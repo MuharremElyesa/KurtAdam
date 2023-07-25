@@ -3,6 +3,11 @@
     padding: 0px;
     margin: 0px;
 }
+/* body */
+body{
+    background-color: rgba(38,64,94,255);
+    overflow-x: hidden;
+}
 /* Başlangıç kutusu ayarları */
 #starter-div{
     background-image: url("images/wolf-4561204_1920.png");
@@ -45,4 +50,29 @@
 /* Giriş kutusu button active */
 #logInButton:active{
     background-color: rgba(60, 153, 60, 0.39);
+}
+/* Ana menü */
+#main-menu{
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: rgba(51, 134, 211, 0.5);
+    border-radius: 15px;
+    border-color: rgba(0, 0, 255, 0.363);
+    border-style: groove;
+    box-shadow: 0px 0px 30px rgb(51, 134, 211);
+    height: 90vh;
+}
+/* Main menu kısmındaki isim kısmı */
+#main-menu-name{
+    background-color: rgba(54, 54, 165, 0.74);
+    border-radius: 15px 15px 0px 0px;
+    text-align: center;
+    font-size: 25px;
+    text-shadow: 0px 0px 10px white;
+}
+/* Oda oluşturma divi içindeki span*/
+#newCreateRoomDiv span{
+    font-size: 30px;
 }

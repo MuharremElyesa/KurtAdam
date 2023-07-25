@@ -10,16 +10,36 @@ include 'settings.php';
     <title><?=$settings->title?></title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Firebase servisini kullanmak için gerekli temel bağlantı -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <!-- Firebase realtime database (gerçek zamanlı veritabanı)nı kullanmak için gerekli bağlantı -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body onresize="windowResize()">
     <!-- Başlangıç kutusu -->
     <div id="starter-div">
+        <!-- İsim giriş kutusu -->
         <div id="login-div">
             <input type="text" class="form-control" id="logInInputText" placeholder="<?=$settings->logInPlaceHolder?>">
-            <input type="button" value="Giriş Yap" id="logInButton">
+            <input type="button" value="Giriş Yap" id="logInButton" onclick="logIn()">
+        </div>
+        <!-- Ana menü -->
+        <div id="main-menu" class="container">
+            <div class="row">
+                <div id="main-menu-name" class="p-2 col-12"></div>
+                <!-- Ana menü butonlar ve kod girme alanı -->
+                <div id="main-menu-room-button-div" class="col-12">
+                    <input type="text" class="form-control col-12 mt-3 text-center" placeholder="Oda kodunu yazınız">
+                    <button class="btn btn-primary col-12 mt-3">Odaya Katıl</button>
+                    <button class="btn btn-primary col-12 mt-2" onclick="newCreateRoom()">Yeni Oda Oluştur</button>
+                </div>
+                <!-- Yeni oda oluşturma -->
+                <div id="newCreateRoomDiv" class="d-none col-12 text-center bg-danger">
+                    <span>Oda kodunuz: </span><span id="roomIdText"></span><br>
+                </div>
+            </div>
         </div>
     </div>
-
     <!-- Bootstrap JS ve Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
