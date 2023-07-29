@@ -14,14 +14,19 @@ include 'settings.php';
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <!-- Firebase realtime database (gerçek zamanlı veritabanı)nı kullanmak için gerekli bağlantı -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Firebase auth (kimlik doğrulama) işlemi için gerekli bağlantı -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body onresize="windowResize()">
     <!-- Başlangıç kutusu -->
     <div id="starter-div">
         <!-- İsim giriş kutusu -->
-        <div id="login-div">
-            <input type="text" class="form-control" id="logInInputText" placeholder="<?=$settings->logInPlaceHolder?>">
-            <input type="button" value="Giriş Yap" id="logInButton" onclick="logIn()">
+        <div id="login-div" class="d-flex justify-content-center">
+            <!-- Google ile giriş yap butonu -->
+            <button class="google-login-button col-6 m-auto" onclick="googleSignIn()" style="height: 50px;">
+                <img src="images/google-icon-2048x2048-czn3g8x8.png" alt="Google Logo" style="width: 30px;">
+            Google ile Giriş Yap
+            </button>
         </div>
         <!-- Ana menü -->
         <div id="main-menu" class="container">
@@ -29,13 +34,17 @@ include 'settings.php';
                 <div id="main-menu-name" class="p-2 col-12"></div>
                 <!-- Ana menü butonlar ve kod girme alanı -->
                 <div id="main-menu-room-button-div" class="col-12">
-                    <input type="text" class="form-control col-12 mt-3 text-center" placeholder="Oda kodunu yazınız">
-                    <button class="btn btn-primary col-12 mt-3">Odaya Katıl</button>
+                    <input type="text" class="form-control col-12 mt-3 text-center" placeholder="Oda kodunu yazınız" id="room-key-input-text">
+                    <button class="btn btn-primary col-12 mt-3" onclick="joinRoom()">Odaya Katıl</button>
                     <button class="btn btn-primary col-12 mt-2" onclick="newCreateRoom()">Yeni Oda Oluştur</button>
+                    <button class="btn btn-danger col-12 mt-2" onclick="signOut()">Oturumu Kapat!</button>
                 </div>
                 <!-- Yeni oda oluşturma -->
                 <div id="newCreateRoomDiv" class="d-none col-12 text-center bg-danger">
                     <span>Oda kodunuz: </span><span id="roomIdText"></span><br>
+                    
+                </div>
+                <div id="gamers-list" class="col-12 bg-success mt-3">
                 </div>
             </div>
         </div>
