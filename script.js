@@ -36,6 +36,12 @@ var roomKeyInputText = document.getElementById("room-key-input-text");
 var html="";
 // Oyun öncesi oyuncu listesi
 var gamerList = document.getElementById("gamers-list");
+//  Oda kontrol butonları
+var roomControlButtons = document.getElementById("room-control-buttons");
+// Rastgele oyuncu kimliği
+var randomPlayerKey;
+// Yeni katılan oyuncu butonları divi
+var playerButtonsDiv = document.getElementById("player-buttons-div");
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -117,16 +123,22 @@ function signOut() {
 function newCreateRoom() {
     mainMenuRoomButtonDiv.style.display="none";
     newCreateRoomDiv.classList.remove("d-none");
+    roomControlButtons.classList.remove("d-none");
     randomRoomKey=Math.floor(Math.random() * 1000000 + 100000);
     roomIdText.innerHTML=randomRoomKey;
     firebase.database().ref("roomKeys").child(randomRoomKey).set({
         admin: User.displayName
     });
     firebase.database().ref("roomKeys").child(randomRoomKey).on('value', (snapshot) => {
+        gamerList.innerHTML=null;
+        var sss = 0;
+        for (const key in snapshot.val()) {
         var data = Object.values(snapshot.val())
-        html = "<div class='bg-warning col-12 mt-2'>"+ data[0] +"</div>";
-        gamerList.innerHTML=html;
+        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
+        gamerList.innerHTML+=html;
         html="";
+        sss++;
+        }
     });
 }
 
@@ -137,20 +149,89 @@ function onDisconnectHandler() {
     if(randomRoomKey!=""){
         firebase.database().ref("roomKeys").child(randomRoomKey).remove();
     }
+    if(roomKeyInputText!=""){
+        firebase.database().ref("roomKeys").child(roomKeyInputText.value).once('value', (snapshot) => {
+            for (const key in snapshot.val()) {
+                if (randomPlayerKey==key) {
+                    var upd = {
+                        [key]: null
+                    }
+                    firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(upd);
+                }  
+            }
+        });
+    }
 }
 
 // Tarayıcı yenilendiğinde onDisconnectHandler işlevini çağırın
 window.onbeforeunload = onDisconnectHandler;
 
+// Odaya katılma fonksiyonu
 function joinRoom() {
-    firebase.database().ref("roomKeys").once('value', (snapshot)=>{
-        console.log(Object.values(snapshot.val()));
-        // if (roomKeyInputText.value==snapshot.val()) {
-        
-        // } else {
-            
-        // }
+    firebase.database().ref("roomKeys").once('value').then((snapshot)=>{
+        for (const key in snapshot.val()) {
+            if (key==roomKeyInputText.value) {
+                // Odaya girme:
+                randomPlayerKey = Math.floor(Math.random() * 10000);
+                var roomObje = {
+                    [randomPlayerKey]: User.displayName
+                }
+                firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(roomObje);
+                mainMenuRoomButtonDiv.style.display="none";
+                newCreateRoomDiv.classList.remove("d-none");
+                roomIdText.innerHTML = roomKeyInputText.value;
+                playerButtonsDiv.classList.remove("d-none");
+                firebase.database().ref("roomKeys").child(roomKeyInputText.value).on('value', (snapshot) => {
+                    gamerList.innerHTML=null;
+                    var sss = 0;
+                    for (const key in snapshot.val()) {
+                        var data = Object.values(snapshot.val())
+                        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
+                        gamerList.innerHTML+=html;
+                        html="";
+                        sss++;
+                    }
+                });
+            }
+        }
+    });
+    firebase.database().ref("roomKeys").on('child_removed', (snapshot) => {
+            firebase.database().ref("roomKeys").child(roomKeyInputText.value).catch((error) => {
 
-        //Burdan devamke
+                // En son burda kaldık. Diğer kullanıcı odayı kapatınca olacaklar..
+
+                mainMenuRoomButtonDiv.style.display="block";
+                newCreateRoomDiv.classList.add("d-none");
+                roomControlButtons.classList.add("d-none");
+                playerButtonsDiv.classList.add("d-none");
+                console.log("oyeeğğğğğ :D");
+            })
     })
+}
+
+// Odayı kapatma fonksiyonu
+function roomClose() {
+    firebase.database().ref("roomKeys").child(randomRoomKey).remove();
+    mainMenuRoomButtonDiv.style.display="block";
+    newCreateRoomDiv.classList.add("d-none");
+    roomControlButtons.classList.add("d-none");
+    randomRoomKey="";
+}
+
+// Odadan ayrıl
+function leftRoom() {
+    firebase.database().ref("roomKeys").child(roomKeyInputText.value).once('value', (snapshot) => {
+        for (const key in snapshot.val()) {
+            if (randomPlayerKey==key) {
+                var upd = {
+                    [key]: null
+                }
+                firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(upd);
+            }  
+        }
+    });
+    mainMenuRoomButtonDiv.style.display="block";
+    newCreateRoomDiv.classList.add("d-none");
+    roomControlButtons.classList.add("d-none");
+    playerButtonsDiv.classList.add("d-none");
 }

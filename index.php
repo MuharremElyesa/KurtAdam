@@ -40,11 +40,16 @@ include 'settings.php';
                     <button class="btn btn-danger col-12 mt-2" onclick="signOut()">Oturumu Kapat!</button>
                 </div>
                 <!-- Yeni oda oluşturma -->
-                <div id="newCreateRoomDiv" class="d-none col-12 text-center bg-danger">
+                <div id="newCreateRoomDiv" class="d-none col-12 text-center">
                     <span>Oda kodunuz: </span><span id="roomIdText"></span><br>
-                    
+                    <div id="gamers-list" class="col-12 mt-3"></div>
                 </div>
-                <div id="gamers-list" class="col-12 bg-success mt-3">
+                <div id="room-control-buttons" class="col-12 d-none">
+                    <button class="btn btn-success col-12 mt-3">Oyunu Başlat!</button>
+                    <button class="btn btn-danger col-12 mt-2" onclick="roomClose()">Odayı kapat!</button>
+                </div>
+                <div id="player-buttons-div" class="col-12 d-none">
+                <button class="btn btn-danger col-12 mt-2" onclick="leftRoom()">Odadan ayrıl!</button>
                 </div>
             </div>
         </div>

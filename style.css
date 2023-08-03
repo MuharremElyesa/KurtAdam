@@ -64,6 +64,7 @@ body{
     border-style: groove;
     box-shadow: 0px 0px 30px rgb(51, 134, 211);
     height: 90vh;
+    overflow-y: auto;
 }
 /* Main menu kısmındaki isim kısmı */
 #main-menu-name{
@@ -76,6 +77,7 @@ body{
 /* Oda oluşturma divi içindeki span*/
 #newCreateRoomDiv span{
     font-size: 30px;
+    background-color: red;
 }
 
 /* Google ile giriş yap butonu stilleri */
@@ -99,4 +101,15 @@ body{
     vertical-align: middle; /* İmg içindeki metni hizala */
     margin-right: 10px; /* İmg ile metin arasındaki boşluk */
 }
-  
+
+/* Oda kontrol tuşları */
+#room-control-buttons{
+    bottom: 0;
+}
+/* Oyun öncesi oyuncu çerçeveri */
+.before-game-players-frame{
+    background-color: #1e687eb0;
+    font-weight: bold;
+    text-shadow: 0px 0px 10px white;
+    border-radius: 5px;
+}
