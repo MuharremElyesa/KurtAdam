@@ -45,7 +45,7 @@ include 'settings.php';
                     <div id="gamers-list" class="col-12 mt-3"></div>
                 </div>
                 <div id="room-control-buttons" class="col-12 d-none">
-                    <button class="btn btn-success col-12 mt-3">Oyunu Başlat!</button>
+                    <button class="btn btn-success col-12 mt-3" onclick="startGame()">Oyunu Başlat!</button>
                     <button class="btn btn-danger col-12 mt-2" onclick="roomClose()">Odayı kapat!</button>
                 </div>
                 <div id="player-buttons-div" class="col-12 d-none">
@@ -54,6 +54,13 @@ include 'settings.php';
             </div>
         </div>
     </div>
+
+    <!-- Game -->
+    <div id="game" class="d-none container-fluid">
+        <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
+        <div id="game-player-frame" class="row"></div>
+    </div>
+
     <!-- Bootstrap JS ve Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>

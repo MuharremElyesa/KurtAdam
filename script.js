@@ -42,6 +42,14 @@ var roomControlButtons = document.getElementById("room-control-buttons");
 var randomPlayerKey;
 // Yeni katılan oyuncu butonları divi
 var playerButtonsDiv = document.getElementById("player-buttons-div");
+// Oyun kutusu
+var gameDiv = document.getElementById("game");
+// Oyuncu çerçevesi
+var gamePlayerFrame = document.getElementById("game-player-frame");
+// Geri sayım kutusu
+var countdown = document.getElementById("countdown");
+// Geri sayım yazdırma kutusu
+var countdownPriting = document.getElementById("countdown-printing");
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -127,17 +135,35 @@ function newCreateRoom() {
     randomRoomKey=Math.floor(Math.random() * 1000000 + 100000);
     roomIdText.innerHTML=randomRoomKey;
     firebase.database().ref("roomKeys").child(randomRoomKey).set({
-        admin: User.displayName
+        admin: User.displayName,
+        situation: 0
     });
+
     firebase.database().ref("roomKeys").child(randomRoomKey).on('value', (snapshot) => {
         gamerList.innerHTML=null;
         var sss = 0;
         for (const key in snapshot.val()) {
         var data = Object.values(snapshot.val())
         html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-        gamerList.innerHTML+=html;
+        if (key!="situation") {
+            gamerList.innerHTML+=html;
+        }
         html="";
         sss++;
+        }
+    });
+    var ccc = 0;
+    firebase.database().ref("roomKeys").child(randomRoomKey).on('value', (snapshot) => {
+        var sss = 0;
+        if (ccc==0) {
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val());
+                if (key=="situation" && data[sss]=="1") {
+                    game();
+                    ccc++;
+                }
+                sss++;
+            }
         }
     });
 }
@@ -187,7 +213,9 @@ function joinRoom() {
                     for (const key in snapshot.val()) {
                         var data = Object.values(snapshot.val())
                         html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-                        gamerList.innerHTML+=html;
+                        if (key!="situation") {
+                            gamerList.innerHTML+=html;
+                        }
                         html="";
                         sss++;
                     }
@@ -195,18 +223,33 @@ function joinRoom() {
             }
         }
     });
-    firebase.database().ref("roomKeys").on('child_removed', (snapshot) => {
-            firebase.database().ref("roomKeys").child(roomKeyInputText.value).catch((error) => {
+    var ccc = 0;
+    firebase.database().ref("roomKeys").child(roomKeyInputText.value).on('value', (snapshot) => {
+        var sss = 0;
+        if (ccc==0) {
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val());
+                if (key=="situation" && data[sss]=="1") {
+                    game();
+                    ccc++;
+                }
+                sss++;
+            }
+        }
+    });
 
-                // En son burda kaldık. Diğer kullanıcı odayı kapatınca olacaklar..
+    // firebase.database().ref("roomKeys").on('child_removed', (snapshot) => {
+    //         firebase.database().ref("roomKeys").child(roomKeyInputText.value).catch((error) => {
 
-                mainMenuRoomButtonDiv.style.display="block";
-                newCreateRoomDiv.classList.add("d-none");
-                roomControlButtons.classList.add("d-none");
-                playerButtonsDiv.classList.add("d-none");
-                console.log("oyeeğğğğğ :D");
-            })
-    })
+    //             // En son burda kaldık. Diğer kullanıcı odayı kapatınca olacaklar..
+
+    //             mainMenuRoomButtonDiv.style.display="block";
+    //             newCreateRoomDiv.classList.add("d-none");
+    //             roomControlButtons.classList.add("d-none");
+    //             playerButtonsDiv.classList.add("d-none");
+    //             console.log("oyeeğğğğğ :D");
+    //         })
+    // })
 }
 
 // Odayı kapatma fonksiyonu
@@ -234,4 +277,61 @@ function leftRoom() {
     newCreateRoomDiv.classList.add("d-none");
     roomControlButtons.classList.add("d-none");
     playerButtonsDiv.classList.add("d-none");
+}
+
+function startGame() {
+    var upd = {
+        situation: 1
+    }
+    firebase.database().ref("roomKeys").child(randomRoomKey).update(upd);
+}
+
+function game() {
+    starterDiv.style.display="none";
+    gameDiv.classList.remove("d-none");
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
+
+    // Şu anki zamanı alın
+    var now = new Date();
+
+    // 15 saniye ekleyin
+    var futureTime = new Date(now.getTime() + 15000); // 15 saniye = 15000 milisaniye
+
+    // 2023-09-09T21:38:18.305Z
+
+    var upd = {
+        time: futureTime
+    }
+
+    firebase.database().ref("roomKeys").child(keyy).update(upd);
+
+    var sure = setInterval(()=>{
+        now = new Date();
+        var thisSecond = futureTime - now;
+        var thisSecond = String(thisSecond).slice(0,-3);
+        countdownPriting.innerHTML=thisSecond;
+        if (now >= futureTime) {
+            countdown.style.display="none";
+            // Süre bitince gerekli işlemler yapılacak. Buradan devam...
+            clearInterval(sure);   
+        }
+    }, 1000);
+
+    firebase.database().ref("roomKeys").child(keyy).on('value', (snapshot) => {
+        var sss=0;
+        gamePlayerFrame.innerHTML="";
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val());
+            if (key!="situation" && key!="time") {
+                html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + data[sss] +"</div> </div>";
+                gamePlayerFrame.innerHTML+=html;
+                html="";
+                sss++;
+            }
+        }
+    })
 }
