@@ -57,6 +57,7 @@ include 'settings.php';
 
     <!-- Game -->
     <div id="game" class="d-none container-fluid">
+        <div id="role-selection-div" class="d-none"></div>
         <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
         <div id="game-player-frame" class="row"></div>
     </div>

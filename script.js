@@ -50,6 +50,10 @@ var gamePlayerFrame = document.getElementById("game-player-frame");
 var countdown = document.getElementById("countdown");
 // Geri sayım yazdırma kutusu
 var countdownPriting = document.getElementById("countdown-printing");
+// Rol seçme divi
+var roleSelectionDiv = document.getElementById("role-selection-div");
+// Oyuncu rolu
+var playerRole;
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -138,6 +142,9 @@ function newCreateRoom() {
         admin: User.displayName,
         situation: 0
     });
+    firebase.database().ref("roomKeys/"+randomRoomKey).child("situations").set({
+        admin: 1
+    });
 
     firebase.database().ref("roomKeys").child(randomRoomKey).on('value', (snapshot) => {
         gamerList.innerHTML=null;
@@ -145,7 +152,7 @@ function newCreateRoom() {
         for (const key in snapshot.val()) {
         var data = Object.values(snapshot.val())
         html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-        if (key!="situation") {
+        if (key!="situation" && key!="situations") {
             gamerList.innerHTML+=html;
         }
         html="";
@@ -203,6 +210,9 @@ function joinRoom() {
                     [randomPlayerKey]: User.displayName
                 }
                 firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(roomObje);
+                firebase.database().ref("roomKeys/"+roomKeyInputText.value).child("situations").update({
+                    [randomPlayerKey]: 1
+                })
                 mainMenuRoomButtonDiv.style.display="none";
                 newCreateRoomDiv.classList.remove("d-none");
                 roomIdText.innerHTML = roomKeyInputText.value;
@@ -213,7 +223,7 @@ function joinRoom() {
                     for (const key in snapshot.val()) {
                         var data = Object.values(snapshot.val())
                         html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-                        if (key!="situation") {
+                        if (key!="situation" && key!="situations") {
                             gamerList.innerHTML+=html;
                         }
                         html="";
@@ -284,6 +294,42 @@ function startGame() {
         situation: 1
     }
     firebase.database().ref("roomKeys").child(randomRoomKey).update(upd);
+
+    firebase.database().ref("roomKeys/"+randomRoomKey).once('value', (snapshot)=>{
+        var sss=0;
+        var player = [];
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val());
+            if (key!="situation" && key!="situations") {
+                player.push(key);
+            }
+        }
+        //player.forEach((keyyy, index)=>{console.log(keyyy + " " + index)})
+        var rolesss = roleSelection(player.length);
+
+        // Dizileri karıştır
+        shuffleArray(player);
+        shuffleArray(rolesss);
+        
+        // Eşleştirmeyi oluştur
+        var role_assignment = {};
+
+        for (var i = 0; i < player.length; i++) {
+            role_assignment[player[i]] = rolesss[i];
+        }
+
+        firebase.database().ref("roomKeys/"+randomRoomKey).child("roles").set(role_assignment);
+
+        randomPlayerKey="admin";
+    })
+}
+
+// Dizileri karıştırma işlevi
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 function game() {
@@ -316,7 +362,7 @@ function game() {
         countdownPriting.innerHTML=thisSecond;
         if (now >= futureTime) {
             countdown.style.display="none";
-            // Süre bitince gerekli işlemler yapılacak. Buradan devam...
+            showRole();
             clearInterval(sure);   
         }
     }, 1000);
@@ -326,7 +372,7 @@ function game() {
         gamePlayerFrame.innerHTML="";
         for (const key in snapshot.val()) {
             var data = Object.values(snapshot.val());
-            if (key!="situation" && key!="time") {
+            if (key!="situation" && key!="time" && key!="situations" && key!="roles") {
                 html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + data[sss] +"</div> </div>";
                 gamePlayerFrame.innerHTML+=html;
                 html="";
@@ -334,4 +380,67 @@ function game() {
             }
         }
     })
+}
+
+// Rol dağıtımı
+function roleSelection(number_of_people) {
+    var number_of_player = number_of_people;
+    var number_of_people = number_of_people/5;
+    var v1=-1, v2=0, v3=0;
+    while (v3==0) {
+        v1++;
+        v2++;
+        if (v1<number_of_people && number_of_people<=v2) {
+            v3++;
+        }
+    }
+
+    // alert("v1:"+v1+" "+"v2:"+v2+" "+"v3:"+v3+"\n"+"Sonuç olarak "+v2+" kurt");
+
+    // Kurt sayısı: v2
+    // Kişi sayısı: number_of_people
+
+    var roless = [];
+    var villager = number_of_player - v2;
+    var wolf = v2;
+
+    while (wolf>0) {
+        roless.push("wolf");
+        wolf--;
+    }
+
+    while (villager>0) {
+        roless.push("villager");
+        villager--;
+    }
+
+    return roless;
+}
+
+// Rolü kullanıcıya göster
+function showRole() {
+    roleSelectionDiv.classList.remove("d-none");
+    countdown.classList.add("d-none");
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
+
+    firebase.database().ref("roomKeys/"+keyy+"/roles").once('value',(snapshot)=>{
+        var sss=0;
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val())
+            if (key==randomPlayerKey) {
+                playerRole=data[sss];
+            }
+            sss++;
+        }
+    })
+
+    if (playerRole=="wolf") {
+        roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt</h1>";
+    }else if (playerRole=="villager") {
+        roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü</h1>";
+    }
 }
