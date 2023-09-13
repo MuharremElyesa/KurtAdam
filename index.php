@@ -17,7 +17,7 @@ include 'settings.php';
     <!-- Firebase auth (kimlik doğrulama) işlemi için gerekli bağlantı -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
-<body onresize="windowResize()">
+<body id="body" onresize="windowResize()">
     <!-- Başlangıç kutusu -->
     <div id="starter-div">
         <!-- İsim giriş kutusu -->
@@ -59,6 +59,7 @@ include 'settings.php';
     <div id="game" class="d-none container-fluid">
         <div id="role-selection-div" class="d-none"></div>
         <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
+        <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span> <div id="duration-top-bar" class="m-auto text-center"></div></div>
         <div id="game-player-frame" class="row"></div>
     </div>
 

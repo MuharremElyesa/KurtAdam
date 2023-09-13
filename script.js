@@ -54,6 +54,14 @@ var countdownPriting = document.getElementById("countdown-printing");
 var roleSelectionDiv = document.getElementById("role-selection-div");
 // Oyuncu rolu
 var playerRole;
+// Üst bar
+var topBar = document.getElementById("top-bar");
+// Üst bar rol kutusu
+var roleShowTopDiv = document.getElementById("role-show-top-div");
+// Üst bar süre kutusu
+var durationTopBar = document.getElementById("duration-top-bar");
+// Body etiketi
+var bodyTag = document.getElementById("body");
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -362,7 +370,12 @@ function game() {
         countdownPriting.innerHTML=thisSecond;
         if (now >= futureTime) {
             countdown.style.display="none";
-            showRole();
+            futureTime = new Date(now.getTime() + 10000);
+            var upd = {
+                time: futureTime
+            }
+            firebase.database().ref("roomKeys").child(keyy).update(upd);
+            showRole(futureTime);
             clearInterval(sure);   
         }
     }, 1000);
@@ -418,7 +431,7 @@ function roleSelection(number_of_people) {
 }
 
 // Rolü kullanıcıya göster
-function showRole() {
+function showRole(futureTime) {
     roleSelectionDiv.classList.remove("d-none");
     countdown.classList.add("d-none");
     if (randomRoomKey!="") {
@@ -439,8 +452,95 @@ function showRole() {
     })
 
     if (playerRole=="wolf") {
-        roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt</h1>";
+        var suree= setInterval(()=>{
+            now = new Date();
+            var thisSecond = futureTime - now;
+            var thisSecond = String(thisSecond).slice(0,-3);
+            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt "+thisSecond+"</h1>";
+            if (now  >= futureTime) {
+                roleSelectionDiv.classList.add("d-none");
+                topBar.classList.remove("d-none");
+                roleShowTopDiv.innerHTML="Rol: Kurt";
+                gameLoop();
+                clearInterval(suree);
+            }
+        }, 1000);
     }else if (playerRole=="villager") {
-        roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü</h1>";
+        var suree= setInterval(()=>{
+            now = new Date();
+            var thisSecond = futureTime - now;
+            var thisSecond = String(thisSecond).slice(0,-3);
+            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü "+thisSecond+"</h1>";
+            if (now  >= futureTime) {
+                roleSelectionDiv.classList.add("d-none");
+                topBar.classList.remove("d-none");
+                roleShowTopDiv.innerHTML="Rol: Köylü";
+                gameLoop();
+                clearInterval(suree);
+            }
+        }, 1000);
     }
+}
+
+// Oyun döngüsü
+function gameLoop() {
+    var day=0;
+    var situation="";
+
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
+
+    var sss=0;
+    firebase.database().ref("roomKeys/"+keyy).on('value',(snapshot)=>{
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val());
+            if (key=="situation") {
+                situation = data[sss];
+            }
+            sss++;
+        }
+    });
+    var xxx = situation;
+    var now = new Date();
+    var futureTime = new Date(now.getTime() + 30000);
+    var upd = {
+        time: futureTime
+    }
+    firebase.database().ref("roomKeys").child(keyy).update(upd);
+    gameLoop1(day, xxx, futureTime);
+}
+
+function gameLoop1(day, situation, futureTime) {
+        console.log("fonksiyondayız")
+        if (day%2==0) {
+            console.log("gecedeyiz") /***/
+            // Gece:
+            bodyTag.style.backgroundColor="#036";
+            // Kurt özelliklerini çalıştırıcaz...
+            var gece = setInterval(()=>{
+                now = new Date();
+                var thisSecond = futureTime - now;
+                var thisSecond = String(thisSecond).slice(0,-3);
+                durationTopBar.innerHTML="Gün doğumuna: "+thisSecond+" saniye!";
+                if (now >= futureTime) {
+                    futureTime = new Date(now.getTime() + 120000);
+                    var upd = {
+                        time: futureTime
+                    }
+                    firebase.database().ref("roomKeys").child(keyy).update(upd);
+                    day++;
+                    clearInterval(gece);
+                    gameLoop1(day, situation);
+                }
+            }, 1000);
+        }else{
+            // Gündüz:
+            console.log("gündüz")
+            bodyTag.style.backgroundColor="#fff4b6";
+            xxx=0;
+        }
+
 }
