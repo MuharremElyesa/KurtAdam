@@ -147,20 +147,37 @@ function newCreateRoom() {
     randomRoomKey=Math.floor(Math.random() * 1000000 + 100000);
     roomIdText.innerHTML=randomRoomKey;
     firebase.database().ref("roomKeys").child(randomRoomKey).set({
-        admin: User.displayName,
+        admin: {
+            name: User.displayName,
+            situation: 1,
+        },
         situation: 0
     });
-    firebase.database().ref("roomKeys/"+randomRoomKey).child("situations").set({
-        admin: 1
-    });
+    // firebase.database().ref("roomKeys/"+randomRoomKey).child("situations").set({
+    //     admin: 1
+    // });
 
     firebase.database().ref("roomKeys").child(randomRoomKey).on('value', (snapshot) => {
         gamerList.innerHTML=null;
         var sss = 0;
         for (const key in snapshot.val()) {
         var data = Object.values(snapshot.val())
-        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-        if (key!="situation" && key!="situations") {
+        if (key!="situation") {
+            firebase.database().ref("roomKeys/"+randomRoomKey+"/"+key).once('value',(snapshot)=>{
+                for(const keyt in snapshot.val()){
+                    var ddd=0;
+                    var dataa = Object.values(snapshot.val())
+                    if (keyt=="name") {
+                        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ dataa[ddd] +"</div>";
+                    }
+                    ddd++;
+                }
+            })    
+        }
+
+
+
+        if (key!="situation") {
             gamerList.innerHTML+=html;
         }
         html="";
@@ -191,16 +208,7 @@ function onDisconnectHandler() {
         firebase.database().ref("roomKeys").child(randomRoomKey).remove();
     }
     if(roomKeyInputText!=""){
-        firebase.database().ref("roomKeys").child(roomKeyInputText.value).once('value', (snapshot) => {
-            for (const key in snapshot.val()) {
-                if (randomPlayerKey==key) {
-                    var upd = {
-                        [key]: null
-                    }
-                    firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(upd);
-                }  
-            }
-        });
+        firebase.database().ref("roomKeys/"+roomKeyInputText.value+"/"+randomPlayerKey).remove();
     }
 }
 
@@ -215,29 +223,47 @@ function joinRoom() {
                 // Odaya girme:
                 randomPlayerKey = Math.floor(Math.random() * 10000);
                 var roomObje = {
-                    [randomPlayerKey]: User.displayName
+                    [randomPlayerKey]: {
+                        name: User.displayName,
+                        situation: 1
+                    }
                 }
                 firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(roomObje);
-                firebase.database().ref("roomKeys/"+roomKeyInputText.value).child("situations").update({
-                    [randomPlayerKey]: 1
-                })
+                // firebase.database().ref("roomKeys/"+roomKeyInputText.value).child("situations").update({
+                //     [randomPlayerKey]: 1
+                // })
                 mainMenuRoomButtonDiv.style.display="none";
                 newCreateRoomDiv.classList.remove("d-none");
                 roomIdText.innerHTML = roomKeyInputText.value;
                 playerButtonsDiv.classList.remove("d-none");
+                
                 firebase.database().ref("roomKeys").child(roomKeyInputText.value).on('value', (snapshot) => {
                     gamerList.innerHTML=null;
                     var sss = 0;
                     for (const key in snapshot.val()) {
                         var data = Object.values(snapshot.val())
-                        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ data[sss] +"</div>";
-                        if (key!="situation" && key!="situations") {
+                        if (key!="situation") {
+                            firebase.database().ref("roomKeys/"+roomKeyInputText.value+"/"+key).once('value',(snapshot)=>{
+                                for(const keyt in snapshot.val()){
+                                    var ddd=0;
+                                    var dataa = Object.values(snapshot.val())
+                                    if (keyt=="name") {
+                                        html = "<div class='before-game-players-frame col-12 mt-2 p-2 mb-2'>"+ dataa[ddd] +"</div>";
+                                    }
+                                    ddd++;
+                                }
+                            })    
+                        }
+                        if (key!="situation") {
                             gamerList.innerHTML+=html;
                         }
                         html="";
                         sss++;
                     }
                 });
+
+
+
             }
         }
     });
@@ -281,16 +307,7 @@ function roomClose() {
 
 // Odadan ayrıl
 function leftRoom() {
-    firebase.database().ref("roomKeys").child(roomKeyInputText.value).once('value', (snapshot) => {
-        for (const key in snapshot.val()) {
-            if (randomPlayerKey==key) {
-                var upd = {
-                    [key]: null
-                }
-                firebase.database().ref("roomKeys").child(roomKeyInputText.value).update(upd);
-            }  
-        }
-    });
+    firebase.database().ref("roomKeys/"+roomKeyInputText.value+"/"+randomPlayerKey).remove();
     mainMenuRoomButtonDiv.style.display="block";
     newCreateRoomDiv.classList.add("d-none");
     roomControlButtons.classList.add("d-none");
@@ -308,7 +325,7 @@ function startGame() {
         var player = [];
         for (const key in snapshot.val()) {
             var data = Object.values(snapshot.val());
-            if (key!="situation" && key!="situations") {
+            if (key!="situation") {
                 player.push(key);
             }
         }
@@ -323,10 +340,22 @@ function startGame() {
         var role_assignment = {};
 
         for (var i = 0; i < player.length; i++) {
-            role_assignment[player[i]] = rolesss[i];
+            role_assignment[player[i]] = {role: rolesss[i]};
         }
 
-        firebase.database().ref("roomKeys/"+randomRoomKey).child("roles").set(role_assignment);
+        firebase.database().ref("roomKeys/"+randomRoomKey).once('value',(snapshot)=>{
+            var sss=0;
+            for (const key in snapshot.val()) {
+                for (const keyt in role_assignment) {
+                    if (keyt==key) {
+                        firebase.database().ref("roomKeys/"+randomRoomKey+"/"+key).update(role_assignment[keyt]);
+                    }
+                }
+                sss++;
+            }
+        })
+
+        
 
         randomPlayerKey="admin";
     })
@@ -343,6 +372,7 @@ function shuffleArray(array) {
 function game() {
     starterDiv.style.display="none";
     gameDiv.classList.remove("d-none");
+    var keyy;
     if (randomRoomKey!="") {
         keyy = randomRoomKey;
     }else if(roomKeyInputText.value!=""){
@@ -386,7 +416,18 @@ function game() {
         for (const key in snapshot.val()) {
             var data = Object.values(snapshot.val());
             if (key!="situation" && key!="time" && key!="situations" && key!="roles") {
-                html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + data[sss] +"</div> </div>";
+
+                firebase.database().ref("roomKeys/"+keyy+"/"+key).once('value',(snapshot)=>{
+                    var ddd=0;
+                    for (const keyt in snapshot.val()) {
+                        var data = Object.values(snapshot.val())
+                        if (keyt=="name") {
+                            html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + data[ddd] +"</div> </div>";
+                        }
+                        ddd++;
+                    }
+                })
+
                 gamePlayerFrame.innerHTML+=html;
                 html="";
                 sss++;
@@ -434,19 +475,29 @@ function roleSelection(number_of_people) {
 function showRole(futureTime) {
     roleSelectionDiv.classList.remove("d-none");
     countdown.classList.add("d-none");
+    var keyy;
     if (randomRoomKey!="") {
         keyy = randomRoomKey;
     }else if(roomKeyInputText.value!=""){
         keyy = roomKeyInputText.value;
     }
 
-    firebase.database().ref("roomKeys/"+keyy+"/roles").once('value',(snapshot)=>{
+    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
         var sss=0;
         for (const key in snapshot.val()) {
-            var data = Object.values(snapshot.val())
-            if (key==randomPlayerKey) {
-                playerRole=data[sss];
-            }
+            //var data = Object.values(snapshot.val())
+            firebase.database().ref("roomKeys/"+keyy+"/"+key).once('value',(snapshot)=>{
+                var ddd=0;
+                for (const keyt in snapshot.val()){
+                    var dataa = Object.values(snapshot.val())
+                    if (keyt=="role") {
+                        if (key==randomPlayerKey) {
+                            playerRole=dataa[ddd];
+                        }
+                    }
+                    ddd++;
+                }
+            })
             sss++;
         }
     })
@@ -519,7 +570,7 @@ function gameLoop1(day, situation, futureTime) {
             console.log("gecedeyiz") /***/
             // Gece:
             bodyTag.style.backgroundColor="#036";
-            // Kurt özelliklerini çalıştırıcaz...
+            wolfAction(day);
             var gece = setInterval(()=>{
                 now = new Date();
                 var thisSecond = futureTime - now;
@@ -543,4 +594,8 @@ function gameLoop1(day, situation, futureTime) {
             xxx=0;
         }
 
+}
+
+function wolfAction(day) {
+    // Kurt özellikleri yazılacak...
 }
