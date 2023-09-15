@@ -59,7 +59,8 @@ include 'settings.php';
     <div id="game" class="d-none container-fluid">
         <div id="role-selection-div" class="d-none"></div>
         <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
-        <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span> <div id="duration-top-bar" class="m-auto text-center"></div></div>
+        <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span><div id="role-action-div-control-button" onclick="roleActionDivControlButton()"></div> <div id="duration-top-bar" class="m-auto text-center"></div></div>
+        <div id="role-action-div" class="d-none"><div id="role-action-div-write"></div><div id="role-action-div-wolfs"></div></div>
         <div id="game-player-frame" class="row"></div>
     </div>
 

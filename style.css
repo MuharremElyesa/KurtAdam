@@ -144,3 +144,24 @@ body{
     background-color: aquamarine;
     color: #1d1a1a;
 }
+
+/* Rol aksiyonları divi */
+#role-action-div{
+    height: 600px;
+    width: 90%;
+    background-color: rgba(88, 88, 88, 0.99);
+    color: #f1f1f1;
+    border-radius: 10px;
+    z-index: 998;
+    position: absolute;
+    margin: auto;
+}
+
+/* Rol aksiyonları açıp kapatma butonu */
+#role-action-div-control-button{
+    float: right;
+    width: 45px;
+    height: 45px;
+    background-color: green;
+    border-radius: 50px;
+}
