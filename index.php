@@ -57,10 +57,17 @@ include 'settings.php';
 
     <!-- Game -->
     <div id="game" class="d-none container-fluid">
+        <!-- Rol gösterimi (olması lazım) -->
         <div id="role-selection-div" class="d-none"></div>
+        <!-- Oyuna başlangıç geri sayımı -->
         <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
+        <!-- Üst bar -->
         <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span><div id="role-action-div-control-button" onclick="roleActionDivControlButton()"></div> <div id="duration-top-bar" class="m-auto text-center"></div></div>
-        <div id="role-action-div" class="d-none"><div id="role-action-div-write"></div><div id="role-action-div-wolfs"></div></div>
+        <!-- Aksiyon menüsü -->
+        <div id="role-action-div" class="d-none"><div id="role-action-div-write"></div><div id="role-action-div-wolfs"></div><div id="role-action-div-live-vote-screen"></div></div>
+        <!-- Oyun sonu ekranı -->
+        <div id="game-over-div" class="d-none"></div>
+        <!-- Oyuncuların listelenmesi -->
         <div id="game-player-frame" class="row"></div>
     </div>
 

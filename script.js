@@ -68,9 +68,14 @@ var roleActionDiv = document.getElementById("role-action-div");
 var roleActionDivWrite = document.getElementById("role-action-div-write");
 // Rol aksiyon divi kurtlar
 var roleActionDivWolfs = document.getElementById("role-action-div-wolfs");
+// Oyun sonu divi
+var gameOverDiv = document.getElementById("game-over-div");
+// Rol ekranı canlı oy izleme ekranı
+var roleActionDivLiveVoteScreen = document.getElementById("role-action-div-live-vote-screen");
 
 var oy_verdigi_kisi="";
 var oy_veren_kisi="";
+var kurt_oylaması_yapıldı_mı=0;
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -516,7 +521,7 @@ function showRole(futureTime) {
             now = new Date();
             var thisSecond = futureTime - now;
             var thisSecond = String(thisSecond).slice(0,-3);
-            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt "+thisSecond+"</h1>";
+            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto; display:block;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt "+thisSecond+"</h1>";
             if (now  >= futureTime) {
                 roleSelectionDiv.classList.add("d-none");
                 topBar.classList.remove("d-none");
@@ -530,7 +535,7 @@ function showRole(futureTime) {
             now = new Date();
             var thisSecond = futureTime - now;
             var thisSecond = String(thisSecond).slice(0,-3);
-            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü "+thisSecond+"</h1>";
+            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto; display:block;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü "+thisSecond+"</h1>";
             if (now  >= futureTime) {
                 roleSelectionDiv.classList.add("d-none");
                 topBar.classList.remove("d-none");
@@ -574,11 +579,18 @@ function gameLoop() {
 }
 
 function gameLoop1(day, situation, futureTime) {
+    var keyy;
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
 
     if (day%2==0) {
 
         // Gece:
         roleActionDivWrite.innerHTML=""
+        roleActionDivLiveVoteScreen.innerHTML=""
         roleActionDiv.classList.add("d-none");
         bodyTag.style.backgroundColor="#036";
         if (playerRole=="wolf") {
@@ -597,14 +609,144 @@ function gameLoop1(day, situation, futureTime) {
                 firebase.database().ref("roomKeys").child(keyy).update(upd);
                 day++;
                 // d!=0 (d: kurt oylaması yapıldı ise) en çok oyu alanı öldür.
+                if (kurt_oylaması_yapıldı_mı!=0) {
+                    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                        var sss=0;
+                        for (const key in snapshot.val()) {
+                            var data = Object.values(snapshot.val())
+                            if (key=="vote") {
+                                var ddd=0;
+                                var en_buyuk="";
+                                var en_buyuk2="";
+                                for (var anahtar in data[sss]) {
+                                    var dataa = Object.values(data[sss]);
+
+                                    if (en_buyuk="") {
+                                        en_buyuk=dataa[ddd];
+                                    }else{
+                                        if (en_buyuk<dataa[ddd]) {
+                                            en_buyuk=dataa[ddd];
+                                        }else if (en_buyuk==dataa[ddd]) {
+                                            en_buyuk2=dataa[ddd];
+                                        }
+                                    }
+
+                                    //console.log(anahtar+" --> "+ dataa[ddd]);
+                                    ddd++;
+                                }
+
+                                if (en_buyuk!="") {
+                                    var kontrol=0;
+                                    if (en_buyuk2!="") {
+                                        roleActionDivWrite.innerHTML="Eşit Oy";
+                                        console.log("Eşit oy");
+                                        kontrol=1;
+                                    }
+                                    if (kontrol==0) {
+                                        firebase.database().ref("roomKeys/"+keyy+"/vote").once('value',(snapshot)=>{
+                                            var sss=0;
+                                            for (const key in snapshot.val()) {
+                                                var data = Object.values(snapshot.val())
+                                                    if (data[sss]==en_buyuk) {
+                                                        // key->oyuncu-id 
+                                                        firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                                                            var ddd=0;
+                                                            for (const keyt in snapshot.val()) {
+                                                                var dataa = Object.values(snapshot.val())
+                                                                    if (key==keyt) {
+                                                                        var upd = {
+                                                                            situation: 0
+                                                                        }
+                                                                        firebase.database().ref("roomKeys/"+keyy+"/"+keyt).update(upd);
+                                                                    }
+                                                                ddd++;
+                                                            }
+                                                        })
+                                                    }
+                                                sss++;
+                                            }
+                                        })
+                                    }
+                                    
+                                }
+
+                            }
+                            sss++;
+                        }
+                    })
+                }
                 // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
+
+                var sss=0;
+                var kontrol="";
+                var oyun_devam_mı=0;
+
+                firebase.database().ref("roomKeys/"+keyy).on('value',(snapshot)=>{
+                    sss=0;
+                    kontrol="";
+                    oyun_devam_mı=0;
+                    for (const key in snapshot.val()) {
+                        var data = Object.values(snapshot.val())
+                            if (key!="vote" && key!="situation" && key!="time") {
+                                if (data[sss].situation==1) {
+                                    if (kontrol=="") {
+                                        kontrol = data[sss].role;
+                                    }
+                                    if (kontrol != data[sss].role) {
+                                        // Oyun devam...
+                                        oyun_devam_mı=1;
+                                    }
+                                }
+                            }
+                        sss++;
+                    }
+                    if (oyun_devam_mı==0) {
+                    gameOver(kontrol);
+                }
+                });
+
+                if (oyun_devam_mı==0) {
+                    gameOver(kontrol);
+                }else{
+                    gameLoop1(day, situation, futureTime);
+                }
+
                 clearInterval(gece);
-                gameLoop1(day, situation, futureTime);
             }
         }, 1000);
     }else{
+
+        // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
+
+        var sss=0;
+        var kontrol="";
+        var oyun_devam_mı=0;
+
+        firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val())
+                    if (key!="vote" && key!="situation" && key!="time") {
+                        if (data[sss].situation==1) {
+                            if (kontrol=="") {
+                                kontrol = data[sss].role;
+                            }
+                            if (kontrol != data[sss].role) {
+                                // Oyun devam...
+                                oyun_devam_mı=1;
+                            }
+                        }
+                    }
+                sss++;
+            }
+        });
+
+        if (oyun_devam_mı==0) {
+            gameOver(kontrol);
+        }
+
         // Gündüz:
         roleActionDivWrite.innerHTML=""
+        roleActionDivLiveVoteScreen.innerHTML=""
         roleActionDiv.classList.add("d-none");
         bodyTag.style.backgroundColor="#fff4b6";
         // tartışma
@@ -640,12 +782,38 @@ function gameLoop1(day, situation, futureTime) {
                     firebase.database().ref("roomKeys").child(keyy).update(upd);
                     day++;
                     // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
+
+                    var sss=0;
+                    var kontrol="";
+                    var oyun_devam_mı=0;
+
+                    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                        for (const key in snapshot.val()) {
+                            var data = Object.values(snapshot.val())
+                                if (key!="vote" && key!="situation" && key!="time") {
+                                    if (data[sss].situation==1) {
+                                        if (kontrol=="") {
+                                            kontrol = data[sss].role;
+                                        }
+                                        if (kontrol != data[sss].role) {
+                                            // Oyun devam...
+                                            oyun_devam_mı=1;
+                                        }
+                                    }
+                                }
+                            sss++;
+                        }
+                    });
+
+                    if (oyun_devam_mı==0) {
+                        gameOver(kontrol);
+                    }else{
+                        gameLoop1(day, situation, futureTime);
+                    } 
                     clearInterval(oylama);
-                    gameLoop1(day, situation, futureTime);
                 }
             }, 1000);
         }
-
 
         
     }
@@ -696,6 +864,7 @@ function wolfAction(day) {
             
 
     }else{
+        var keyy;
         if (randomRoomKey!="") {
             keyy = randomRoomKey;
         }else if(roomKeyInputText.value!=""){
@@ -714,8 +883,9 @@ function wolfAction(day) {
 
                 if (key!="vote" && key!="time" && key!="situation") {
                     if (data[sss].role!="wolf") {
-                        html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
-                        console.log(key)
+                        if (data[sss].name!=randomPlayerKey) {
+                            html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                        }
                     }
                 }
 
@@ -726,6 +896,32 @@ function wolfAction(day) {
             roleActionDivWrite.innerHTML=html;
             html="";
         })
+
+        // Canlı oy ekranı:
+        firebase.database().ref("roomKeys/"+keyy).child("vote").on('value',(snapshot)=>{
+            var htmll="";
+            var sss=0;
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val())
+                firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                    var ddd=0;
+                    for (const keyt in snapshot.val()) {
+                        var dataa = Object.values(snapshot.val())
+                            if (key==keyt) {
+                                if (data[sss]!=0) {
+                                    htmll+="<div class='col-12 bg-success'>"+dataa[ddd].name+" "+data[sss]+"</div>";
+                                }
+                                
+                            }
+                        ddd++;
+                    }
+                })
+                sss++;
+            }
+            roleActionDivLiveVoteScreen.innerHTML=htmll;
+            htmll="";
+        })
+
     }
 }
 
@@ -740,6 +936,7 @@ function roleActionDivControlButton(){
 
 // kurt oyları
 function kurtVote(playerId) {
+    kurt_oylaması_yapıldı_mı=1;
     if (randomRoomKey!="") {
         keyy = randomRoomKey;
     }else if(roomKeyInputText.value!=""){
@@ -831,9 +1028,20 @@ function kurtVote(playerId) {
             }
 
             oy_verdigi_kisi = playerId;
-
         })
 
 
     } 
+}
+
+// Oyun Sonu Fonksiyonu
+function gameOver(kazanan_takim) {
+    gameOverDiv.classList.remove("d-none");
+    if (kazanan_takim=="wolf") {
+        // kazanan takım kurtlarsa:
+        gameOverDiv.innerHTML="<img src='images/wolf.png' style='height: 500px; margin:auto; display:block;'> <br> <h1 style='color:red'>Kurtlar Kazandı!</h1>";
+    }else if (kazanan_takim=="villager") {
+        // kazanan takım köyse:
+        gameOverDiv.innerHTML="<img src='images/villager.png' style='height: 500px; margin:auto; display:block;'> <br> <h1 style='color:skyblue'>Köylüler Kazandı!</h1>";
+    }
 }
