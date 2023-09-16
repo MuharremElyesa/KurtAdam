@@ -72,10 +72,13 @@ var roleActionDivWolfs = document.getElementById("role-action-div-wolfs");
 var gameOverDiv = document.getElementById("game-over-div");
 // Rol ekranı canlı oy izleme ekranı
 var roleActionDivLiveVoteScreen = document.getElementById("role-action-div-live-vote-screen");
+// Ölme efekti divi
+var dyingEffectDiv = document.getElementById("dying effect");
 
 var oy_verdigi_kisi="";
 var oy_veren_kisi="";
 var kurt_oylaması_yapıldı_mı=0;
+var oldun_mu=0;
 
 // Başlangıç kutusunu sayfa yüksekliğine eşitliyoruz
 starterDiv.style.height=window.innerHeight+"px";
@@ -434,9 +437,14 @@ function game() {
                 firebase.database().ref("roomKeys/"+keyy+"/"+key).once('value',(snapshot)=>{
                     var ddd=0;
                     for (const keyt in snapshot.val()) {
-                        var data = Object.values(snapshot.val())
+                        var dataa = Object.values(snapshot.val())
                         if (keyt=="name") {
-                            html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + data[ddd] +"</div> </div>";
+                            if (data[sss].situation==0) {
+                                html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/grave.png'>" + dataa[ddd] +"</div> </div>";
+                            }else{
+                                html="<div class='col-3 p-1'> <div class='text-center' style='background-color: #d6feff; border-radius: 15px;'> <img class='card-img-top' src='images/player.png'>" + dataa[ddd] +"</div> </div>"; 
+                            }
+                            
                         }
                         ddd++;
                     }
@@ -444,6 +452,18 @@ function game() {
 
                 gamePlayerFrame.innerHTML+=html;
                 html="";
+
+                if (oldun_mu==0) {
+                   if (data[sss].name==randomPlayerKey) {
+                        if (data[sss].situation==0) {
+                            oldun_mu=1;
+                            // Ölme efekti:
+                            dyingEffectDiv.classList.remove("d-none");
+                        }
+                } 
+                }
+                
+
                 sss++;
             }
         }
@@ -884,7 +904,10 @@ function wolfAction(day) {
                 if (key!="vote" && key!="time" && key!="situation") {
                     if (data[sss].role!="wolf") {
                         if (data[sss].name!=randomPlayerKey) {
-                            html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                            if (data[sss].situation==1) {
+                                html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                            }
+                            
                         }
                     }
                 }

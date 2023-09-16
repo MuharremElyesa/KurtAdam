@@ -18,6 +18,10 @@ include 'settings.php';
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body id="body" onresize="windowResize()">
+
+    <!-- Ölme efekti kutusu -->
+    <div id="dying-effect" class="d-none"></div>
+
     <!-- Başlangıç kutusu -->
     <div id="starter-div">
         <!-- İsim giriş kutusu -->
