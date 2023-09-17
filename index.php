@@ -66,7 +66,7 @@ include 'settings.php';
         <!-- Oyuna başlangıç geri sayımı -->
         <div id="countdown"> Oyunun Başlamasına Son <span id="countdown-printing"></span> Saniye!</div>
         <!-- Üst bar -->
-        <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span><div id="role-action-div-control-button" onclick="roleActionDivControlButton()"></div> <div id="duration-top-bar" class="m-auto text-center"></div></div>
+        <div id="top-bar" class="d-none"><span id="role-show-top-div" class="float-start"></span><span id="day-station-div" class="position-absolute m-auto d-block"></span><div id="role-action-div-control-button" onclick="roleActionDivControlButton()"></div> <div id="duration-top-bar" class="m-auto text-center"></div></div>
         <!-- Aksiyon menüsü -->
         <div id="role-action-div" class="d-none"><div id="role-action-div-write"></div><div id="role-action-div-wolfs"></div><div id="role-action-div-live-vote-screen"></div></div>
         <!-- Oyun sonu ekranı -->

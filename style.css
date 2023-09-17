@@ -180,7 +180,8 @@ body{
 @keyframes dyingEffect {
     0% {background-color: rgba(255, 0, 0, 0);}
     50% {background-color: rgba(255, 0, 0, 1);}
-    100% {background-color: rgba(255, 0, 0, 0);}
+    99% {background-color: rgba(255, 0, 0, 0);}
+    100%{display: none;}
 }
 
 /* Ölme efekti kutusu */

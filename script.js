@@ -74,6 +74,10 @@ var gameOverDiv = document.getElementById("game-over-div");
 var roleActionDivLiveVoteScreen = document.getElementById("role-action-div-live-vote-screen");
 // Ölme efekti divi
 var dyingEffectDiv = document.getElementById("dying-effect");
+// Gün divi
+var dayStationDiv = document.getElementById("day-station-div");
+// Oyuncuya gözükecek gün
+var writingDay = 0;
 
 var oy_verdigi_kisi="";
 var oy_veren_kisi="";
@@ -400,7 +404,7 @@ function game() {
     var now = new Date();
 
     // 15 saniye ekleyin
-    var futureTime = new Date(now.getTime() + 3000); // 15 saniye = 15000 milisaniye
+    var futureTime = new Date(now.getTime() + 15000); // 15 saniye = 15000 milisaniye
 
     // 2023-09-09T21:38:18.305Z
 
@@ -417,7 +421,7 @@ function game() {
         countdownPriting.innerHTML=thisSecond;
         if (now >= futureTime) {
             countdown.style.display="none";
-            futureTime = new Date(now.getTime() + 5000);
+            futureTime = new Date(now.getTime() + 10000);
             var upd = {
                 time: futureTime
             }
@@ -589,7 +593,7 @@ function gameLoop() {
     });
     var xxx = situation;
     var now = new Date();
-    var futureTime = new Date(now.getTime() + 10000);
+    var futureTime = new Date(now.getTime() + 30000);
     var upd = {
         time: futureTime
     }
@@ -612,16 +616,18 @@ function gameLoop1(day, situation, futureTime) {
         roleActionDivLiveVoteScreen.innerHTML=""
         roleActionDiv.classList.add("d-none");
         bodyTag.style.backgroundColor="#036";
+        dayStationDiv.innerHTML="Gün: "+writingDay;
         if (playerRole=="wolf") {
             wolfAction(day);   
         }
+        
         var gece = setInterval(()=>{
             now = new Date();
             var thisSecond = futureTime - now;
             var thisSecond = String(thisSecond).slice(0,-3);
             durationTopBar.innerHTML="Gün doğumuna: "+thisSecond+" saniye!";
             if (now >= futureTime) {
-                futureTime = new Date(now.getTime() + 10000);
+                futureTime = new Date(now.getTime() + 120000);
                 var upd = {
                     time: futureTime
                 }
@@ -724,16 +730,17 @@ function gameLoop1(day, situation, futureTime) {
                         gameOver(kontrol);
                     }
                 });
-
+                writingDay++;
                 if (oyun_devam_mı==0) {
                     gameOver(kontrol);
                 }else{
                     gameLoop1(day, situation, futureTime);
                 }
-
+                
                 clearInterval(gece);
             }
         }, 1000);
+        setTimeout(gece, 2000);
     }else{
 
         // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
@@ -769,6 +776,7 @@ function gameLoop1(day, situation, futureTime) {
         roleActionDivLiveVoteScreen.innerHTML=""
         roleActionDiv.classList.add("d-none");
         bodyTag.style.backgroundColor="#fff4b6";
+        dayStationDiv.innerHTML="Gün: "+writingDay;
         // tartışma
         var tartisma = setInterval(()=>{
             now = new Date();
@@ -798,14 +806,6 @@ function gameLoop1(day, situation, futureTime) {
                 var thisSecond = String(thisSecond).slice(0,-3);
                 durationTopBar.innerHTML="Oylamanın bitmesine: "+thisSecond+" saniye!";
                 if (now >= futureTime) {
-                    futureTime = new Date(now.getTime() + 30000);
-                    var upd = {
-                        time: futureTime
-                    }
-                    firebase.database().ref("roomKeys").child(keyy).update(upd);
-                    day++;
-                    // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
-
                     firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
                         var sss=0;
                         for (const key in snapshot.val()) {
@@ -871,6 +871,13 @@ function gameLoop1(day, situation, futureTime) {
                         }
                     })
                     firebase.database().ref("roomKeys/"+keyy).child("vote").remove();
+                    futureTime = new Date(now.getTime() + 30000);
+                    var upd = {
+                        time: futureTime
+                    }
+                    firebase.database().ref("roomKeys").child(keyy).update(upd);
+                    day++;
+                    // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
 
                     var sss=0;
                     var kontrol="";
@@ -900,6 +907,8 @@ function gameLoop1(day, situation, futureTime) {
                         gameLoop1(day, situation, futureTime);
                     }
 
+
+
                     clearInterval(oylama);
                 }
             }, 1000);
@@ -928,7 +937,7 @@ function wolfAction(day) {
             for (const key in snapshot.val()) {
                 var data = Object.values(snapshot.val());
 
-                if (key!="time" && key!="situation") {
+                if (key!="time" && key!="situation" && key!="vote") {
                     if (data[sss].role=="wolf") {
                         kurtlar[data[sss].name] = data[sss].role;
                     }
@@ -973,9 +982,11 @@ function wolfAction(day) {
 
                 if (key!="vote" && key!="time" && key!="situation") {
                     if (data[sss].role!="wolf") {
-                        if (data[sss].name!=randomPlayerKey) {
+                        if (key!=randomPlayerKey) {
                             if (data[sss].situation==1) {
-                                html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                                if (oldun_mu==0) {
+                                    html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                                }
                             }
                             
                         }
@@ -985,7 +996,9 @@ function wolfAction(day) {
                 
                 sss++;
             }
-            html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote(\"empty\")' value='empty'> <span class='col-11'>Boş oy</span></div>";
+            if (oldun_mu==0) {
+                html+="<input type='radio' name='vote' class='col-1' onclick='kurtVote(\"empty\")' value='empty'> <span class='col-11'>Boş oy</span></div>";
+            }
             roleActionDivWrite.innerHTML=html;
             html="";
         })
@@ -1159,9 +1172,11 @@ function villageAction() {
             var data = Object.values(snapshot.val());
 
             if (key!="vote" && key!="time" && key!="situation") {
-                if (data[sss].name!=randomPlayerKey) {
+                if (key!=randomPlayerKey) {
                     if (data[sss].situation==1) {
-                        html+="<input type='radio' name='vote' class='col-1' onclick='villageVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                        if (oldun_mu==0) {
+                            html+="<input type='radio' name='vote' class='col-1' onclick='villageVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                        } 
                     }
                     
                 }
@@ -1170,7 +1185,9 @@ function villageAction() {
             
             sss++;
         }
-        html+="<input type='radio' name='vote' class='col-1' onclick='villageVote(\"empty\")' value='empty'> <span class='col-11'>Boş oy</span></div>";
+        if (oldun_mu==0) {
+            html+="<input type='radio' name='vote' class='col-1' onclick='villageVote(\"empty\")' value='empty'> <span class='col-11'>Boş oy</span></div>";
+        }
         roleActionDivWrite.innerHTML=html;
         html="";
     })
