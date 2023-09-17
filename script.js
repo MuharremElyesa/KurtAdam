@@ -73,7 +73,7 @@ var gameOverDiv = document.getElementById("game-over-div");
 // Rol ekranı canlı oy izleme ekranı
 var roleActionDivLiveVoteScreen = document.getElementById("role-action-div-live-vote-screen");
 // Ölme efekti divi
-var dyingEffectDiv = document.getElementById("dying effect");
+var dyingEffectDiv = document.getElementById("dying-effect");
 
 var oy_verdigi_kisi="";
 var oy_veren_kisi="";
@@ -454,16 +454,15 @@ function game() {
                 html="";
 
                 if (oldun_mu==0) {
-                   if (data[sss].name==randomPlayerKey) {
+                   if (key==randomPlayerKey) {
                         if (data[sss].situation==0) {
                             oldun_mu=1;
                             // Ölme efekti:
                             dyingEffectDiv.classList.remove("d-none");
                         }
-                } 
+                    } 
                 }
                 
-
                 sss++;
             }
         }
@@ -694,6 +693,7 @@ function gameLoop1(day, situation, futureTime) {
                             sss++;
                         }
                     })
+                    firebase.database().ref("roomKeys/"+keyy).child("vote").remove();
                 }
                 // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
 
@@ -721,8 +721,8 @@ function gameLoop1(day, situation, futureTime) {
                         sss++;
                     }
                     if (oyun_devam_mı==0) {
-                    gameOver(kontrol);
-                }
+                        gameOver(kontrol);
+                    }
                 });
 
                 if (oyun_devam_mı==0) {
@@ -776,7 +776,7 @@ function gameLoop1(day, situation, futureTime) {
             var thisSecond = String(thisSecond).slice(0,-3);
             durationTopBar.innerHTML="Tartışmanın bitmesine: "+thisSecond+" saniye!";
             if (now >= futureTime) {
-                futureTime = new Date(now.getTime() + 10000);
+                futureTime = new Date(now.getTime() + 30000);
                 var upd = {
                     time: futureTime
                 }
@@ -789,6 +789,9 @@ function gameLoop1(day, situation, futureTime) {
         function gunduz(day, situation, futureTime) {
             roleActionDiv.classList.remove("d-none");
             roleActionDivWrite.innerHTML="Oylama zamanı!";
+
+            villageAction();
+
             var oylama = setInterval(()=>{
                 now = new Date();
                 var thisSecond = futureTime - now;
@@ -802,6 +805,72 @@ function gameLoop1(day, situation, futureTime) {
                     firebase.database().ref("roomKeys").child(keyy).update(upd);
                     day++;
                     // Kalanların hepsi aynı takımdan mı? Aynı ise situation=0 yap ve oyun sonu fonksiyonunu çağır
+
+                    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                        var sss=0;
+                        for (const key in snapshot.val()) {
+                            var data = Object.values(snapshot.val())
+                            if (key=="vote") {
+                                var ddd=0;
+                                var en_buyuk="";
+                                var en_buyuk2="";
+                                for (var anahtar in data[sss]) {
+                                    var dataa = Object.values(data[sss]);
+
+                                    if (en_buyuk="") {
+                                        en_buyuk=dataa[ddd];
+                                    }else{
+                                        if (en_buyuk<dataa[ddd]) {
+                                            en_buyuk=dataa[ddd];
+                                        }else if (en_buyuk==dataa[ddd]) {
+                                            en_buyuk2=dataa[ddd];
+                                        }
+                                    }
+
+                                    //console.log(anahtar+" --> "+ dataa[ddd]);
+                                    ddd++;
+                                }
+
+                                if (en_buyuk!="") {
+                                    var kontrol=0;
+                                    if (en_buyuk2!="") {
+                                        roleActionDivWrite.innerHTML="Eşit Oy";
+                                        console.log("Eşit oy");
+                                        kontrol=1;
+                                    }
+                                    if (kontrol==0) {
+                                        firebase.database().ref("roomKeys/"+keyy+"/vote").once('value',(snapshot)=>{
+                                            var sss=0;
+                                            for (const key in snapshot.val()) {
+                                                var data = Object.values(snapshot.val())
+                                                    if (data[sss]==en_buyuk) {
+                                                        // key->oyuncu-id 
+                                                        firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                                                            var ddd=0;
+                                                            for (const keyt in snapshot.val()) {
+                                                                var dataa = Object.values(snapshot.val())
+                                                                    if (key==keyt) {
+                                                                        var upd = {
+                                                                            situation: 0
+                                                                        }
+                                                                        firebase.database().ref("roomKeys/"+keyy+"/"+keyt).update(upd);
+                                                                    }
+                                                                ddd++;
+                                                            }
+                                                        })
+                                                    }
+                                                sss++;
+                                            }
+                                        })
+                                    }
+                                    
+                                }
+
+                            }
+                            sss++;
+                        }
+                    })
+                    firebase.database().ref("roomKeys/"+keyy).child("vote").remove();
 
                     var sss=0;
                     var kontrol="";
@@ -829,7 +898,8 @@ function gameLoop1(day, situation, futureTime) {
                         gameOver(kontrol);
                     }else{
                         gameLoop1(day, situation, futureTime);
-                    } 
+                    }
+
                     clearInterval(oylama);
                 }
             }, 1000);
@@ -1067,4 +1137,165 @@ function gameOver(kazanan_takim) {
         // kazanan takım köyse:
         gameOverDiv.innerHTML="<img src='images/villager.png' style='height: 500px; margin:auto; display:block;'> <br> <h1 style='color:skyblue'>Köylüler Kazandı!</h1>";
     }
+}
+
+// Köy aksiyonları (genel)
+function villageAction() {
+    var keyy;
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
+
+    roleActionDiv.classList.remove("d-none");
+
+    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+        var sss=0;
+        roleActionDivWrite.innerHTML="";
+        html="";
+        html="<div class='row'>"
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val());
+
+            if (key!="vote" && key!="time" && key!="situation") {
+                if (data[sss].name!=randomPlayerKey) {
+                    if (data[sss].situation==1) {
+                        html+="<input type='radio' name='vote' class='col-1' onclick='villageVote("+"\""+key+"\""+")' value='"+key+"'> <span class='col-11'>"+data[sss].name+"</span>";
+                    }
+                    
+                }
+            }
+
+            
+            sss++;
+        }
+        html+="<input type='radio' name='vote' class='col-1' onclick='villageVote(\"empty\")' value='empty'> <span class='col-11'>Boş oy</span></div>";
+        roleActionDivWrite.innerHTML=html;
+        html="";
+    })
+
+    // Canlı oy ekranı:
+    firebase.database().ref("roomKeys/"+keyy).child("vote").on('value',(snapshot)=>{
+        var htmll="";
+        var sss=0;
+        for (const key in snapshot.val()) {
+            var data = Object.values(snapshot.val())
+            firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
+                var ddd=0;
+                for (const keyt in snapshot.val()) {
+                    var dataa = Object.values(snapshot.val())
+                        if (key==keyt) {
+                            if (data[sss]!=0) {
+                                htmll+="<div class='col-12 bg-success'>"+dataa[ddd].name+" "+data[sss]+"</div>";
+                            }
+                            
+                        }
+                    ddd++;
+                }
+            })
+            sss++;
+        }
+        roleActionDivLiveVoteScreen.innerHTML=htmll;
+        htmll="";
+    })
+}
+
+// Köy oyu
+function villageVote(playerId) {
+    if (randomRoomKey!="") {
+        keyy = randomRoomKey;
+    }else if(roomKeyInputText.value!=""){
+        keyy = roomKeyInputText.value;
+    }
+
+    if (oy_veren_kisi=="") {
+        if (playerId=="empty") {
+            console.log("vermedim1")
+            return 0;
+        }
+        oy_veren_kisi = randomPlayerKey;
+        firebase.database().ref("roomKeys/"+keyy).child("vote").once('value',(snapshot)=>{
+            var sss=0;
+            var ddd=0;
+            var vote;
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val())
+                    if (key==playerId) {
+                        vote = data[sss];
+                        ddd=1;
+                    }
+                sss++;
+            }
+
+            if (ddd==1) {
+                // Önceden oy almışsa:
+                vote=vote+1;
+                var upd = {}
+                upd[playerId] = vote;
+                firebase.database().ref("roomKeys/"+keyy).child("vote").update(upd);
+            }else{
+                // İlk defa oy alacaksa:
+                var upd = {}
+                upd[playerId] = 1;
+                firebase.database().ref("roomKeys/"+keyy).child("vote").update(upd);
+            }
+
+            oy_verdigi_kisi = playerId;
+
+        })
+    }else{
+
+        firebase.database().ref("roomKeys/"+keyy).child("vote").once('value',(snapshot)=>{
+            var sss=0;
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val())
+                    if (key==oy_verdigi_kisi) {
+                        var vote = data[sss];
+                        vote = vote-1;
+                        var upd = {}
+                        upd[oy_verdigi_kisi] = vote;
+                        firebase.database().ref("roomKeys/"+keyy).child("vote").update(upd)
+                    }
+                sss++;
+            }
+        })
+
+        if (playerId=="empty") {
+            console.log("vermedim2")
+            oy_veren_kisi="";
+            return 0;
+        }
+
+        firebase.database().ref("roomKeys/"+keyy).child("vote").once('value',(snapshot)=>{
+            var sss=0;
+            var ddd=0;
+            var vote;
+            for (const key in snapshot.val()) {
+                var data = Object.values(snapshot.val())
+                    if (key==playerId) {
+                        vote = data[sss];
+                        ddd=1;
+                    }
+                sss++;
+            }
+
+            if (ddd==1) {
+                // Önceden oy almışsa:
+                vote=vote+1;
+                var upd = {}
+                upd[playerId] = vote;
+                firebase.database().ref("roomKeys/"+keyy).child("vote").update(upd);
+            }else{
+                // İlk defa oy alacaksa:
+                var upd = {}
+                upd[playerId] = 1;
+                firebase.database().ref("roomKeys/"+keyy).child("vote").update(upd);
+            }
+
+            oy_verdigi_kisi = playerId;
+        })
+
+
+    } 
 }
