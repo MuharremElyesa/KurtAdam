@@ -618,7 +618,7 @@ function gameLoop1(day, situation, futureTime) {
         bodyTag.style.backgroundColor="#036";
         dayStationDiv.innerHTML="Gün: "+writingDay;
         if (playerRole=="wolf") {
-            wolfAction(day);   
+            wolfAction(day);
         }
         
         var gece = setInterval(()=>{
@@ -646,7 +646,7 @@ function gameLoop1(day, situation, futureTime) {
                                 for (var anahtar in data[sss]) {
                                     var dataa = Object.values(data[sss]);
 
-                                    if (en_buyuk="") {
+                                    if (en_buyuk=="") {
                                         en_buyuk=dataa[ddd];
                                     }else{
                                         if (en_buyuk<dataa[ddd]) {
@@ -659,10 +659,10 @@ function gameLoop1(day, situation, futureTime) {
                                     //console.log(anahtar+" --> "+ dataa[ddd]);
                                     ddd++;
                                 }
-
+                                var kontrol=0;
                                 if (en_buyuk!="") {
-                                    var kontrol=0;
-                                    if (en_buyuk2!="") {
+                                    
+                                    if (en_buyuk2!="" && en_buyuk2==en_buyuk) {
                                         roleActionDivWrite.innerHTML="Eşit Oy";
                                         console.log("Eşit oy");
                                         kontrol=1;
@@ -817,7 +817,7 @@ function gameLoop1(day, situation, futureTime) {
                                 for (var anahtar in data[sss]) {
                                     var dataa = Object.values(data[sss]);
 
-                                    if (en_buyuk="") {
+                                    if (en_buyuk=="") {
                                         en_buyuk=dataa[ddd];
                                     }else{
                                         if (en_buyuk<dataa[ddd]) {
@@ -830,10 +830,10 @@ function gameLoop1(day, situation, futureTime) {
                                     //console.log(anahtar+" --> "+ dataa[ddd]);
                                     ddd++;
                                 }
-
+                                var kontrol=0;
                                 if (en_buyuk!="") {
-                                    var kontrol=0;
-                                    if (en_buyuk2!="") {
+                                    
+                                    if (en_buyuk2!="" && en_buyuk2==en_buyuk) {
                                         roleActionDivWrite.innerHTML="Eşit Oy";
                                         console.log("Eşit oy");
                                         kontrol=1;
