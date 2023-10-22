@@ -6,14 +6,10 @@
 /* body */
 body{
     background-color: #fff4b6;
-    overflow-x: hidden;
+    
 }
 /* Başlangıç kutusu ayarları */
 #starter-div{
-    background-image: url("images/wolf-4561204_1920.png");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
     position: relative;
 }
 /* Giriş yapma kutusu */

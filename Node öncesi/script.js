@@ -1,15 +1,3 @@
-// Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyBxw7C-h3jhVZPhb5TaqvimWHbMX_s1MLE",
-    authDomain: "kurtadam-2d0d9.firebaseapp.com",
-    projectId: "kurtadam-2d0d9",
-    storageBucket: "kurtadam-2d0d9.appspot.com",
-    messagingSenderId: "904218030245",
-    appId: "1:904218030245:web:1f035aef3c01ed69381d4c",
-    measurementId: "G-YQHBWR85L9"
-};
-firebase.initializeApp(firebaseConfig);
-
 // Başlangıç kutusu
 const starterDiv = document.getElementById("starter-div");
 // İsim input

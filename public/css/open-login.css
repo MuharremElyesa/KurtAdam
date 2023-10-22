@@ -1,0 +1,12 @@
+/* Body */
+#body{
+    overflow-x: hidden;
+    background: url("../img/kurt-background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    background-position: top;
+    overflow-y: hidden;
+    margin-top: 10px;
+    background-position-y: center;
+}
