@@ -1,0 +1,34 @@
+{
+  "name": "kurtadam",
+  "version": "0.0.2",
+  "description": "Muharrem Elyesa tarafından geliştirilen kurtadam oyunu",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuharremElyesa/KurtAdam.git"
+  },
+  "keywords": [
+    "kurt adam",
+    "kurt köylü",
+    "vampir köylü"
+  ],
+  "author": "Muharrem Elyesa ŞENGEZER",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MuharremElyesa/KurtAdam/issues"
+  },
+  "homepage": "https://github.com/MuharremElyesa/KurtAdam#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase": "^10.5.0",
+    "firebase-admin": "^11.11.0",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

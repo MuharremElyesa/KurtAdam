@@ -1,21 +1,8 @@
-<?php
-// Ayarlar php dosyası
-include 'settings.php';
-?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?=$settings->title?></title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Firebase servisini kullanmak için gerekli temel bağlantı -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <!-- Firebase realtime database (gerçek zamanlı veritabanı)nı kullanmak için gerekli bağlantı -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <!-- Firebase auth (kimlik doğrulama) işlemi için gerekli bağlantı -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body id="body" onresize="windowResize()">
 
