@@ -3,6 +3,20 @@ html(lang="tr")
     head
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        //- Bootstrap:
+        link(rel="stylesheet", type="text/css", href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+        //- open-login.css:
         link(rel="stylesheet", type="text/css", href="css/open-login.css")
-        title Kurtadam Oturum Açma Ekranı
-    body(id="body")
+        title Kurtadam Oturum Açma Sayfası
+
+    body(id="body" onresize="ekranGenisligiAyarlamasi()")
+        div(id="oturumCercevesi").px-5
+            h1.text-center KurtAdam Oyununa Hoş Geldiniz 
+            h2.text-center Devam Etmek İçin Lütfen Oturum Açın:
+
+        //- Bootstrap JS ve Popper JS:
+        script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
+        script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js")
+        script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+        //- open-login.js:
+        script(src="js/open-login.js")
