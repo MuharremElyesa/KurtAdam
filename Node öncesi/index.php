@@ -7,14 +7,7 @@
 
     <!-- Başlangıç kutusu -->
     <div id="starter-div">
-        <!-- İsim giriş kutusu -->
-        <div id="login-div" class="d-flex justify-content-center">
-            <!-- Google ile giriş yap butonu -->
-            <button class="google-login-button col-6 m-auto" onclick="googleSignIn()" style="height: 50px;">
-                <img src="images/google-icon-2048x2048-czn3g8x8.png" alt="Google Logo" style="width: 30px;">
-            Google ile Giriş Yap
-            </button>
-        </div>
+
         <!-- Ana menü -->
         <div id="main-menu" class="container">
             <div class="row">

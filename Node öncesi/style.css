@@ -12,22 +12,7 @@ body{
 #starter-div{
     position: relative;
 }
-/* Giriş yapma kutusu */
-#login-div{
-    background-color: rgba(51, 134, 211, 0.5);
-    height: 130px;
-    width: 500px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-top: -65px;
-    margin-left: -250px;
-    border-radius: 15px;
-    border-color: rgba(0, 0, 255, 0.363);
-    border-style: groove;
-    box-shadow: 0px 0px 30px rgb(51, 134, 211);
-    flex-direction: column;
-}
+
 /* Giriş kutusu text input */
 #logInInputText{
     width: 460px;
@@ -76,27 +61,8 @@ body{
     background-color: red;
 }
 
-/* Google ile giriş yap butonu stilleri */
-.google-login-button {
-    background-color: #fff; /* Arka plan rengi */
-    color: #555; /* Metin rengi */
-    border: 1px solid #ccc; /* Kenarlık rengi ve kalınlığı */
-    border-radius: 4px; /* Kenar yuvarlatma */
-    padding: 10px 15px; /* İç kenar boşluğu */
-    font-size: 16px; /* Metin boyutu */
-    cursor: pointer; /* İmleç stilini değiştir */
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Dönüşüm efektleri */
-}
 
-.google-login-button:hover {
-    background-color: #f1f1f1; /* Arka plan rengi hover durumunda */
-    border-color: #999; /* Kenarlık rengi hover durumunda */
-}
 
-.google-login-button img {
-    vertical-align: middle; /* İmg içindeki metni hizala */
-    margin-right: 10px; /* İmg ile metin arasındaki boşluk */
-}
 
 /* Oda kontrol tuşları */
 #room-control-buttons{

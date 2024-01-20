@@ -23,11 +23,41 @@
     background-color: rgba(102, 139, 173, 0.5);
     border-color: rgba(61, 61, 185, 0.363);
     position: absolute;
-    left: 50%;
+    /* left: 50%; */
     top: 50%;
     border-style: groove;
-    box-shadow: 0px 0px 30px rgb(51, 134, 211);
     flex-direction: column;
     box-sizing: border-box;
+    box-shadow: 0px 0px 30px rgb(51, 134, 211);
     overflow: auto;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+}
+
+
+/* Google ile giriş yap butonu stilleri */
+#google-login-button {
+    background-color: #fff; /* Arka plan rengi */
+    color: #555; /* Metin rengi */
+    border: 1px solid #ccc; /* Kenarlık rengi ve kalınlığı */
+    border-radius: 4px; /* Kenar yuvarlatma */
+    padding: 10px 15px; /* İç kenar boşluğu */
+    cursor: pointer; /* İmleç stilini değiştir */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Dönüşüm efektleri */
+}
+#google-login-button:hover {
+    background-color: #f1f1f1; /* Arka plan rengi hover durumunda */
+    border-color: #999; /* Kenarlık rengi hover durumunda */
+}
+#google-login-button img {
+    vertical-align: middle; /* İmg içindeki metni hizala */
+    margin-right: 10px; /* İmg ile metin arasındaki boşluk */
+}
+
+
+/* Etiketler */
+h1{
+    color: rgb(0, 27, 49);
+    text-shadow: 0px 0px 30px rgb(255, 255, 255);
 }
