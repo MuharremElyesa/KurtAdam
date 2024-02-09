@@ -17,7 +17,7 @@ html(lang="tr")
             h4.modal-title.text-center Devam Etmek İçin Lütfen Oturum Açın:
 
             //- Google ile oturum aç kutusu:
-            div.d-flex.justify-content-center.my-2
+            div(onclick="window.location.href = '/GoogleSignIn'").d-flex.justify-content-center.my-2
                 button#google-login-button.col-6.m-auto
                     img(src="img/google-logo.png", alt="Google Logo", style="width:30px;")
                     span(style="font-size: 16px;") Google ile Giriş Yap!
