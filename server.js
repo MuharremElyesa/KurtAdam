@@ -15,7 +15,7 @@ app.set("view engine", "pug")
 // views klasörünün konumunu bildirdik:
 app.set("views", "./app/views")
 // Bu oluşturduğumuz middleware ile express.js'in static özelliğini kullanarak ve path modulü ile de yolumuzu belirterek "public" klasörünü tarayıcıdan ulaşılabilir hale getirdik:
-app.use(express.static(path.join(__dirname,"public")))
+app.use(express.static(path.join(__dirname, "public")))
 
 
 /* Program Akışı */

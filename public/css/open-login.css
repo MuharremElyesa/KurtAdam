@@ -35,26 +35,14 @@
     width: 100%;
 }
 
-
-/* Google ile giriş yap butonu stilleri */
-#google-login-button {
-    background-color: #fff; /* Arka plan rengi */
-    color: #555; /* Metin rengi */
-    border: 1px solid #ccc; /* Kenarlık rengi ve kalınlığı */
-    border-radius: 4px; /* Kenar yuvarlatma */
-    padding: 10px 15px; /* İç kenar boşluğu */
-    cursor: pointer; /* İmleç stilini değiştir */
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Dönüşüm efektleri */
+/* İsim Formu */
+#nick-name-input{
+    border: none;
+    border-bottom: 2px solid #007bff; /* Alt çizginin stilini ve rengini ayarlayın */
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.651);
+    text-align: center;
 }
-#google-login-button:hover {
-    background-color: #f1f1f1; /* Arka plan rengi hover durumunda */
-    border-color: #999; /* Kenarlık rengi hover durumunda */
-}
-#google-login-button img {
-    vertical-align: middle; /* İmg içindeki metni hizala */
-    margin-right: 10px; /* İmg ile metin arasındaki boşluk */
-}
-
 
 /* Etiketler */
 h1{
