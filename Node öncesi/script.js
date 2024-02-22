@@ -131,22 +131,6 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 });
 
-function signOut() {
-    firebase.auth().signOut()
-    .then(() => {
-      // Kullanıcı oturumdan çıkış yaptı
-      console.log("Kullanıcı oturumdan çıkış yaptı.");
-      loginDiv.classList.add("d-flex");
-      loginDiv.style.display="block";
-      mainMenu.style.display="none";
-    })
-    .catch((error) => {
-      // Hata durumunda yapılacak işlemler
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error("Hata:", errorMessage);
-    });  
-}
 
 // Yeni oda oluşturma
 function newCreateRoom() {
