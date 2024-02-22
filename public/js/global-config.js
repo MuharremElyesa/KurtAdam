@@ -9,9 +9,7 @@ ekranGenisligiAyarlamasi()
 // Genişlik ayarları:
 function ekranGenisligiAyarlamasi() {
 
-    // Fonksiyon değişkenleri:
-    var ekranGenisligi = window.innerWidth
-    // Oturum Çerçevesi Style
+    // Oturum Çerçevesi Style:
     const ocs = oturumCercevesi.style
 
 
