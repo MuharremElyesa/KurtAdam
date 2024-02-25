@@ -21,7 +21,7 @@ html(lang="en")
                 button.btn.btn-primary.col-12.mt-3(onclick='joinRoom()') Odaya Katıl
                 button.btn.btn-primary.col-12.mt-2(onclick='newCreateRoom()') Yeni Oda Oluştur
                 button.btn.btn-warning.col-12.mt-2(onclick='') Nasıl Oynanır?
-                button.btn.btn-danger.col-12.my-2(onclick='signOut()') Geçici Oturumu Kapat!
+                button.btn.btn-danger.col-12.my-2(onclick='window.location.href=\"/logout\"') Oturumu Kapat!
 
         //- Bootstrap JS ve Popper JS:
         script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
@@ -29,5 +29,3 @@ html(lang="en")
         script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
         //- global-config.js:
         script(src="js/global-config.js")
-        //- main-menu.js
-        script(src="js/main-menu.js") 

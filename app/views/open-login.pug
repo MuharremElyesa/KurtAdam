@@ -16,11 +16,10 @@ html(lang="tr")
 
             h1.text-center= gameName+" Oyununa Hoş Geldiniz"
             h4.modal-title.text-center Devam Etmek İçin Lütfen Takma İsim Girin:
-            form(action="/anlik-isim-kayit", method="post").justify-content-center
-                .row
-                    input(type="text", placeholder="Oyun için bir takma isim giriniz.", name="nick_name").col-11.col-md-6.my-3.m-auto#nick-name-input
-                .row
-                    input(type="submit", value="Oyuna Gir").col-11.col-md-6.m-auto.mb-2
+            .sessionButton.m-auto.my-3(onclick="window.location.href='/auth/google'")
+                img(src="img/google.png", alt="Google Logo")
+                div Google ile Giriş Yap!
+
 
         //- Bootstrap JS ve Popper JS:
         script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
