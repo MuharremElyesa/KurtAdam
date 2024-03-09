@@ -1,4 +1,7 @@
 doctype html
+//- Yönlendirmeden gelen profil fotosu:
+- var playerPhoto = playerPhoto
+
 html(lang="en")
     head
         meta(charset="UTF-8")
@@ -13,9 +16,9 @@ html(lang="en")
 
     body(onresize="ekranGenisligiAyarlamasi()")#body
         div.container-fluid#oturumCercevesi
-            .row
-                div.col-12.text-center#nickNameDiv
-                    h1=playerName
+            div#nickNameDiv.row.justify-content-center
+                img.col-12.p-2.m-2(src=playerPhoto)
+                h1.col-12.text-center=playerName
             .col-12
                 input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız')
                 button.btn.btn-primary.col-12.mt-3(onclick='joinRoom()') Odaya Katıl
