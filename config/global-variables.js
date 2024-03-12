@@ -10,3 +10,6 @@ exports.playerSurname
 exports.playerFullname
 // Oyuncunun Profil Fotoğrafı:
 exports.playerPhoto
+
+// Rastgele oda kimliği:
+exports.randomRoomKey
