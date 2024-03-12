@@ -14,8 +14,7 @@ const mainMenuRoomButtonDiv = document.getElementById("main-menu-room-button-div
 const newCreateRoomDiv =  document.getElementById("newCreateRoomDiv");
 // Oda kodu başlığı
 const roomIdText = document.getElementById("roomIdText");
-// Rastgele oda kimliği
-var randomRoomKey="";
+
 // Kullanıcı bilgileri
 var User;
 // Oda kodu yazıp katılma alanı
@@ -26,8 +25,7 @@ var html="";
 var gamerList = document.getElementById("gamers-list");
 //  Oda kontrol butonları
 var roomControlButtons = document.getElementById("room-control-buttons");
-// Rastgele oyuncu kimliği
-var randomPlayerKey;
+
 // Yeni katılan oyuncu butonları divi
 var playerButtonsDiv = document.getElementById("player-buttons-div");
 // Oyun kutusu
@@ -134,11 +132,11 @@ firebase.auth().onAuthStateChanged((user) => {
 
 // Yeni oda oluşturma
 function newCreateRoom() {
-    mainMenuRoomButtonDiv.style.display="none";
-    newCreateRoomDiv.classList.remove("d-none");
-    roomControlButtons.classList.remove("d-none");
-    randomRoomKey=Math.floor(Math.random() * 1000000 + 100000);
-    roomIdText.innerHTML=randomRoomKey;
+    // mainMenuRoomButtonDiv.style.display="none";
+    // newCreateRoomDiv.classList.remove("d-none");
+    // roomControlButtons.classList.remove("d-none");
+    randomRoomKey=Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+    // roomIdText.innerHTML=randomRoomKey;
     firebase.database().ref("roomKeys").child(randomRoomKey).set({
         admin: {
             name: User.displayName,

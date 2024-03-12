@@ -5,17 +5,19 @@ const express = require("express")
 const router = express.Router()
 // express app:
 const app = express()
-// FirebaseAdmin:
-const firebaseAdmin = require("./../../config/firebase-connect")
 // Oturum açmak:
 const auth = require("../models/auth")
 // Global Değişkenler:
 const globalVariables = require("./../../config/global-variables")
+// Oyun oluşturma ve katılmadan sorumlu .js:
+const gameCreating = require("./../models/game-creating")
 
 
 /* Program Akışı */
 // auth:
 router.use(auth)
+// gameCreating:
+router.use(gameCreating)
 
 // Ana dizin middleware:
 router.use("/", (req, res) => {
