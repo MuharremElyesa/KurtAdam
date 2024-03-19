@@ -1,5 +1,5 @@
 // open-login değişkenleri:
-const oturumCercevesi = document.getElementById("oturumCercevesi")
+const cerceve = document.querySelectorAll(".cerceve");
 
 
 // Başlangıç:
@@ -9,10 +9,11 @@ ekranGenisligiAyarlamasi()
 // Genişlik ayarları:
 function ekranGenisligiAyarlamasi() {
 
-    // Oturum Çerçevesi Style:
-    const ocs = oturumCercevesi.style
+    cerceve.forEach(element => {
+        // Çerçeve Style:
+        const cs = element.style
 
-
-    // Oturum çerçevesini yukarıdan ortalar:
-    ocs.marginTop=-(oturumCercevesi.clientHeight/2)+"px"
+        // Oturum çerçevesini yukarıdan ortalar:
+        cs.marginTop=-(element.clientHeight/2)+"px"   
+    });
 }

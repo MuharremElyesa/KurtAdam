@@ -26,11 +26,11 @@ router.use("/yeniOdaolustur", isLoggedIn, (req, res) => {
         [globalVariables.playerID]: {
             name: globalVariables.playerName,
             situation: 1,
-            admin: 1,
+            admin: true,
         },
         situation: 0
     });
-    res.end()
+    res.render("pregame", {gameName: globalVariables.gameName, roomKey: globalVariables.randomRoomKey})
 })
 
 /* Export */

@@ -32,3 +32,9 @@ req.user:
     locale: 'tr'
   }
 }
+
+
+# Kullanıcıdan almamız gereken izinler:
+  # veritabanında verilerini tutuyoruz: fotoğrafı, ismi
+
+# Diğer kullanıcı senkranizasyonunu araştır
