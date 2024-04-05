@@ -1,0 +1,12 @@
+/* Oyun öncesi katılımcılar listesi kutusu */
+.pre-game-participants-list-box{
+    background-color: #1b93b880;
+    font-size: 26px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    border-radius: 5px;
+}
+
+/* background-color: #1e687eb0;
+font-weight: bold;
+text-shadow: 0px 0px 10px white;
+border-radius: 5px; */

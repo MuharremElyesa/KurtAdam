@@ -18,6 +18,22 @@ function isLoggedIn(req, res, next) {
     }
 }
 
+// Oyun öncesi odaya girdiğimizde odada kimlerin olduğunu listeleyen ve anlık yenileyen fonksiyon:
+globalVariables.preGamePlayerListRefresh = function(io){
+    firebaseAdmin.database().ref("roomKeys").child(globalVariables.randomRoomKey).on("value", (snapshot) => {
+        var data = snapshot.val()
+
+        if (data == null) {
+            firebaseAdmin.database().ref("roomKeys").child(globalVariables.randomRoomKey).off("value")
+        }
+
+        io.sockets.emit("preGamePlayerListRefresh", {
+            data: data
+        })
+    })
+    
+}
+
 router.use("/yeniOdaolustur", isLoggedIn, (req, res) => {
     // 6 haneli rastgele oda kodu oluşturuyoruz:
     globalVariables.randomRoomKey = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
@@ -28,9 +44,12 @@ router.use("/yeniOdaolustur", isLoggedIn, (req, res) => {
             situation: 1,
             admin: true,
         },
-        situation: 0
+        gameConfig: {
+            situation: 0
+        }
     });
-    res.render("pregame", {gameName: globalVariables.gameName, roomKey: globalVariables.randomRoomKey})
+
+    res.render("pregame", { gameName: globalVariables.gameName, roomKey: globalVariables.randomRoomKey })
 })
 
 /* Export */
