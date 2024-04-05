@@ -68,13 +68,7 @@ body{
 #room-control-buttons{
     bottom: 0;
 }
-/* Oyun öncesi oyuncu çerçeveri */
-.before-game-players-frame{
-    background-color: #1e687eb0;
-    font-weight: bold;
-    text-shadow: 0px 0px 10px white;
-    border-radius: 5px;
-}
+
 /* Geri sayım kutusu */
 #countdown{
     position: absolute;

@@ -7,6 +7,10 @@ const app = express()
 const router = require("./app/controllers/router")
 // Node.js path modülü:
 const path = require("path")
+// Socket.io modülü:
+const socketIo = require("socket.io")
+// Global Değişkenler:
+const globalVariables = require("./config/global-variables")
 
 
 /* Ayarlar */
@@ -22,4 +26,14 @@ app.use(express.static(path.join(__dirname, "public")))
 // router modulunu middleware olarak tanımladık:
 app.use(router)
 // 7777 portu üzerinden yayın yapıyoruz:
-app.listen(7777)
+const io = socketIo(app.listen(7777))
+
+// Socket.io Server İşlemleri:
+io.on("connection", (connectedSocket) => {
+
+    // Oyun öncesi ekranında odada olan oyuncuları listeleyen olay:
+    connectedSocket.on("firstPreGamePlayerListRefresh", () => {
+        globalVariables.preGamePlayerListRefresh(io)
+    })
+
+})
