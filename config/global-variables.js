@@ -21,3 +21,6 @@
 // Fonksiyonlar
     // game-creating.js:
         exports.preGamePlayerListRefresh
+        exports.joinTheRoom
+    // auth.js:
+        exports.isLoggedIn

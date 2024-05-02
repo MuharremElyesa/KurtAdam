@@ -8,33 +8,59 @@ const firebaseAdmin = require("./../../config/firebase-connect")
 // Global Değişkenler:
 const globalVariables = require("./../../config/global-variables")
 
-// Bu işlev, bir kullanıcının giriş yapmış olup olmadığını kontrol eder. Eğer kullanıcı giriş yapmışsa, işlemi devam ettirir; aksi takdirde, 401 (Yetki Reddedildi) hatası döndürür (aynını geçici çözüm olarak auth.js'ye de koyduk):
-function isLoggedIn(req, res, next) {
-    if (req.user) {
-        next()
-    } else {
-        // res.sendStatus(401)
-        res.redirect('/')
-    }
-}
 
 // Oyun öncesi odaya girdiğimizde odada kimlerin olduğunu listeleyen ve anlık yenileyen fonksiyon:
 globalVariables.preGamePlayerListRefresh = function(io){
     firebaseAdmin.database().ref("roomKeys").child(globalVariables.randomRoomKey).on("value", (snapshot) => {
         var data = snapshot.val()
 
-        if (data == null) {
+        // Oda yoksa veritabanını okumayı durdur ve odanın kapandığını istemciye bildir:
+        if (data === null) {
             firebaseAdmin.database().ref("roomKeys").child(globalVariables.randomRoomKey).off("value")
+            io.sockets.emit("theRoomIsClosed")
+        // Odadaki oyuncuları varsa sunucuya gönder:
+        }else{
+            io.sockets.emit("preGamePlayerListRefresh", {
+                data: data,
+                id: globalVariables.playerID
+            })
         }
-
-        io.sockets.emit("preGamePlayerListRefresh", {
-            data: data
-        })
     })
     
 }
 
-router.use("/yeniOdaolustur", isLoggedIn, (req, res) => {
+// Odaya katılma fonksiyonu:
+globalVariables.joinTheRoom = function(io, data){
+    // Girilen oda anahtarı veritabanında mevcut mu?:
+    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot)=>{
+        if (snapshot.exists()) {
+            var kontrol = false
+            var keys = Object.keys(snapshot.val())
+            keys.forEach((anahtar)=>{
+                if (data.enteredRoomKey == anahtar) {
+                    // console.log("oda var")
+                    firebaseAdmin.database().ref("roomKeys").child(anahtar).update({
+                        [globalVariables.playerID]: {
+                            admin: false,
+                            name: globalVariables.playerName,
+                            situation: 1
+                        }
+                    })
+                    io.sockets.emit("returnJoinTheRoom")
+                    kontrol = true
+                }
+            })
+            if (kontrol===false) {
+                // console.log("oda yok")
+                return io.sockets.emit("returnCouldNotJoinTheRoom")
+            }
+        }else{
+            return io.sockets.emit("returnCouldNotJoinTheRoom")
+        }
+    })
+}
+
+router.use("/yeniOdaolustur", globalVariables.isLoggedIn, (req, res) => {
     // 6 haneli rastgele oda kodu oluşturuyoruz:
     globalVariables.randomRoomKey = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
     // Açılan odayı adminimizle birlikte gerçekzamanlı veritabanına kayıt ediyoruz:
@@ -50,6 +76,20 @@ router.use("/yeniOdaolustur", isLoggedIn, (req, res) => {
     });
 
     res.render("pregame", { gameName: globalVariables.gameName, roomKey: globalVariables.randomRoomKey })
+})
+
+router.use("/odayaKatil", globalVariables.isLoggedIn, (req, res) => {
+    const postData = req.body
+    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot)=>{
+        var data = Object.keys(snapshot.val())
+        data.forEach(function(keys){
+            if(keys == postData.roomKey){
+                // Yazılan odaya giriş:
+                res.render("pregame", { gameName: globalVariables.gameName, roomKey: keys })
+                res.end("sss")
+            }
+        })
+    })
 })
 
 /* Export */
