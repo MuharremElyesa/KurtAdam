@@ -11,6 +11,8 @@ const path = require("path")
 const socketIo = require("socket.io")
 // Global Değişkenler:
 const globalVariables = require("./config/global-variables")
+// body-parser:
+const bodyParser = require("body-parser")
 
 
 /* Ayarlar */
@@ -20,6 +22,8 @@ app.set("view engine", "pug")
 app.set("views", "./app/views")
 // Bu oluşturduğumuz middleware ile express.js'in static özelliğini kullanarak ve path modulü ile de yolumuzu belirterek "public" klasörünü tarayıcıdan ulaşılabilir hale getirdik:
 app.use(express.static(path.join(__dirname, "public")))
+// JSON verilerini işlemek için body-parser middlewaresi:
+app.use(bodyParser.json())
 
 
 /* Program Akışı */
@@ -34,6 +38,11 @@ io.on("connection", (connectedSocket) => {
     // Oyun öncesi ekranında odada olan oyuncuları listeleyen olay:
     connectedSocket.on("firstPreGamePlayerListRefresh", () => {
         globalVariables.preGamePlayerListRefresh(io)
+    })
+
+    // Odaya katılma olayı:
+    connectedSocket.on("joinTheRoom", (data)=>{
+        globalVariables.joinTheRoom(io, data)
     })
 
 })

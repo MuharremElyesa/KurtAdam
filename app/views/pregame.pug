@@ -20,12 +20,15 @@ html(lang="tr")
                 h1.col-12.text-center.text-snadow-white="Oda Kodu: "+roomKey
             #pre-game-participants-list
             .col-12
-                button.btn.btn-danger.col-12.my-3(onclick='') Ayrıl ve Odayı Kapat!
+                button#start-game-button.btn.btn-success.col-12.my-1.d-none(onclick='') Oyunu Başlat!
+                button.btn.btn-danger.col-12.my-1(onclick='') Ayrıl ve Odayı Devret
 
         //- Bootstrap JS ve Popper JS:
         script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
         script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js")
         script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+        //- socket.io:
+        script(src="js/global-socket-io(client).js") 
         //- global-config.js:
         script(src="js/global-config.js")
         //- pregame.js:

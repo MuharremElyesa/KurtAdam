@@ -38,3 +38,9 @@ req.user:
   # veritabanında verilerini tutuyoruz: fotoğrafı, ismi
 
 # Diğer kullanıcı senkranizasyonunu araştır
+
+# ---
+# Odaya katılan kullanıcıyı odaya al
+# Odadan çıkma fonksiyonunu ayarla
+# Odadan admin çıktıysa vadminliği rastgele birine ver
+# !!! Çok önemli ilk bu yapılacak !!!: Sunucudaki herkesin değiştirebilidiği değişkenler o alanda depolanmayacak. Veriler gerekirse tarayıcıda depolanacak. ARAŞTIR!
