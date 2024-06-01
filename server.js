@@ -35,14 +35,16 @@ const io = socketIo(app.listen(7777))
 // Socket.io Server İşlemleri:
 io.on("connection", (connectedSocket) => {
 
+    var clientID = connectedSocket.id
+
     // Oyun öncesi ekranında odada olan oyuncuları listeleyen olay:
-    connectedSocket.on("firstPreGamePlayerListRefresh", () => {
-        globalVariables.preGamePlayerListRefresh(io)
+    connectedSocket.on("firstPreGamePlayerListRefresh", (data) => {
+        globalVariables.preGamePlayerListRefresh(io, clientID, data)
     })
 
     // Odaya katılma olayı:
     connectedSocket.on("joinTheRoom", (data)=>{
-        globalVariables.joinTheRoom(io, data)
+        globalVariables.joinTheRoom(io, clientID, data)
     })
 
 })

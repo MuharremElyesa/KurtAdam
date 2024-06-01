@@ -1,6 +1,6 @@
 doctype html
 //- Yönlendirmeden gelen profil fotosu:
-- var playerPhoto = playerPhoto
+//- - var playerPhoto = playerPhoto
 
 html(lang="tr")
     head
@@ -17,20 +17,20 @@ html(lang="tr")
     body(onresize="ekranGenisligiAyarlamasi()")#body
         .container-fluid.cerceve
             .cerceve-ici.row.justify-content-center
-                img.col-12.p-2.m-2(src=playerPhoto)
-                h1.col-12.text-center.text-snadow-white=playerName
+                //- img.col-12.p-2.m-2(src=playerPhoto)
+                h1.col-12.text-center.text-shadow-white=playerName
             .col-12
                 input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız')
                 button#join-room-button.btn.btn-primary.col-12.mt-3(onclick='joinTheRoom()') Odaya Katıl
-                button.btn.btn-primary.col-12.mt-2(onclick='window.location.href=\"/yeniOdaOlustur\"') Yeni Oda Oluştur
+                button.btn.btn-primary.col-12.mt-2(onclick='yeniOdaOlustur()') Yeni Oda Oluştur
                 button.btn.btn-warning.col-12.mt-2(onclick='') Nasıl Oynanır?
-                button.btn.btn-danger.col-12.my-2(onclick='window.location.href=\"/logout\"') Oturumu Kapat!
+                button.btn.btn-danger.col-12.my-2(onclick='signOut()') Oturumu Kapat!
 
         //- Yeni gelen kişiye özel karşılama yapılacak
         if first == true
             .container-fluid.cerceve(style="background-color: rgba(102, 139, 173, 0.9);")
                 .cerceve-ici.row
-                    h1.text-center.text-snadow-white= gameName+" Oyununa Hoş Geldiniz"
+                    h1.text-center.text-shadow-white= gameName+" Oyununa Hoş Geldiniz"
                 p.fs-4.text-center.text-primary-emphasis.mt-3= "Hoşgeldin "+ playerName +"! Seni aramızda görmek çok güzel. Umarız güzel zaman geçirirsin :). Nasıl oynandığını öğrenmek istersen ana ekranda bulunan \"Nasıl oynanır!\" butonuna basarak öğrenebilirsin. İyi eğlenceler dilerim :D."
                 button.btn.btn-primary.col-12.my-3(onclick="window.location.href='/profile'")= gameName + " Dünyasına Dal!"
 
@@ -38,9 +38,14 @@ html(lang="tr")
         script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
         script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js")
         script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+        script.
+            const playerID = "#{playerID}"
+            const playerName = "#{playerName}"
+            sessionStorage.setItem("playerID", playerID)
+            sessionStorage.setItem("playerName", playerName)
         //- socket.io:
         script(src="js/global-socket-io(client).js") 
         //- global-config.js:
         script(src="js/global-config.js")
-        //- global-config.js:
+        //- main-menu.js:
         script(src="js/main-menu.js")
