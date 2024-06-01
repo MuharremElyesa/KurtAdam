@@ -21,7 +21,7 @@ router.use(gameCreating)
 
 // Ana dizin middleware:
 router.use("/", (req, res) => {
-    res.render("open-login", {gameName: globalVariables.gameName})
+    res.render("open-login", {gameName: globalVariables.gameName, bannedCharacters: globalVariables.bannedCharacters1})
 })
 
 

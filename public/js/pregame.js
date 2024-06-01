@@ -5,7 +5,7 @@ let admin = false
 
 
 // Odaya girdiğimiz an sunucuyu listeyi yenilemesi için tetikliyoruz:
-socket.emit("firstPreGamePlayerListRefresh")
+socket.emit("firstPreGamePlayerListRefresh", {roomKey: roomKey})
 
 // Sunucudan gelen oyuncuları listeliyoruz:
 socket.on("preGamePlayerListRefresh", (data1)=>{
@@ -40,5 +40,5 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
 // Oda yoksa veya beklenmedik bir şekilde kapandıysa oyuncuyu ana menüye yönlendiriyoruz:
 socket.on("theRoomIsClosed",()=>{
     preGameParticipantsList.innerHTML = "<div class='col-12 p-2 text-center my-1 pre-game-participants-list-box text-snadow-white' style='background-color:#6fb81b80;'> Oda beklenmedik bir şekilde kayboldu :(. 5 saniye sonra ana menüdesiniz. </div>"
-    setTimeout(function(){ window.location.href = "/profile" }, 5000)
+    setTimeout(function(){ window.location.href = "/takmaIsimIleGiris?nickName="+sessionStorage.getItem("playerName") }, 5000)
 })

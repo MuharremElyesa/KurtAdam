@@ -1,4 +1,4 @@
-/* İsim Formu */
+/* İsim İnputu */
 #nick-name-input{
     border: none;
     border-bottom: 2px solid #007bff; /* Alt çizginin stilini ve rengini ayarlayın */
@@ -13,8 +13,16 @@ h1{
     text-shadow: 0px 0px 30px rgb(255, 255, 255);
 }
 
+#nick-name-error-span{
+    color: rgb(255, 0, 0);
+    display: none;
+    transition: display 0.5s;
+    background-color: rgba(0, 0, 0, 0.705);
+    border-radius: 3px;
+}
+
 /* Oturum butonları */
-.sessionButton{
+/* .sessionButton{
     width: 230px;
     background-color: #fff;
     padding: 10px 10px;
@@ -31,4 +39,4 @@ h1{
 .sessionButton div{
     display: flex;
     margin: auto;
-}
+} */
