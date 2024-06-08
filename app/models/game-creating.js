@@ -8,7 +8,6 @@ const firebaseAdmin = require("./../../config/firebase-connect")
 // Global Değişkenler:
 const globalVariables = require("./../../config/global-variables")
 
-
 // Oyun öncesi odaya girdiğimizde odada kimlerin olduğunu listeleyen ve anlık yenileyen fonksiyon:
 globalVariables.preGamePlayerListRefresh = function(io, clientID, data1){
     firebaseAdmin.database().ref("roomKeys").child(data1.roomKey).on("value", (snapshot) => {
@@ -105,6 +104,16 @@ globalVariables.joinTheRoom = function(io, clientID, data){
 
 router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
 
+    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot)=>{
+        var keys = Object.keys(snapshot.val())
+
+        keys.forEach(anahtar => {
+            if ((snapshot.val()[anahtar].gameConfig.creationDate) < (Date.now()-24*60*60*1000)) {
+                firebaseAdmin.database().ref("roomKeys").child(anahtar).remove()
+            }
+        })
+    })
+
     // Rastgele oluşturulan oda kimliği:
     var randomRoomKey = Math.floor(Math.random() * (globalVariables.r_room_max - globalVariables.r_room_min + 1)) + globalVariables.r_room_min
 
@@ -116,7 +125,8 @@ router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
             admin: true,
         },
         gameConfig: {
-            situation: 0
+            situation: 0,
+            creationDate: Date.now()
         }
     })
 
@@ -186,13 +196,50 @@ router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
 })
 
 router.get("/odayaKatil"/*, globalVariables.isLoggedIn*/, (req, res) => {
-    // console.log(req.query.playerName)
-    // console.log(req.query.playerID)
-    // console.log(req.query.enteredRoomKey)
-
-
     res.render("pregame", { gameName: globalVariables.gameName, roomKey: req.query.enteredRoomKey })
     res.end()
+})
+
+router.get("/odadanAyriliniyor", (req, res)=>{
+    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(req.query.playerID).remove()
+    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).once("value", (snapshot)=>{
+
+        if (snapshot.exists()) {
+            var keys = Object.keys(snapshot.val())
+
+
+            for (let i = 0; i < keys.length; i++) {
+                // console.log(keys[i])
+                if (snapshot.val()[keys[i]].admin == false) {
+                    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(keys[i]).update({admin: true})
+                    break
+                }
+                
+            }
+
+            if (keys.length == 1 && keys == "gameConfig") {
+                firebaseAdmin.database().ref("roomKeys/").child(req.query.enteredRoomKey).remove()
+            }
+    
+            res.render("main-menu", {
+                gameName: globalVariables.gameName,
+                playerName: req.query.playerName,
+                // playerPhoto: playerPhoto,
+                playerID: req.query.playerID
+                // first: false
+            })
+            res.end()
+    
+        }else{
+            res.render("main-menu", {
+                gameName: globalVariables.gameName,
+                playerName: req.query.playerName,
+                // playerPhoto: playerPhoto,
+                playerID: req.query.playerID
+                // first: false
+            })
+        }
+    })
 })
 
 /* Export */

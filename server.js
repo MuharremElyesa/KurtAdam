@@ -43,7 +43,7 @@ io.on("connection", (connectedSocket) => {
     })
 
     // Odaya katılma olayı:
-    connectedSocket.on("joinTheRoom", (data)=>{
+    connectedSocket.on("joinTheRoom", (data) => {
         globalVariables.joinTheRoom(io, clientID, data)
     })
 
