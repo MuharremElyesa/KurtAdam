@@ -15,6 +15,9 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
     keys.forEach((data2)=>{
         // Oyun ayarlarını içeren düğüğmü atlıyoruz:
         if (data2 == "gameConfig") {
+            if (data1.data[data2].situation==1) {
+                window.location.href="/oyunBaslatiliyor?enteredRoomKey="+roomKey
+            }
             return
         }
 
@@ -49,4 +52,9 @@ socket.on("theRoomIsClosed",()=>{
 // Odadan Ayrıl:
 function leaveTheRoom() {
     window.location.href="/odadanAyriliniyor?playerID="+sessionStorage.getItem("playerID")+"&playerName="+sessionStorage.getItem("playerName")+"&enteredRoomKey="+roomKey
+}
+
+// Oyunu Başlat:
+function startGame() {
+    window.location.href="/oyunuBaslat?enteredRoomKey="+roomKey
 }

@@ -1,0 +1,38 @@
+#gameContainer {
+    height: 100vh;
+    background-color: rgb(234, 234, 255);
+}
+
+.kite-one-regular {
+    font-family: "Kite One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+.top-bar {
+    height: 60px;
+    background-color: rgb(255, 255, 255);
+}
+
+.top-bar-div-height {
+    height: 60px;
+}
+
+.day-box {}
+
+.counter-box {}
+
+.menu-box {
+    margin-right: 5px;
+}
+
+.menu-box:hover {
+    background-color: #e2e2e2;
+    border-radius: 15px;
+}
+
+.menu-box:active {
+    background-color: #c1c1c1;
+    border-radius: 15px;
+}

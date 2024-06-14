@@ -2,10 +2,6 @@
 const cerceve = document.querySelectorAll(".cerceve");
 
 
-// Başlangıç:
-ekranGenisligiAyarlamasi()
-
-
 // Genişlik ayarları:
 function ekranGenisligiAyarlamasi() {
 
@@ -14,6 +10,10 @@ function ekranGenisligiAyarlamasi() {
         const cs = element.style
 
         // Oturum çerçevesini yukarıdan ortalar:
-        cs.marginTop=-(element.clientHeight/2)+"px"   
+        cs.marginTop = -(element.clientHeight / 2) + "px"
     });
 }
+
+
+// Başlangıç:
+ekranGenisligiAyarlamasi()
