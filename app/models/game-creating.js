@@ -242,6 +242,19 @@ router.get("/odadanAyriliniyor", (req, res)=>{
     })
 })
 
+router.get("/oyunuBaslat", (req, res)=>{
+
+    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child("gameConfig").update({situation: 1})
+
+})
+
+router.get("/oyunBaslatiliyor", (req, res)=>{
+    res.render("game",{
+        gameName: globalVariables.gameName,
+        roomKey: req.query.enteredRoomKey
+    })
+})
+
 /* Export */
 // router'i dış kullanıma açıyoruz:
 module.exports = router
