@@ -1,38 +1,214 @@
+/* Ana oyun ekranı konteynırı: */
 #gameContainer {
-    height: 100vh;
+    min-height: 100vh;
     background-color: rgb(234, 234, 255);
 }
 
+/* Body etiketi: */
+body{
+    user-select: none;
+}
+
+/* Tüm sayfada geçerli olan yazı tipi: */
 .kite-one-regular {
     font-family: "Kite One", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
 
-
+/* Üst bar */
 .top-bar {
     height: 60px;
     background-color: rgb(255, 255, 255);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    margin-bottom: 8px;
 }
 
+/* Üst bar yükseklik ayarlaması: */
 .top-bar-div-height {
     height: 60px;
 }
 
+/* Gün sayacı sınıfı: */
 .day-box {}
 
-.counter-box {}
+/* Ana sayaç sınıfı: */
+#counter-box {}
 
+/* Menu kutusu: */
 .menu-box {
     margin-right: 5px;
 }
 
+/* Menu kutusu, üstüne gelindiğinde: */
 .menu-box:hover {
     background-color: #e2e2e2;
     border-radius: 15px;
 }
 
+/* Menu kutusu, tıklandığında: */
 .menu-box:active {
     background-color: #c1c1c1;
     border-radius: 15px;
+}
+
+/* Oyuncu kartı, konteynırı: */
+.player-card-container{
+    height: 300px;
+    position: relative;
+    justify-content: center;
+    margin: 8px 0px;
+}
+
+/* Oyuncu kartı,: */
+.player-card{
+    background-color: #414552;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: flex;
+    /* align-items: center; */
+    /* justify-content: center; */
+    position: absolute;
+    border-radius: 5px;
+    width: 168px;
+}
+
+/* Oyuncu kartı, karakter kutusu: */
+.player-character{
+    background-color: #dddddd;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    display: flex;
+    position: absolute;
+    height: 229px;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Oyuncu kartı, alt bilgiler kutusu: */
+.player-info{
+    background-color: #dddddd;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: flex;
+    position: absolute;
+    height: 60px;
+}
+
+/* Oyuncu kartı, oyuncu ismi kutusu: */
+.player-name-div{
+    /* background-color: #858585;  */
+    left: 2px;
+    top: 2px;
+    display: flex;
+    position: absolute;
+    height: 26px;
+    width: 100px;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Oyuncu ismi (Animasyonlu): */
+.player-name{
+    display: inline-block;
+    padding-left: 30%;
+    animation: marquee 10s linear infinite;
+    white-space: nowrap;
+}
+
+/* Marquee animasyonu: */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Oyuncu ismi (Animasyon İptali) */
+.player-name.no-scroll {
+    animation: none;
+    padding-left: 0;
+}
+
+/* Oyuncu kartı, kime oy verdiğini gösteren kutu: */
+.voted-player-div{
+    /* background-color: #858585;  */
+    left: 2px;
+    bottom: 2px;
+    display: flex;
+    position: absolute;
+    height: 26px;
+    width: 100px;
+    overflow: hidden;
+}
+.voted-player{
+    display: inline-block;
+    padding-left: 30%;
+    animation: marquee 10s linear infinite;
+    white-space: nowrap;
+    color: red;
+}
+.voted-player.no-scroll {
+    animation: none;
+    padding-left: 0;
+}
+.voted-player-div span{
+    color: rgb(172, 0, 0);
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    background-color: #dddddd;
+    z-index: 10;
+    left: 0;
+}
+
+/* Oyuncu kartı, oyuncu rolu: */
+.player-role{
+    background-color: #858585; 
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: flex;
+    position: absolute;
+    width: 55px;
+}
+
+/* Oyuncu kartı, oyuncu numarası: */
+.player-no{
+    background-color: #858585; 
+    top: 2px;
+    left: 2px;
+    display: flex;
+    position: absolute;
+    width: 40px;
+    height: 50px;
+    z-index: 50;
+    border-bottom-right-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+    color: whitesmoke;
+}
+
+/* Oyuncu kartı, kaç kişi oy verdi?: */
+.players-vote{
+    background-color: #ac611b;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: flex;
+    position: absolute;
+    height: 40px;
+    z-index: 55;
+    justify-content: center;
+    align-items: center;
 }

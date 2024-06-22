@@ -47,4 +47,13 @@ io.on("connection", (connectedSocket) => {
         globalVariables.joinTheRoom(io, clientID, data)
     })
 
+    // Oyuna girildikten sonraki süre sorguları:
+    connectedSocket.on("timeQuery", (data)=>{
+        globalVariables.timeQueryFunction(io, clientID, data)
+    })
+
+    // Oyuna girildikten sonraki süre sorguları:
+    connectedSocket.on("listContats", (data)=>{
+        globalVariables.listContats(io, clientID, data)
+    })
 })
