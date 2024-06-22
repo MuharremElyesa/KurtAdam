@@ -12,11 +12,16 @@
     // Rastgele oda kimliği alt ve üst değerleri:
     exports.r_room_min = 100000
     exports.r_room_max = 999999
+    // Oyunun başlamasına kalan süre:
+    exports.time_left_until_the_game_starts = 10
     
 
 // Fonksiyonlar
     // game-creating.js:
         exports.preGamePlayerListRefresh
         exports.joinTheRoom
+    // game.js:
+        exports.timeQueryFunction
+        exports.listContats
     // auth.js:
         // exports.isLoggedIn

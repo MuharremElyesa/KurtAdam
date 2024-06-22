@@ -11,6 +11,8 @@ const auth = require("../models/auth")
 const globalVariables = require("./../../config/global-variables")
 // Oyun oluşturma ve katılmadan sorumlu .js:
 const gameCreating = require("./../models/game-creating")
+// game.js:
+const gamejs = require("./../models/game")
 
 
 /* Program Akışı */
