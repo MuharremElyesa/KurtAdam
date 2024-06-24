@@ -20,7 +20,7 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
 
     // Client ne istediyse onu veriyoruz:
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
-        io.sockets.to(clientID).emit("sendingTime", {time: snapshot.val()[clientRequest], emit: clientRequest})
+        io.sockets.to(clientID).emit("sendingTime", {time: snapshot.val()[clientRequest], emit: clientRequest, control: snapshot.val()[clientRequest+"Control"]})
     })
 
 }
@@ -29,5 +29,16 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
 globalVariables.listContats = function(io, clientID, data) {
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).on("value", (snapshot)=>{
         io.sockets.to(clientID).emit("sendListContats", {data: snapshot.val()})
+    })
+}
+
+// Rol dağıtımı:
+globalVariables.roleDistribution = function(io, clientID, data) {
+    // Bundan önceki kontrol bitirilir:
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).once("value", (snapshot)=>{
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
+            toTheBeginningOfTheGameControl: true
+        })
+        // Buradan sonra rol dağıtımı yapılacak ve devam edilecek...
     })
 }
