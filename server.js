@@ -56,4 +56,9 @@ io.on("connection", (connectedSocket) => {
     connectedSocket.on("listContats", (data)=>{
         globalVariables.listContats(io, clientID, data)
     })
+
+    // Oyuna girildikten sonraki süre sorguları:
+    connectedSocket.on("roleDistribution", (data)=>{
+        globalVariables.roleDistribution(io, clientID, data)
+    })
 })

@@ -246,7 +246,9 @@ router.get("/oyunuBaslat", (req, res)=>{
 
     firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child("gameConfig").update({
         situation: 1,
-        toTheBeginningOfTheGame: Math.floor(Date.now() / 1000) + globalVariables.time_left_until_the_game_starts
+        toTheBeginningOfTheGame: Math.floor(Date.now() / 1000) + globalVariables.time_left_until_the_game_starts,
+        // Buradaki kontrol oyunun bu aşaması geçildi mi anlamında:
+        toTheBeginningOfTheGameControl: false
     })
 
 })

@@ -2,8 +2,12 @@
 const counterBox = document.getElementById("counter-box")
 // Kişilerin kartlarını yazdıracağımız element:
 const printCards = document.getElementById("contacts-card-div").querySelector(".row")
+// İstemcide (yani tarayıcıda) bulunan id değeri:
+const browserID = sessionStorage.getItem("playerID")
 // Serverdan gelen kişi bilgilerinin tutulduğu değişken:
 var contactsCard = ""
+// Adminlik kontrolu
+var adminControl = false
 
 // Oyunun başlaması için kalan süre sorgusu:
 socket.emit("timeQuery", {
@@ -17,9 +21,11 @@ socket.on("sendingTime", (data) => {
     // Gelen süre ne ise ilgili alana yönlendiriyoruz:
     switch (data.emit) {
         case "toTheBeginningOfTheGame":
-            // Oyunun başlamasına kalan süre sayacı:
-            toTheBeginningOfTheGame(data.time)
-            break;
+            if (data.control == false) {
+                // Oyunun başlamasına kalan süre sayacı:
+                timerFunction(data.time, "toTheBeginningOfTheGame")
+                break;  
+            }
 
         default:
             break;
@@ -27,18 +33,27 @@ socket.on("sendingTime", (data) => {
 
 })
 
-// Oyunun başlamasına kalan süre fonksiyonu:
-function toTheBeginningOfTheGame(time) {
+// Süre fonksiyonu:
+function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime) {
     // Fonksiyonu süre bitene kadar her saniye çalıştırıyoruz:
-    var oyunun_baslamasina = setInterval(() => {
+    var timerVariable = setInterval(() => {
         // Kalan süreyi saniye cinsinden değişkene atıyoruz:
         var sure = (time - (Math.floor(Date.now() / 1000)))
         // Süreyi sayaca yazdırıyoruz:
-        counterBox.innerHTML = "Oyunun Başlamasına: " + sure + " Saniye!"
-        // Süre bitti mi diye kontrol ediyoruz:
-        if (sure <= 0) {
-            clearInterval(oyunun_baslamasina)
+        switch (whatTime) {
+            case "toTheBeginningOfTheGame":
+                counterBox.innerHTML = "Oyunun Başlamasına: " + sure + " Saniye!"
+                // Süre bitti mi diye kontrol ediyoruz:
+                if (sure <= 0) {
+                    clearInterval(timerVariable)
+                    roleDistribution()
+                }
+                break;
+        
+            default:
+                break;
         }
+
     }, 1000)
 }
 
@@ -61,6 +76,16 @@ socket.on("sendListContats", (data) => {
 
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
+
+        // Gelen değer bizsek yapılacak işlemler:
+        if (keys[i] == browserID) {
+            // Burda oyuncunun admin olup olmadığını tespit ediyoruz. Adminse dönecek bütün süre gibi ayarlar burdan giden isteklerle değiştirilir:
+            if (data.data[keys[i]].admin == true) {
+                adminControl = true
+            }else{
+                adminControl = false
+            }
+        }
 
         // Gelen değer oyuncu değilse (yani "gameConfig"e eşitse) döngüyü atla:
         if (keys[i] == "gameConfig") {
@@ -108,4 +133,13 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
         </div>
         </div>
     `
+}
+
+// Rol dağıtımı isteği:
+function roleDistribution() {
+    if (adminControl == true) {
+        socket.emit("roleDistribution", {
+            enteredRoomKey: roomKey
+        })
+    }
 }

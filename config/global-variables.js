@@ -23,5 +23,6 @@
     // game.js:
         exports.timeQueryFunction
         exports.listContats
+        exports.roleDistribution
     // auth.js:
         // exports.isLoggedIn
