@@ -19,10 +19,13 @@
 # Oyuncu aktif mi diye her 5 saniyede bir istek alabiliriz bu sayede odada ve oyunda gerksiz boş oyuncu bulunmaz.
 # Ortalama sorununu çöz.
 # Nasıl oynanır butonu doldurulacak.
+# Oda oyun esnasında artık mevcut değilse ana sayfaya yönlendirilsin.
+# Oyun esnasında admin oyundan çıkarsa adminliğin başkasına verilmesi.
+# Oyuna giriş ekranındaki, oyunu başlatmadan önce olan kısımdaki kişiler taştığında scroll'u aktif et.
 
 
 
 
 
 
-# Rol dağıtımından sonra süre isteği nasıl yapılacak? (Olmazsa değişikliğe gidilebilir)
+# Roolerin gösterilmesi ekranından devam edilecek

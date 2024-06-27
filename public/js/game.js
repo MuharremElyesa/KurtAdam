@@ -2,6 +2,12 @@
 const counterBox = document.getElementById("counter-box")
 // Kişilerin kartlarını yazdıracağımız element:
 const printCards = document.getElementById("contacts-card-div").querySelector(".row")
+// Ana oyun container'ı:
+const mainGameContainer = document.getElementById("contacts-card-div")
+// Rol gösterim divi:
+const roleShowingDiv = document.getElementById("role-showing-div")
+// Rol divi:
+const roleDiv = document.getElementById("role-div")
 // İstemcide (yani tarayıcıda) bulunan id değeri:
 const browserID = sessionStorage.getItem("playerID")
 // Serverdan gelen kişi bilgilerinin tutulduğu değişken:
@@ -20,11 +26,21 @@ socket.on("sendingTime", (data) => {
 
     // Gelen süre ne ise ilgili alana yönlendiriyoruz:
     switch (data.emit) {
+
+        // Oyunun başlamasına kalan süre:
         case "toTheBeginningOfTheGame":
             if (data.control == false) {
                 // Oyunun başlamasına kalan süre sayacı:
                 timerFunction(data.time, "toTheBeginningOfTheGame")
                 break;  
+            }
+
+        // Rollerin gösterilmesinin bitmesine kalan süre:
+        case "showingRoles":
+            if (data.control == false) {
+                // Rollerin gösterilmesi için süre:
+                timerFunction(data.time, "showingRoles")
+                break;
             }
 
         default:
@@ -35,12 +51,17 @@ socket.on("sendingTime", (data) => {
 
 // Süre fonksiyonu:
 function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime) {
+    // Döngü değişkenleri:
+    var completed = false
+
     // Fonksiyonu süre bitene kadar her saniye çalıştırıyoruz:
     var timerVariable = setInterval(() => {
         // Kalan süreyi saniye cinsinden değişkene atıyoruz:
         var sure = (time - (Math.floor(Date.now() / 1000)))
         // Süreyi sayaca yazdırıyoruz:
         switch (whatTime) {
+
+            // Oyunun başlamasına kalan süre:
             case "toTheBeginningOfTheGame":
                 counterBox.innerHTML = "Oyunun Başlamasına: " + sure + " Saniye!"
                 // Süre bitti mi diye kontrol ediyoruz:
@@ -49,6 +70,27 @@ function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime) {
                     roleDistribution()
                 }
                 break;
+
+            // Rollerin gösterilme süresi:
+            case "showingRoles":
+                counterBox.innerHTML = "Roller Gösteriliyor: " + sure
+                // Döngüde tek seferlik çalıştırmak istediğimiz kodlar:
+                if (completed == false) {
+
+                    // Buraya rol gösterim anını yazıyoruz:
+                    mainGameContainer.classList.add("d-none")
+                    roleShowingDiv.classList.remove("d-none")
+
+                    completed = true
+                }
+                // Süre bitti mi diye kontrol ediyoruz:
+                if (sure <= 0) {
+                    mainGameContainer.classList.remove("d-none")
+                    roleShowingDiv.classList.add("d-none")
+                    clearInterval(timerVariable)
+                    // roleDistribution()
+                }
+                break;  
         
             default:
                 break;
@@ -89,6 +131,19 @@ socket.on("sendListContats", (data) => {
 
         // Gelen değer oyuncu değilse (yani "gameConfig"e eşitse) döngüyü atla:
         if (keys[i] == "gameConfig") {
+            
+            // Hangi zaman diliminde olduğumuzu tespit ediyoruz:
+            // Rol gösterme süresinin geçip geçmediğine bakıyoruz:
+            if (data.data[keys[i]].showingRolesControl == false) {
+
+                socket.emit("timeQuery", {
+                    timeQuery: "showingRoles",
+                    enteredRoomKey: roomKey
+                })
+
+            }
+
+            // Diğer işlemlere devam edilmemesi için döngüyü burdan başa sarıyoruz:
             continue
         }
 
@@ -137,6 +192,7 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
 
 // Rol dağıtımı isteği:
 function roleDistribution() {
+    // Bu tarz isteklerde oynanan oda için sadece tek bir istek gitmesi için adminden sorguyu gönderiyoruz. Oyun esnasında admin oyundan çıkarsa adminlik başkasına verileceği için bu kontrol hep yapılıyor:
     if (adminControl == true) {
         socket.emit("roleDistribution", {
             enteredRoomKey: roomKey

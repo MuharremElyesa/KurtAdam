@@ -212,3 +212,23 @@ body{
     justify-content: center;
     align-items: center;
 }
+
+/* Rol gösterim divi: */
+#role-showing-div{
+    height: calc(100vh - 60px);
+    background-color: #4d546a;
+    margin-top: -8px;
+}
+
+/* Rol divi (Rol gösterim divinin içindeki div): */
+#role-div{
+    background-color: whitesmoke;
+    min-height: 400px;
+}
+
+/* Rol divi içindeki img */
+#role-div img{
+    width: 100px;
+    height: 100px;
+    background-color: #ac611b;
+}

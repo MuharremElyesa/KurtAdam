@@ -1,17 +1,9 @@
-/* Sıfırlama kodları */
-*{
-    padding: 0px;
-    margin: 0px;
-}
 /* body */
 body{
     background-color: #fff4b6;
     
 }
-/* Başlangıç kutusu ayarları */
-#starter-div{
-    position: relative;
-}
+
 
 /* Giriş kutusu text input */
 #logInInputText{
@@ -69,23 +61,7 @@ body{
     bottom: 0;
 }
 
-/* Geri sayım kutusu */
-#countdown{
-    position: absolute;
-    z-index: 999;
-    width: 350px;
-    height: 100px;
-    top: 50%;
-    right: 50%;
-    margin-right: -175px;
-    margin-top: -50px;
-    background-color: rgba(255, 0, 0, 0.5);
-    box-shadow: rgb(240 248 255) 0px 0px 10px;
-    border-radius: 15px;
-    text-align: center;
-    color:aliceblue;
-    font-size: 30px;
-}
+
 
 /* Rol seçim ekranı */
 #role-selection-div{
@@ -96,10 +72,7 @@ body{
     position: absolute;
 }
 
-#top-bar{
-    background-color: aquamarine;
-    color: #1d1a1a;
-}
+
 
 /* Rol aksiyonları divi */
 #role-action-div{
@@ -133,12 +106,6 @@ body{
     position: absolute;
 }
 
-@keyframes dyingEffect {
-    0% {background-color: rgba(255, 0, 0, 0);}
-    50% {background-color: rgba(255, 0, 0, 1);}
-    99% {background-color: rgba(255, 0, 0, 0);}
-    100%{display: none;}
-}
 
 /* Ölme efekti kutusu */
 #dying-effect{
