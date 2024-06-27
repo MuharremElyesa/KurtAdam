@@ -211,40 +211,7 @@ function game() {
     })
 }
 
-// Rol dağıtımı
-function roleSelection(number_of_people) {
-    var number_of_player = number_of_people;
-    var number_of_people = number_of_people/5;
-    var v1=-1, v2=0, v3=0;
-    while (v3==0) {
-        v1++;
-        v2++;
-        if (v1<number_of_people && number_of_people<=v2) {
-            v3++;
-        }
-    }
 
-    // alert("v1:"+v1+" "+"v2:"+v2+" "+"v3:"+v3+"\n"+"Sonuç olarak "+v2+" kurt");
-
-    // Kurt sayısı: v2
-    // Kişi sayısı: number_of_people
-
-    var roless = [];
-    var villager = number_of_player - v2;
-    var wolf = v2;
-
-    while (wolf>0) {
-        roless.push("wolf");
-        wolf--;
-    }
-
-    while (villager>0) {
-        roless.push("villager");
-        villager--;
-    }
-
-    return roless;
-}
 
 // Rolü kullanıcıya göster
 function showRole(futureTime) {
