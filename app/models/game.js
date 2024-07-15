@@ -17,6 +17,18 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
         case "showingRoles":
             clientRequest = "showingRoles"
             break;
+
+        case "night":
+            clientRequest = "night"
+            break;
+
+        case "day":
+            clientRequest = "day"
+            break;
+
+        case "vote":
+            clientRequest = "vote"
+            break;
     
         default:
             break;
@@ -31,9 +43,20 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
 
 // Kişileri client'e gönderen socket:
 globalVariables.listContats = function(io, clientID, data) {
-    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).on("value", (snapshot)=>{
-        io.sockets.to(clientID).emit("sendListContats", {data: snapshot.val()})
-    })
+
+    if (data.leave == "leave") {
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).off()
+    }else{
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).on("value", (snapshot)=>{
+            if (snapshot.exists()) {
+                io.sockets.to(clientID).emit("sendListContats", {data: snapshot.val()})
+                if (snapshot.val()["gameConfig"].situation == 2 || (snapshot.val()["gameConfig"].creationDate) < (Date.now()-24*60*60*1000)) {
+                    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).off()
+                }  
+            }
+        })
+    }
+
 }
 
 // Rol dağıtımı:
@@ -42,6 +65,7 @@ globalVariables.roleDistribution = function(io, clientID, data) {
     // Fonksiyon içi değişkenler:
     var players=[]
     var roles=[]
+    var v1=-1, v2=0, v3=0 /*Bu değişkenler ilk kurtadam oyunundan geliyor. Aşağıda while döngüsünde kullanıldı.*/
 
     // Bundan önceki kontrol bitirilir:
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).once("value", (snapshot)=>{
@@ -64,13 +88,21 @@ globalVariables.roleDistribution = function(io, clientID, data) {
         })
 
         // Kaç tane kurt atanacağını belirliyoruz:
-        var number_of_wolves = Math.floor(players.length / globalVariables.how_many_people_have_a_wolf)
+        var number_of_wolves = players.length / globalVariables.how_many_people_have_a_wolf
 
+        // Eski kurtadam oyunundan alınan kaç kurt atanması gerektiğini hesap eden döngü:
+        while (v3==0) {
+            v1++,v2++
+           if (number_of_wolves > 0 && number_of_wolves <= 1) {
+                v3++
+            } 
+        }
+        
         // Atanmış roller dizisi (Kurt sayısı kadar assignedRoles dizisine "wolf" yazdırıyoruz.):
-        var assignedRoles = new Array(number_of_wolves).fill("wolf")
+        var assignedRoles = new Array(v2).fill("wolf")
 
         // Geriye kaç kişi kaldıysa, o kadar köylü rolu atıyoruz (ŞİMDİLİK):
-        var number_of_people_remaining = players.length - number_of_wolves
+        var number_of_people_remaining = players.length - v2
 
         // Diğer rolleri rastgele bir şekilde dağıtıyoruz  (Şu anda sadece KÖYLÜ):
         var remaining_roles = new Array(number_of_people_remaining).fill("villager")
@@ -121,4 +153,47 @@ function shuffleArray(array) {
 // Şimdiki zamanın üstüne zaman koymamızı sağlayan fonksiyon:
 function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
     return Math.floor(Date.now() / 1000) + timeToBePlaced
+}
+
+// Gece:
+globalVariables.night = function(io, clientID, data) {
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
+        showingRolesControl: true,
+        voteControl: true,
+        night: timeKeeper(globalVariables.nightTime),
+        nightControl: false
+    })
+}
+
+// Gündüz:
+globalVariables.day = function(io, clientID, data) {
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
+        // console.log(snapshot.val().whichDay)
+
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
+            nightControl: true,
+            day: timeKeeper(globalVariables.dayTime),
+            dayControl: false,
+            whichDay: snapshot.val().whichDay + 1
+        })
+
+    })
+
+}
+
+// Oy:
+globalVariables.vote = function(io, clientID, data) {
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
+        dayControl: true,
+        vote: timeKeeper(globalVariables.voteTime),
+        voteControl: false
+    })
+}
+
+// Oyun esnasındayken odadan çıkış isteği:
+globalVariables.escapeFromTheRoom = function(io, clientID, data) {
+    // Oyuncuyu odadan siliyoruz:
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.playerID).remove()
+    // Sonrasında client'e çıkış yapması için emit atıyoruz:
+    io.sockets.to(clientID).emit("escapeFromTheRoom")
 }

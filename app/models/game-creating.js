@@ -126,7 +126,8 @@ router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
         },
         gameConfig: {
             situation: 0,
-            creationDate: Date.now()
+            creationDate: Date.now(),
+            whichDay: 0
         }
     })
 
