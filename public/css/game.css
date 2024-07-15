@@ -54,6 +54,22 @@ body{
     border-radius: 15px;
 }
 
+/* Menu */
+#menu{
+    height: calc(100vh - 60px);
+    margin-top: 60px;
+    background-color: rgb(216 216 216 / 95%);
+    position: absolute;
+    z-index: 100;
+    padding: 20px;
+}
+
+/* Menu, rol resmi */
+#menu-role-img{
+    height: 120px;
+    width: 120px;
+}
+
 /* Oyuncu kartı, konteynırı: */
 .player-card-container{
     height: 300px;
@@ -222,13 +238,23 @@ body{
 
 /* Rol divi (Rol gösterim divinin içindeki div): */
 #role-div{
-    background-color: whitesmoke;
     min-height: 400px;
 }
 
 /* Rol divi içindeki img */
 #role-div img{
-    width: 100px;
-    height: 100px;
-    background-color: #ac611b;
+    width: 300px;
+    height: 300px;
+}
+
+/* Rol divi içindeki p */
+#role-showing-div p{
+    color: whitesmoke;
+    font-size: 40px;
+}
+
+/* Rol divi içindeki i */
+#role-showing-div i{
+    color: rgb(201, 201, 201);
+    font-size: 20px;
 }

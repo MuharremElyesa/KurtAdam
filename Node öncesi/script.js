@@ -72,62 +72,6 @@ var oldun_mu=0;
 
 
 
-
-function startGame() {
-    var upd = {
-        situation: 1
-    }
-    firebase.database().ref("roomKeys").child(randomRoomKey).update(upd);
-
-    firebase.database().ref("roomKeys/"+randomRoomKey).once('value', (snapshot)=>{
-        var sss=0;
-        var player = [];
-        for (const key in snapshot.val()) {
-            var data = Object.values(snapshot.val());
-            if (key!="situation") {
-                player.push(key);
-            }
-        }
-        //player.forEach((keyyy, index)=>{console.log(keyyy + " " + index)})
-        var rolesss = roleSelection(player.length);
-
-        // Dizileri karıştır
-        shuffleArray(player);
-        shuffleArray(rolesss);
-        
-        // Eşleştirmeyi oluştur
-        var role_assignment = {};
-
-        for (var i = 0; i < player.length; i++) {
-            role_assignment[player[i]] = {role: rolesss[i]};
-        }
-
-        firebase.database().ref("roomKeys/"+randomRoomKey).once('value',(snapshot)=>{
-            var sss=0;
-            for (const key in snapshot.val()) {
-                for (const keyt in role_assignment) {
-                    if (keyt==key) {
-                        firebase.database().ref("roomKeys/"+randomRoomKey+"/"+key).update(role_assignment[keyt]);
-                    }
-                }
-                sss++;
-            }
-        })
-
-        
-
-        randomPlayerKey="admin";
-    })
-}
-
-// Dizileri karıştırma işlevi
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
 function game() {
     starterDiv.style.display="none";
     gameDiv.classList.remove("d-none");
@@ -213,67 +157,7 @@ function game() {
 
 
 
-// Rolü kullanıcıya göster
-function showRole(futureTime) {
-    roleSelectionDiv.classList.remove("d-none");
-    countdown.classList.add("d-none");
-    var keyy;
-    if (randomRoomKey!="") {
-        keyy = randomRoomKey;
-    }else if(roomKeyInputText.value!=""){
-        keyy = roomKeyInputText.value;
-    }
 
-    firebase.database().ref("roomKeys/"+keyy).once('value',(snapshot)=>{
-        var sss=0;
-        for (const key in snapshot.val()) {
-            //var data = Object.values(snapshot.val())
-            firebase.database().ref("roomKeys/"+keyy+"/"+key).once('value',(snapshot)=>{
-                var ddd=0;
-                for (const keyt in snapshot.val()){
-                    var dataa = Object.values(snapshot.val())
-                    if (keyt=="role") {
-                        if (key==randomPlayerKey) {
-                            playerRole=dataa[ddd];
-                        }
-                    }
-                    ddd++;
-                }
-            })
-            sss++;
-        }
-    })
-
-    if (playerRole=="wolf") {
-        var suree= setInterval(()=>{
-            now = new Date();
-            var thisSecond = futureTime - now;
-            var thisSecond = String(thisSecond).slice(0,-3);
-            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto; display:block;' src='images/wolf.png'> <br> <h1 style='color:red'>Kurt "+thisSecond+"</h1>";
-            if (now  >= futureTime) {
-                roleSelectionDiv.classList.add("d-none");
-                topBar.classList.remove("d-none");
-                roleShowTopDiv.innerHTML="Rol: Kurt";
-                gameLoop();
-                clearInterval(suree);
-            }
-        }, 1000);
-    }else if (playerRole=="villager") {
-        var suree= setInterval(()=>{
-            now = new Date();
-            var thisSecond = futureTime - now;
-            var thisSecond = String(thisSecond).slice(0,-3);
-            roleSelectionDiv.innerHTML="<img style='height: 500px; margin:auto; display:block;' src='images/villager.png'> <br> <h1 style='color:skyblue'>Köylü "+thisSecond+"</h1>";
-            if (now  >= futureTime) {
-                roleSelectionDiv.classList.add("d-none");
-                topBar.classList.remove("d-none");
-                roleShowTopDiv.innerHTML="Rol: Köylü";
-                gameLoop();
-                clearInterval(suree);
-            }
-        }, 1000);
-    }
-}
 
 // Oyun döngüsü
 function gameLoop() {
@@ -736,14 +620,6 @@ function wolfAction(day) {
     }
 }
 
-// Rol özellikleri kontrol
-function roleActionDivControlButton(){
-    if (roleActionDiv.classList.contains("d-none")) {
-        roleActionDiv.classList.remove("d-none");
-    }else{
-        roleActionDiv.classList.add("d-none");
-    }
-}
 
 // kurt oyları
 function kurtVote(playerId) {
@@ -845,17 +721,6 @@ function kurtVote(playerId) {
     } 
 }
 
-// Oyun Sonu Fonksiyonu
-function gameOver(kazanan_takim) {
-    gameOverDiv.classList.remove("d-none");
-    if (kazanan_takim=="wolf") {
-        // kazanan takım kurtlarsa:
-        gameOverDiv.innerHTML="<img src='images/wolf.png' style='height: 500px; margin:auto; display:block;'> <br> <h1 style='color:red'>Kurtlar Kazandı!</h1>";
-    }else if (kazanan_takim=="villager") {
-        // kazanan takım köyse:
-        gameOverDiv.innerHTML="<img src='images/villager.png' style='height: 500px; margin:auto; display:block;'> <br> <h1 style='color:skyblue'>Köylüler Kazandı!</h1>";
-    }
-}
 
 // Köy aksiyonları (genel)
 function villageAction() {

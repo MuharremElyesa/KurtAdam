@@ -9,7 +9,6 @@
 #   Oyuncu ismi sınıfı -> .player-name
 #   Oyuncu ismi animasyon iptali sınıfı -> .player-name.no-scroll
 # player-role divi ayarlanacak.
-# Oyun ekranındaki kartlarının bir değişiklikte yeniden yenelenecek mi yoksa yenilenmeden değişiklik mi ekrana yansıtılacak?
 # Oyun ekranında yenileme yapıldığında oyundan atacak mı yada bir değişiklik olacak mı?
 # game.pug dosyasına açıklama satırları yazılacak.
 
@@ -22,10 +21,15 @@
 # Oda oyun esnasında artık mevcut değilse ana sayfaya yönlendirilsin.
 # Oyun esnasında admin oyundan çıkarsa adminliğin başkasına verilmesi.
 # Oyuna giriş ekranındaki, oyunu başlatmadan önce olan kısımdaki kişiler taştığında scroll'u aktif et.
+# Clientteki css'de tekrar eden şeyler değişkene bağlanacak.
+# Oyun bitince dinlenen on şeysi durdurulacak.
+# Herhangi bir şekilde ana sayfaya dönülse bile on fonksiyonu durdurulacak.
+# Oda yoksa ana sayfaya yönlendir.
+# Oyuna başlandıysa odaya girilemesin.
+# Kendine oy veremezsin.
+# Olan süre bittiyse ve o sırada oyunda admin yoksa oyun kilitleniyor. Düzeltilecek.
+# Oy verme fonksiyonu her türlü oylama için kullanılabilir hale getirilecek.
 
-
-
-
-
-
-# Roolerin gösterilmesi ekranından devam edilecek
+# Oy ihtimalleri:
+#   2 kişi eşit oy alabilir.
+#   1 kişi en çok oyu alır.

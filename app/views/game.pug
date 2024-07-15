@@ -24,12 +24,12 @@ html(lang="tr")
                     .row.position-relative
                         //- Gün Sayacı:
                         .col-3.top-bar-div-height
-                            .d-inline-flex.day-box.top-50.start-0.position-absolute.translate-middle-y Gün: 0
+                            #day-counter.d-inline-flex.day-box.top-50.start-0.position-absolute.translate-middle-y Gün: 0
                         //- Ana Sayaç:
                         .col-6.top-bar-div-height
                             #counter-box.d-inline-flex.top-50.start-50.position-absolute.translate-middle.text-center
                         //- Menu butonu:
-                        .col-3.top-bar-div-height
+                        .col-3.top-bar-div-height(onclick="menuOpenner()")
                             .d-inline-flex.menu-box.top-50.end-0.position-absolute.translate-middle-y
                                 svg(viewbox='0 0 24.00 24.00' fill='none' xmlns='http://www.w3.org/2000/svg' transform='matrix(1, 0, 0, 1, 0, 0)' stroke='#787878' width='55' height='55')
                                     g#SVGRepo_bgCarrier(stroke-width='0')
@@ -41,8 +41,16 @@ html(lang="tr")
                     .row
                 #role-showing-div.container-fluid.d-none
                     .row
-                        #role-div.col-12.col-sm-10.col-md-8.col-xl-4.position-absolute.top-50.start-50.translate-middle
-                            img(src="d")
+                        #role-div.col-12.col-sm-10.col-md-8.col-xl-4.position-absolute.top-50.start-50.translate-middle.d-flex.flex-column
+                            img.m-auto
+                            p.m-auto
+                            i.m-auto
+                #menu.col-12.d-none
+                    .row
+                        img#menu-role-img.m-auto.mb-3
+                        h1#menu-role-text.col-12.text-center
+                        button#menu-leave-the-game.btn.btn-danger.col-12 Oyundan Ayrıl!
+                        
                 //- .col-6.col-sm-4.col-md-3.col-xl-2.player-card-container
                 //-         .player-card.m-auto
                 //-             .player-no 1

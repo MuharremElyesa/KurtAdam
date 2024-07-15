@@ -61,4 +61,24 @@ io.on("connection", (connectedSocket) => {
     connectedSocket.on("roleDistribution", (data)=>{
         globalVariables.roleDistribution(io, clientID, data)
     })
+
+    // Gece:
+    connectedSocket.on("night", (data)=>{
+        globalVariables.night(io, clientID, data)
+    })
+
+    // Gündüz:
+    connectedSocket.on("day", (data)=>{
+        globalVariables.day(io, clientID, data)
+    })
+
+    // Oylama:
+    connectedSocket.on("vote", (data)=>{
+        globalVariables.vote(io, clientID, data)
+    })
+
+    // Oyun esnasında iken oyundan çıkma isteği:
+    connectedSocket.on("escapeFromTheRoom", (data)=>{
+        globalVariables.escapeFromTheRoom(io, clientID, data)
+    })
 })

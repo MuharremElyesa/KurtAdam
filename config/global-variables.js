@@ -23,7 +23,13 @@
         // Oyunun başlamasına kalan süre:
             exports.time_left_until_the_game_starts = 3 /*10*/
         // Rollerin gösterilme süresi
-            exports.showing_roles = 10000
+            exports.showing_roles = 3 /*8*/
+        // Gündüz süresi:
+            exports.dayTime = 5 /*30*/
+        // Gece süresi:
+            exports.nightTime = 5 /*30*/
+        // Oylama süresi:
+            exports.voteTime = 30
     
 
 // Fonksiyonlar
@@ -34,5 +40,9 @@
         exports.timeQueryFunction
         exports.listContats
         exports.roleDistribution
+        exports.night
+        exports.day
+        exports.vote
+        exports.escapeFromTheRoom
     // auth.js:
         // exports.isLoggedIn
