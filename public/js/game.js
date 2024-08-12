@@ -344,9 +344,9 @@ socket.on("sendListContats", (data) => {
             no_scroll_name = "no-scroll"
         }
 
-        // 
+        // Oylama esnasında mıyız?:
         if (isItTimeToVote == true) {
-            voteClickFunction = ` onclick="toVote('${keys[i]}')"`
+            voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'peasantVote')"`
         } else {
             voteClickFunction = ""
         }
@@ -446,7 +446,28 @@ socket.on("escapeFromTheRoom", () => {
 })
 
 // Oy verme fonksiyonu:
-function toVote(playerID) {
-    // BU KISIMDAN OY VERME İŞLEMLERİ GERÇEKLEŞTİRİLECEK:
-    console.log(playerID)
+function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVoting, /*Bu ne oylaması?*/ whichVoteIsThis) {
+
+    // Kendine oy veremezsin :):
+    if (/*votedPerson != personVoting*/true) {
+
+        // Hangi oylama?:
+        switch (whichVoteIsThis) {
+            // Köy oylaması:
+            case "peasantVote":
+                socket.emit("voting",{
+                    enteredRoomKey: roomKey, /*Hangi oda?*/
+                    whichVoteIsThis: whichVoteIsThis, /*Hangi oylama? (kurt oylaması, köylü oylaması gibi)*/
+                    votedPerson: votedPerson, /*Oylanan kişi*/
+                    personVoting: personVoting, /*Oylayan kişi*/
+                    whoDoesItCover: "all" /*Kimler oylayabilir ve görebilir?*/
+                })
+                break;
+        
+            default:
+                break;
+        }
+
+    }
+
 }

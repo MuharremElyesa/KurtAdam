@@ -197,3 +197,37 @@ globalVariables.escapeFromTheRoom = function(io, clientID, data) {
     // Sonrasında client'e çıkış yapması için emit atıyoruz:
     io.sockets.to(clientID).emit("escapeFromTheRoom")
 }
+
+// Oy verme isteği:
+globalVariables.voting = function(io, clientID, data) {
+
+    // Oylanan kişi:
+    // console.log(data.votedPerson)
+    // Oyu veren kişi:
+    // console.log(data.personVoting)
+    // Oylamanın döndüğü oyun:
+    // console.log(data.enteredRoomKey)
+    // Hangi oylama?:
+    // console.log(data.whichVoteIsThis)
+    // Kimler oylayabilir ve görebilir:
+    // console.log(data.whoDoesItCover)
+
+    // Kendine oy veremezsin :):
+    if (/*data.votedPerson != data.personVoting*/true) {
+
+        // Hangi oylama?:
+        switch (data.whoDoesItCover) {
+
+            // Gün içinde yapılan her oyuncunun katıldığı oylama:
+            case "all":
+                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).update({
+                    
+                })
+                break;
+        
+            default:
+                break;
+        }
+
+    }
+}
