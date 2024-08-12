@@ -16,7 +16,7 @@
 # SONRA YAPILACAKLAR:
 
 # Oyuncu aktif mi diye her 5 saniyede bir istek alabiliriz bu sayede odada ve oyunda gerksiz boş oyuncu bulunmaz.
-# Ortalama sorununu çöz.
+# Ortalama sorununu çöz. (kod sırasından kaynaklı olabilir.)
 # Nasıl oynanır butonu doldurulacak.
 # Oda oyun esnasında artık mevcut değilse ana sayfaya yönlendirilsin.
 # Oyun esnasında admin oyundan çıkarsa adminliğin başkasına verilmesi.
@@ -29,7 +29,18 @@
 # Kendine oy veremezsin.
 # Olan süre bittiyse ve o sırada oyunda admin yoksa oyun kilitleniyor. Düzeltilecek.
 # Oy verme fonksiyonu her türlü oylama için kullanılabilir hale getirilecek.
+# Kurtlar ilk gece hariç her gece oy verebilir ve kurtlar birbirini görür.
+# Kişilere rollerinin görünür ya da görünmez olduğunu belirten veri tabanı bilgisi yaz.
+# Kişi oyundan çıkmak istediğinde zaten odada kayıtlı olmayabilir. (tarayıcıyı kapatıp açtıysa aldığı ID değişiyor.) bu durumda hata vermeden odadan çıkabilmesi lazım.
+# Girişte isim yazma kısmına da enter ile onaylama olayı eklenecek.
+# Oyun öncesi kişilerin listelendiği ekranda aşağı kaydırma çalışıyor mu test edilecek.
+# kişi kendi rolunu hemen altında görmeli.
 
 # Oy ihtimalleri:
 #   2 kişi eşit oy alabilir.
 #   1 kişi en çok oyu alır.
+
+# game.js client 452. satırdaki if düzeltilecek.
+# game.js server 216. satırdaki if düzeltilecek.
+
+# Oylama zamanında mıyız kontrolu rollere göre farklılık göstereceği için o kısmın düzenlenmesi lazım.

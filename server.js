@@ -81,4 +81,9 @@ io.on("connection", (connectedSocket) => {
     connectedSocket.on("escapeFromTheRoom", (data)=>{
         globalVariables.escapeFromTheRoom(io, clientID, data)
     })
+
+    // Oy vermek:
+    connectedSocket.on("voting", (data)=>{
+        globalVariables.voting(io, clientID, data)
+    })
 })
