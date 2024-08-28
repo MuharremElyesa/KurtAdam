@@ -129,7 +129,8 @@ globalVariables.roleDistribution = function(io, clientID, data) {
         // Atanan rolleri veritabanında kişilere yazdırıyoruz:
         for (let i = 0; i < players.length; i++) {
             firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(Object.keys(user_roles)[i]).update({
-                role: Object.values(user_roles)[i]
+                role: Object.values(user_roles)[i],
+                isTheRoleOpenToEveryone: false
             })
         }
 
@@ -157,6 +158,7 @@ function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
 
 // Gece:
 globalVariables.night = function(io, clientID, data) {
+    voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
         showingRolesControl: true,
         voteControl: true,
@@ -167,6 +169,7 @@ globalVariables.night = function(io, clientID, data) {
 
 // Gündüz:
 globalVariables.day = function(io, clientID, data) {
+    voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
         // console.log(snapshot.val().whichDay)
 
@@ -183,6 +186,7 @@ globalVariables.day = function(io, clientID, data) {
 
 // Oy:
 globalVariables.vote = function(io, clientID, data) {
+    voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
         dayControl: true,
         vote: timeKeeper(globalVariables.voteTime),
@@ -213,21 +217,59 @@ globalVariables.voting = function(io, clientID, data) {
     // console.log(data.whoDoesItCover)
 
     // Kendine oy veremezsin :):
-    if (/*data.votedPerson != data.personVoting*/true) {
+    if (data.votedPerson != data.personVoting) {
 
-        // Hangi oylama?:
-        switch (data.whoDoesItCover) {
+        // Zaten oy vermişsek, oyumuzu geri alıyoruz:
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).once("value", (snapshot)=>{
+            // Oy vermişse geri alıyoruz:
+            if (snapshot.val().votedPerson == data.votedPerson) {
+                
+                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).child("votedPerson").remove()
+                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).child("whichVoteIsThis").remove()
+                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).child("whoDoesItCover").remove()
 
-            // Gün içinde yapılan her oyuncunun katıldığı oylama:
-            case "all":
-                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).update({
-                    
-                })
-                break;
-        
-            default:
-                break;
-        }
+            // Vermediyse veriyoruz:
+            }else{
+
+                // Hangi oylama?:
+                switch (data.whichVoteIsThis) {
+
+                    // Köy oylaması:
+                    case "peasantVote":
+
+                        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).update({
+                            votedPerson: data.votedPerson,/*Oy verdiği kişinin ID'si*/
+                            whoDoesItCover: data.whoDoesItCover,/*Oylamayı kimler görebilir?*/
+                            whichVoteIsThis: data.whichVoteIsThis/*Verilen oy türü (köy oylaması, kurt oylaması gibi.)*/
+                        })
+
+                        break;
+                
+                    default:
+                        break;
+                }
+                
+            }
+        })
 
     }
+}
+
+// Her süre sonunda (gece, gündüz, oylama gibi) verilen oyları sıfırlayan fonksiyon:
+function voteResetter(enteredRoomKey) {
+    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
+        var players = Object.keys(snapshot.val())
+        for (let i = 0; i < players.length; i++) {
+
+            if (players[i] == "gameConfig") {
+                continue
+            }
+
+            firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(players[i]).child("votedPerson").remove()
+            firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(players[i]).child("whichVoteIsThis").remove()
+            firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(players[i]).child("whoDoesItCover").remove()
+
+        }
+        
+    })
 }

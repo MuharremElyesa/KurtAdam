@@ -255,6 +255,7 @@ socket.on("sendListContats", (data) => {
     var no_scroll_name
     var isItTimeToVote = false
     var voteClickFunction
+    var mine
 
     // İşlemlere başlamadan sayfayı temizliyoruz:
     printCards.innerHTML = ""
@@ -270,8 +271,13 @@ socket.on("sendListContats", (data) => {
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
 
+        // Döngüde sırası gelen kişi biz miyiz?:
+        var itIsMe = false
+
         // Gelen değer bizsek yapılacak işlemler:
         if (keys[i] == browserID) {
+
+            itIsMe = true
 
             // Burda oyuncunun admin olup olmadığını tespit ediyoruz. Adminse dönecek bütün süre gibi ayarlar burdan giden isteklerle değiştirilir:
             if (data.data[keys[i]].admin == true) {
@@ -351,8 +357,18 @@ socket.on("sendListContats", (data) => {
             voteClickFunction = ""
         }
 
+        if (itIsMe == true) {
+            /*
+            0: Kendimizi belli eden kart gölgesi.
+            1: Kendimizin rölünü gösteren kod.
+            */
+            mine = [" style='box-shadow: 0px 0px 10px rgb(0, 0, 255);'",playerRole]
+        }else{
+            mine = ""
+        }
+
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, "", data.data[keys[i]].name, "", no_scroll_name, keys[i], voteClickFunction)
+        contactsCard += contactCardDraft(i + 1, "", data.data[keys[i]].name, data.data[keys[i]].votedPerson, no_scroll_name, keys[i], voteClickFunction, mine, data.data[keys[i]].isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
@@ -363,10 +379,37 @@ socket.on("sendListContats", (data) => {
 })
 
 // Kişi kartı taslağı:
-function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction) {
+function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover) {
+
+    // Fonksiyon içi değişkenler:
+    var roleIMG
+    var roleDivHider = ""
+    var votedPersonShowing = " d-none"
+
+    // Kendimiz isek oyuncu kartındaki rolumuzu kendimize açıyoruz:
+    if (roleImageFinder(IsItMe[1]) != null) {
+        roleIMG = roleImageFinder(IsItMe[1])
+    }else{
+        if (isTheRoleOpenToEveryone==false) {
+            roleDivHider = " d-none"
+        }else{
+            if (roleImageFinder(playerRole) != null) {
+                roleIMG = roleImageFinder(playerRole)
+            }
+        }
+    }
+
+    // Bir oylama varsa bizi bağlıyor mu diye kontrol ediyoruz. Bağlıyorsa gösteriyoruz  (true döndüyse görebildiğimiz anlamına geliyor):
+    if (shouldWeSeeTheRole(whoDoesItCover)) {
+        if (votedPlayer!="") {
+            votedPersonShowing = ""
+        }
+    }
+
+    // Fonksiyon sonu return:
     return `
         <div class="col-6 col-sm-4 col-md-3 col-xl-2 player-card-container" id="${playerID}" ${voteClickFunction}>
-            <div class="player-card m-auto">
+            <div class="player-card m-auto" ${IsItMe[0]}>
                 <div class="player-no">${playerNumber}</div>
                 <div class="player-character"><svg width="256px" height="256px" viewbox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048" style="width: 50%; height: 50%;"></g><g id="SVGRepo_iconCarrier"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 9C8 6.79086 9.79086 5 12 5C14.2091 5 16 6.79086 16 9C16 11.2091 14.2091 13 12 13C9.79086 13 8 11.2091 8 9ZM15.8243 13.6235C17.1533 12.523 18 10.8604 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 10.8604 6.84668 12.523 8.17572 13.6235C4.98421 14.7459 3 17.2474 3 20C3 20.5523 3.44772 21 4 21C4.55228 21 5 20.5523 5 20C5 17.7306 7.3553 15 12 15C16.6447 15 19 17.7306 19 20C19 20.5523 19.4477 21 20 21C20.5523 21 21 20.5523 21 20C21 17.2474 19.0158 14.7459 15.8243 13.6235Z" fill="#000000"> </path></g></svg>
                 <div class="players-vote d-none">${playersVote}</div>
@@ -375,10 +418,10 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
                 <div class="player-name-div">
                     <div class="player-name ${no_scroll_name}">${playerName}</div>
                 </div>
-                <div class="voted-player-div d-none"><span>Oy:</span>
+                <div class="voted-player-div ${votedPersonShowing}"><span>Oy:</span>
                     <div class="voted-player no-scroll">${votedPlayer}</div>
                 </div>
-                <div class="player-role d-none"></div>
+                <div class="player-role ${roleDivHider}"><img class="player-role-IMG" src="${roleIMG}"></div>
             </div>
         </div>
         </div>
@@ -470,4 +513,32 @@ function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVotin
 
     }
 
+}
+
+// Rol tespit etme yardımcı fonksiyonu:
+function roleImageFinder(unknownRole) {
+
+    switch (unknownRole) {
+        case "villager":
+            return "img/villager.png"
+
+        case "wolf":
+            return "img/wolf.png"
+
+        default:
+            return null
+
+    }
+
+}
+
+// Bir oylamayı biz görmelimiyiz diye kontrol eden yardımcı fonksiyon:
+function shouldWeSeeTheRole(votingType) {
+    switch (votingType) {
+        case "all":
+            return true
+    
+        default:
+            return false
+    }
 }

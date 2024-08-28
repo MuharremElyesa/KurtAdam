@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------------
 # YAPILACAKLAR:
 
-# Oyun başladığında kartlara yazılan ismin uzunluğu kontrol edilip ona göre marquee efekti olan sınıf eklenecek.
 #   Oyuncu ismi sınıfı -> .player-name
 #   Oyuncu ismi animasyon iptali sınıfı -> .player-name.no-scroll
 # player-role divi ayarlanacak.
@@ -35,6 +34,10 @@
 # Girişte isim yazma kısmına da enter ile onaylama olayı eklenecek.
 # Oyun öncesi kişilerin listelendiği ekranda aşağı kaydırma çalışıyor mu test edilecek.
 # kişi kendi rolunu hemen altında görmeli.
+# Rol dağıtımlarının doğruluğu ve rastgeleliği kontrol edilecek.
+# Client kısmındaki, oyuncu kartlarının altındaki resimi göstermek için kullandığımız kısımda çok fazla kod tekrarı yaptık (switch case kısmında). O kısmın optimize edilmesi gerekiyor.
+# Odayı kuran kişi f5 attığında kimlik ve oda değişiyor. Ayrıca oda değişse bile eski odada kalmaya devam ediyor. Bu durum ne gibi sorunlar açar? Ama odaya katılım sağlandıysa f5 atınca aynı odada kalmaya devam ediyor.
+# Tüm kontroller client kısmında yazıldı. Bu bize ilerde hile sorunlarına fazlasıyla yol açabilir!!!
 
 # Oy ihtimalleri:
 #   2 kişi eşit oy alabilir.
@@ -44,3 +47,11 @@
 # game.js server 216. satırdaki if düzeltilecek.
 
 # Oylama zamanında mıyız kontrolu rollere göre farklılık göstereceği için o kısmın düzenlenmesi lazım.
+
+
+
+
+
+
+
+# Birdahaki girişte oylama ile ilgili frontent kısmı düzenlenecek. Tüm bilgiler bir dizi ya da json halinde alınıp işlenecek. no scroll'lar karakter uzunluğuna göre düzenlenecek.
