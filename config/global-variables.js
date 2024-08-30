@@ -29,7 +29,7 @@
         // Gece süresi:
             exports.nightTime = 2 /*30*/
         // Oylama süresi:
-            exports.voteTime = 30 /*30*/
+            exports.voteTime = 3000 /*30*/
     
 
 // Fonksiyonlar
