@@ -55,3 +55,20 @@
 
 
 # Birdahaki girişte oylama ile ilgili frontent kısmı düzenlenecek. Tüm bilgiler bir dizi ya da json halinde alınıp işlenecek. no scroll'lar karakter uzunluğuna göre düzenlenecek.
+
+# Ayarlanan bilgiler düzgünce return edilecek.
+
+{
+  oyuncu_ID++:{
+    oy_verdiği_kişi_ID++,
+    oy_verdiği_kişi_ismi++,
+    aldığı_oy++,
+    bize_mi_oy_vermiş (true/false)++
+  },
+  oyuncu_ID:{
+    oy_verdiği_kişi_ID,
+    oy_verdiği_kişi_ismi,
+    aldığı_oy,
+    bize_mi_oy_vermiş (true/false)
+  }
+}

@@ -256,6 +256,7 @@ socket.on("sendListContats", (data) => {
     var isItTimeToVote = false
     var voteClickFunction
     var mine
+    var votedata
 
     // İşlemlere başlamadan sayfayı temizliyoruz:
     printCards.innerHTML = ""
@@ -267,6 +268,10 @@ socket.on("sendListContats", (data) => {
     if (data.data.gameConfig.voteControl == false) {
         isItTimeToVote = true
     }
+
+    // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
+    votedata = votingInformationEditor(data)
+    console.log(votedata)
 
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
@@ -382,7 +387,7 @@ socket.on("sendListContats", (data) => {
 function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover) {
 
     // Fonksiyon içi değişkenler:
-    var roleIMG
+    var roleIMG = ""
     var roleDivHider = ""
     var votedPersonShowing = " d-none"
 
@@ -541,4 +546,68 @@ function shouldWeSeeTheRole(votingType) {
         default:
             return false
     }
+}
+
+// Oy bilglerini düzenleyen yardımcı fonksiyon:
+function votingInformationEditor(voteData) {
+
+    // Foknsiyon içi değişkenler:
+    var keys = Object.keys(voteData.data)
+    var playerID
+    var votedPersonID
+    var votedPersonName
+    var theNumberOfVotesThePlayerReceived
+    var didHeVoteForMe = false
+    var dataToBeSent = ""
+
+    // Kaç kişi varsa döngüyü o kadar çeviriyoruz:
+    for (let i = 0; i < keys.length; i++) {
+
+        // gameConfig atlanıyor:
+        if (keys[i] == "gameConfig") {
+            continue;
+        }
+
+        // Oyuncunun ID'si:
+        playerID = keys[i]
+        // Oylanan kişinin ID'si:
+        votedPersonID = voteData.data[keys[i]].votedPerson
+        // Oylanan kişinin İsmi:
+        if (voteData.data[votedPersonID]) {
+            votedPersonName = voteData.data[votedPersonID].name
+        }
+
+        // Döngüye girmeden 0'lamalar:
+        theNumberOfVotesThePlayerReceived = 0
+        // Oyuncunun aldığı oy sayısı:
+        for (let ii = 0; ii < keys.length; ii++) {
+
+            // gameConfig atlanıyor:
+            if (keys[ii] == "gameConfig") {
+                continue;
+            }
+
+            // Kontrol edilen oyuncu, diğer kontrol edilen oyuncuya oy vermişse, oyu 1 artıyor:
+            if (voteData.data[keys[ii]].votedPerson == keys[i]) {
+                theNumberOfVotesThePlayerReceived++
+            }
+            
+        }
+
+        if (votedPersonID == browserID) {
+            didHeVoteForMe = true
+        }
+        
+        dataToBeSent += playerID + " " + votedPersonID + " " + votedPersonName + " " + theNumberOfVotesThePlayerReceived + " " + didHeVoteForMe + "\n"
+
+    }
+
+
+    return dataToBeSent
+    // console.log(playerID)
+    // console.log(votedPersonID)
+    // console.log(votedPersonName)
+    // console.log(theNumberOfVotesThePlayerReceived)
+    // console.log(didHeVoteForMe)
+
 }
