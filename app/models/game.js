@@ -159,8 +159,7 @@ function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
 // Gece:
 globalVariables.night = function(io, clientID, data) {
 
-    // BU ALANA OYLAMA SONU KONTROLU VE KALAN KİŞİLER AYNI TAKIMDA MI KONTROLU YAPILACAK:
-    console.log("AAAAA")
+    endOfStageVoteControl(data.enteredRoomKey)
 
     voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
@@ -275,5 +274,33 @@ function voteResetter(enteredRoomKey) {
 
         }
         
+    })
+}
+
+// Her evre sonunda oylama varsa en çok oy alan kişiyi oyuncan çıkaran ve eğer biri oyundan çıkarsa kalan kişiler aynı takımdan mı kontrolunu sağlayan yardımcı fonksiyon:
+function endOfStageVoteControl(enteredRoomKey) {
+    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
+        var keys = Object.keys(snapshot.val())
+
+        for (let i = 0; i < keys.length; i++) {
+
+            if (keys[i] == "gameConfig") {
+                continue;
+            }
+
+            if(snapshot.val()[keys[i]].whichVoteIsThis){
+
+                switch (snapshot.val()[keys[i]].whichVoteIsThis) {
+                    case "peasantVote":
+                        // BU KISIMDA KÖY İÇİN VERİLEN OYLAR TOPLANIP EN ÇOK OYU ALAN KİŞİ ASILACAK. (BU ALANDA SORUNLAR OLABİLİR. DÜŞÜNÜLECEK.)
+                        break;
+                
+                    default:
+                        break;
+                }
+
+            }
+        }
+
     })
 }
