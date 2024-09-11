@@ -158,6 +158,10 @@ function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
 
 // Gece:
 globalVariables.night = function(io, clientID, data) {
+
+    // BU ALANA OYLAMA SONU KONTROLU VE KALAN KİŞİLER AYNI TAKIMDA MI KONTROLU YAPILACAK:
+    console.log("AAAAA")
+
     voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
         showingRolesControl: true,

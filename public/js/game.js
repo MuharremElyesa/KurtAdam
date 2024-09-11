@@ -257,6 +257,9 @@ socket.on("sendListContats", (data) => {
     var voteClickFunction
     var mine
     var votedata
+    var votedPlayer = ""
+    var playersVote = ""
+    var didHeVoteForMe
 
     // İşlemlere başlamadan sayfayı temizliyoruz:
     printCards.innerHTML = ""
@@ -271,7 +274,6 @@ socket.on("sendListContats", (data) => {
 
     // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
     votedata = votingInformationEditor(data)
-    console.log(votedata)
 
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
@@ -362,6 +364,7 @@ socket.on("sendListContats", (data) => {
             voteClickFunction = ""
         }
 
+        // Kontroldeki kişi biz miyiz?:
         if (itIsMe == true) {
             /*
             0: Kendimizi belli eden kart gölgesi.
@@ -372,8 +375,25 @@ socket.on("sendListContats", (data) => {
             mine = ""
         }
 
+        // Oy bilgileri varsa onları da tespit edip karta gönderiyoruz:
+        for (let ii = 0; ii < votedata.length; ii++) {
+            if(Object.keys(votedata[ii]) == keys[i]){
+
+                // Oylanan oyuncu:
+                votedPlayer = votedata[ii][Object.keys(votedata[ii])[0]].votedPersonName
+
+                // Kişinin aldığı oy sayısı:
+                playersVote = votedata[ii][Object.keys(votedata[ii])[0]].theNumberOfVotesThePlayerReceived
+
+                // Oyuncu bize mi oy verdi?:
+                didHeVoteForMe = votedata[ii][Object.keys(votedata[ii])[0]].didHeVoteForMe
+
+                break;
+            }
+        }
+
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, "", data.data[keys[i]].name, data.data[keys[i]].votedPerson, no_scroll_name, keys[i], voteClickFunction, mine, data.data[keys[i]].isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover)
+        contactsCard += contactCardDraft(i + 1, playersVote, data.data[keys[i]].name, votedPlayer, no_scroll_name, keys[i], voteClickFunction, mine, data.data[keys[i]].isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
@@ -384,12 +404,14 @@ socket.on("sendListContats", (data) => {
 })
 
 // Kişi kartı taslağı:
-function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover) {
+function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe) {
 
     // Fonksiyon içi değişkenler:
     var roleIMG = ""
     var roleDivHider = ""
     var votedPersonShowing = " d-none"
+    var playersVoteHider = " d-none"
+    var frameOfPlayersWhoVotedForUs = ""
 
     // Kendimiz isek oyuncu kartındaki rolumuzu kendimize açıyoruz:
     if (roleImageFinder(IsItMe[1]) != null) {
@@ -411,13 +433,23 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
         }
     }
 
+    // Kişide oy sayısı bilgisi varsa yazdırıyoruz:
+    if (playersVote != 0) {
+        playersVoteHider = ""
+    }
+
+    // Kişi bize mi oy vermiş?:
+    if (didHeVoteForMe == true) {
+        frameOfPlayersWhoVotedForUs = " style='box-shadow: 0px 0px 10px rgb(255, 0, 0);'"
+    }
+
     // Fonksiyon sonu return:
     return `
         <div class="col-6 col-sm-4 col-md-3 col-xl-2 player-card-container" id="${playerID}" ${voteClickFunction}>
-            <div class="player-card m-auto" ${IsItMe[0]}>
+            <div class="player-card m-auto" ${IsItMe[0]} ${frameOfPlayersWhoVotedForUs}>
                 <div class="player-no">${playerNumber}</div>
                 <div class="player-character"><svg width="256px" height="256px" viewbox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048" style="width: 50%; height: 50%;"></g><g id="SVGRepo_iconCarrier"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 9C8 6.79086 9.79086 5 12 5C14.2091 5 16 6.79086 16 9C16 11.2091 14.2091 13 12 13C9.79086 13 8 11.2091 8 9ZM15.8243 13.6235C17.1533 12.523 18 10.8604 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 10.8604 6.84668 12.523 8.17572 13.6235C4.98421 14.7459 3 17.2474 3 20C3 20.5523 3.44772 21 4 21C4.55228 21 5 20.5523 5 20C5 17.7306 7.3553 15 12 15C16.6447 15 19 17.7306 19 20C19 20.5523 19.4477 21 20 21C20.5523 21 21 20.5523 21 20C21 17.2474 19.0158 14.7459 15.8243 13.6235Z" fill="#000000"> </path></g></svg>
-                <div class="players-vote d-none">${playersVote}</div>
+                <div class="players-vote ${playersVoteHider}">${playersVote}</div>
             </div>
             <div class="player-info">
                 <div class="player-name-div">
@@ -553,12 +585,12 @@ function votingInformationEditor(voteData) {
 
     // Foknsiyon içi değişkenler:
     var keys = Object.keys(voteData.data)
-    var playerID
-    var votedPersonID
-    var votedPersonName
-    var theNumberOfVotesThePlayerReceived
+    var playerID = ""
+    var votedPersonID = ""
+    var votedPersonName = ""
+    var theNumberOfVotesThePlayerReceived = ""
     var didHeVoteForMe = false
-    var dataToBeSent = ""
+    var dataToBeSent = []
 
     // Kaç kişi varsa döngüyü o kadar çeviriyoruz:
     for (let i = 0; i < keys.length; i++) {
@@ -573,8 +605,11 @@ function votingInformationEditor(voteData) {
         // Oylanan kişinin ID'si:
         votedPersonID = voteData.data[keys[i]].votedPerson
         // Oylanan kişinin İsmi:
+        votedPersonName=""
         if (voteData.data[votedPersonID]) {
             votedPersonName = voteData.data[votedPersonID].name
+        }else{
+            votedPersonName = ""
         }
 
         // Döngüye girmeden 0'lamalar:
@@ -596,12 +631,20 @@ function votingInformationEditor(voteData) {
 
         if (votedPersonID == browserID) {
             didHeVoteForMe = true
+        }else{
+            didHeVoteForMe = false
         }
         
-        dataToBeSent += playerID + " " + votedPersonID + " " + votedPersonName + " " + theNumberOfVotesThePlayerReceived + " " + didHeVoteForMe + "\n"
+        dataToBeSent.push({
+            [playerID]:{
+                votedPersonID: votedPersonID,
+                votedPersonName: votedPersonName,
+                theNumberOfVotesThePlayerReceived: theNumberOfVotesThePlayerReceived,
+                didHeVoteForMe: didHeVoteForMe
+            }
+        })
 
     }
-
 
     return dataToBeSent
     // console.log(playerID)
