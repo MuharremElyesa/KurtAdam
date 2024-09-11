@@ -49,15 +49,6 @@
 # Oylama zamanında mıyız kontrolu rollere göre farklılık göstereceği için o kısmın düzenlenmesi lazım.
 
 
-
-
-
-
-
-# Birdahaki girişte oylama ile ilgili frontent kısmı düzenlenecek. Tüm bilgiler bir dizi ya da json halinde alınıp işlenecek. no scroll'lar karakter uzunluğuna göre düzenlenecek.
-
-# Ayarlanan bilgiler düzgünce return edilecek.
-
 {
   oyuncu_ID++:{
     oy_verdiği_kişi_ID++,
@@ -72,3 +63,12 @@
     bize_mi_oy_vermiş (true/false)
   }
 }
+
+[playerID]:{
+    votedPersonID: votedPersonID,
+    votedPersonName: votedPersonName,
+    theNumberOfVotesThePlayerReceived: theNumberOfVotesThePlayerReceived,
+    didHeVoteForMe: didHeVoteForMe
+}
+
+# Sonraki girişte oylama türlerine göre kontroller yapılıp en fazla oy alan oyuncu çıkartılacak. Oylama sonrasında kalan herkes aynı takımdaysa oyun bitirilip onlara kazandırılıcak. Oylar eşitse kimse asılmayacak. Ayrıca da oylama bilgilerinin ekranda nasıl gösterileceği düşünülecek.

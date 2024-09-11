@@ -17,19 +17,19 @@
             villager: "village",
             wolf: "wolf"
         }
-    // Kaç kişide bir kurt rolu atanacağını belirliyoruz:
+    // Kaç kişide bir kurt rolü atanacağını belirliyoruz:
         exports.how_many_people_have_a_wolf = 5
     // Oyundaki süre değerleri:
         // Oyunun başlamasına kalan süre:
-            exports.time_left_until_the_game_starts = 3 /*10*/
+            exports.time_left_until_the_game_starts = 5 /*10*/
         // Rollerin gösterilme süresi
-            exports.showing_roles = 3 /*8*/
+            exports.showing_roles = 5 /*8*/
         // Gündüz süresi:
-            exports.dayTime = 2 /*30*/
+            exports.dayTime = 5 /*30*/
         // Gece süresi:
-            exports.nightTime = 2 /*30*/
+            exports.nightTime = 5 /*30*/
         // Oylama süresi:
-            exports.voteTime = 3000 /*30*/
+            exports.voteTime = 15 /*30*/
     
 
 // Fonksiyonlar
