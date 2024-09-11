@@ -25,11 +25,11 @@
         // Rollerin gösterilme süresi
             exports.showing_roles = 5 /*8*/
         // Gündüz süresi:
-            exports.dayTime = 5 /*30*/
+            exports.dayTime = 3 /*30*/
         // Gece süresi:
-            exports.nightTime = 5 /*30*/
+            exports.nightTime = 3 /*30*/
         // Oylama süresi:
-            exports.voteTime = 15 /*30*/
+            exports.voteTime = 3 /*30*/
     
 
 // Fonksiyonlar
