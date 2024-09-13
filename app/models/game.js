@@ -281,6 +281,7 @@ function voteResetter(enteredRoomKey) {
 function endOfStageVoteControl(enteredRoomKey) {
     firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
         var keys = Object.keys(snapshot.val())
+        var peasantVote = []
 
         for (let i = 0; i < keys.length; i++) {
 
@@ -292,7 +293,7 @@ function endOfStageVoteControl(enteredRoomKey) {
 
                 switch (snapshot.val()[keys[i]].whichVoteIsThis) {
                     case "peasantVote":
-                        // BU KISIMDA KÖY İÇİN VERİLEN OYLAR TOPLANIP EN ÇOK OYU ALAN KİŞİ ASILACAK. (BU ALANDA SORUNLAR OLABİLİR. DÜŞÜNÜLECEK.)
+                        peasantVote.push(snapshot.val()[keys[i]].votedPerson)
                         break;
                 
                     default:
@@ -302,5 +303,44 @@ function endOfStageVoteControl(enteredRoomKey) {
             }
         }
 
+        if (peasantVote.length != 0) {
+            // Bu kısımdan devake...
+            console.log(votingResult(peasantVote))
+        }
+        
     })
+}
+
+// Oylama dizisinde kimin en çok oy aldığını tespit eden yardımcı fonksiyon (Bu kısım ChatGPT'ye yazdırılmıştır):
+function votingResult(voteArray) {
+    // İsimlerin sayısını tutmak için bir nesne oluşturuyoruz.
+    let isimSayaci = {};
+
+    // Her bir kişiyi gezip isimleri sayıyoruz.
+    voteArray.forEach(kisi => {
+        if (isimSayaci[kisi]) {
+            isimSayaci[kisi]++;
+        } else {
+            isimSayaci[kisi] = 1;
+        }
+    });
+
+    // En çok geçen ismi ve sayısını tutmak için değişkenler
+    let maxIsim = null;
+    let maxSayi = 0;
+    let ayniSayiDurumu = false;
+
+    // İsimlerin sayısını kontrol ediyoruz
+    for (let isim in isimSayaci) {
+        if (isimSayaci[isim] > maxSayi) {
+            maxSayi = isimSayaci[isim];
+            maxIsim = isim;
+            ayniSayiDurumu = false;  // Eğer yeni bir lider bulursak aynılığı sıfırlıyoruz
+        } else if (isimSayaci[isim] === maxSayi) {
+            ayniSayiDurumu = true;  // Aynı sayıda isim varsa
+        }
+    }
+
+    // Eğer aynı sayıda en çok geçen isim varsa null döndür
+    return ayniSayiDurumu ? null : maxIsim;
 }
