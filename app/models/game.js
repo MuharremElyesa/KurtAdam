@@ -160,6 +160,7 @@ function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
 globalVariables.night = function(io, clientID, data) {
 
     endOfStageVoteControl(data.enteredRoomKey)
+    // BU KISIMA VE SONRAKİ DİĞER KONTROL NOKTALARINA KALAN KİŞİLER AYNI TAKIMDA MI SORGUSU YAPILACAK.
 
     voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
@@ -304,8 +305,18 @@ function endOfStageVoteControl(enteredRoomKey) {
         }
 
         if (peasantVote.length != 0) {
-            // Bu kısımdan devake...
-            console.log(votingResult(peasantVote))
+            
+            var peasantVotingResult = votingResult(peasantVote)
+
+            if (peasantVotingResult) {
+
+                firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(peasantVotingResult).update({
+                    isTheRoleOpenToEveryone: true,    
+                    situation: 0
+                })
+
+            }
+
         }
         
     })

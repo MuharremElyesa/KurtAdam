@@ -7,7 +7,6 @@
 
 #   Oyuncu ismi sınıfı -> .player-name
 #   Oyuncu ismi animasyon iptali sınıfı -> .player-name.no-scroll
-# player-role divi ayarlanacak.
 # Oyun ekranında yenileme yapıldığında oyundan atacak mı yada bir değişiklik olacak mı?
 # game.pug dosyasına açıklama satırları yazılacak.
 
@@ -18,30 +17,21 @@
 # Ortalama sorununu çöz. (kod sırasından kaynaklı olabilir.)
 # Nasıl oynanır butonu doldurulacak.
 # Oda oyun esnasında artık mevcut değilse ana sayfaya yönlendirilsin.
-# Oyun esnasında admin oyundan çıkarsa adminliğin başkasına verilmesi.
 # Oyuna giriş ekranındaki, oyunu başlatmadan önce olan kısımdaki kişiler taştığında scroll'u aktif et.
 # Clientteki css'de tekrar eden şeyler değişkene bağlanacak.
 # Oyun bitince dinlenen on şeysi durdurulacak.
 # Herhangi bir şekilde ana sayfaya dönülse bile on fonksiyonu durdurulacak.
 # Oda yoksa ana sayfaya yönlendir.
 # Oyuna başlandıysa odaya girilemesin.
-# Kendine oy veremezsin.
 # Olan süre bittiyse ve o sırada oyunda admin yoksa oyun kilitleniyor. Düzeltilecek.
-# Oy verme fonksiyonu her türlü oylama için kullanılabilir hale getirilecek.
 # Kurtlar ilk gece hariç her gece oy verebilir ve kurtlar birbirini görür.
-# Kişilere rollerinin görünür ya da görünmez olduğunu belirten veri tabanı bilgisi yaz.
 # Kişi oyundan çıkmak istediğinde zaten odada kayıtlı olmayabilir. (tarayıcıyı kapatıp açtıysa aldığı ID değişiyor.) bu durumda hata vermeden odadan çıkabilmesi lazım.
 # Girişte isim yazma kısmına da enter ile onaylama olayı eklenecek.
 # Oyun öncesi kişilerin listelendiği ekranda aşağı kaydırma çalışıyor mu test edilecek.
-# kişi kendi rolunu hemen altında görmeli.
 # Rol dağıtımlarının doğruluğu ve rastgeleliği kontrol edilecek.
 # Client kısmındaki, oyuncu kartlarının altındaki resimi göstermek için kullandığımız kısımda çok fazla kod tekrarı yaptık (switch case kısmında). O kısmın optimize edilmesi gerekiyor.
 # Odayı kuran kişi f5 attığında kimlik ve oda değişiyor. Ayrıca oda değişse bile eski odada kalmaya devam ediyor. Bu durum ne gibi sorunlar açar? Ama odaya katılım sağlandıysa f5 atınca aynı odada kalmaya devam ediyor.
 # Tüm kontroller client kısmında yazıldı. Bu bize ilerde hile sorunlarına fazlasıyla yol açabilir!!!
-
-# Oy ihtimalleri:
-#   2 kişi eşit oy alabilir.
-#   1 kişi en çok oyu alır.
 
 # game.js client 452. satırdaki if düzeltilecek.
 # game.js server 216. satırdaki if düzeltilecek.
@@ -71,4 +61,10 @@
     didHeVoteForMe: didHeVoteForMe
 }
 
-# Sonraki girişte oylama türlerine göre kontroller yapılıp en fazla oy alan oyuncu çıkartılacak. Oylama sonrasında kalan herkes aynı takımdaysa oyun bitirilip onlara kazandırılıcak. Oylar eşitse kimse asılmayacak. Ayrıca da oylama bilgilerinin ekranda nasıl gösterileceği düşünülecek.
+# Oylama bilgilerinin ekranda nasıl gösterileceği düşünülecek.
+
+# game.js server kısmındaki 163. satıra kalan herkes aynı takımda mı sorgusu yapılacak.
+
+# Oyun esnasındaki menünün kodları optimize edilecek (game.js, client, 302 civarı).
+
+# Sonraki girişteee.... Amaaan yap işte bi şeyler :D
