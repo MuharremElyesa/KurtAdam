@@ -263,3 +263,30 @@ body{
     color: rgb(201, 201, 201);
     font-size: 20px;
 }
+
+/* Yükselen bilgi kutusu - Dış çerçeve */
+#risingInfobox_outerFrame{
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-color: rgba(255, 0, 0, 1);
+    top: 0;
+    z-index: 9999;
+    opacity: 0;
+}
+
+/* Yükselen bilgi kutusu - İç çerçeve */
+#risingInfobox_innerFrame{
+    width: 100%;
+    min-height: 250px;
+    background-color: rgba(172, 97, 27, 1);
+}
+
+/* Yükselen bilgi kutusu - Span metni */
+#risingInfobox_spanText{
+    background-color: #858585;
+    height: auto;
+    font-size: xx-large;
+    width: 100%;
+}
