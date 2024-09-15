@@ -201,7 +201,10 @@ globalVariables.vote = function(io, clientID, data) {
 // Oyun esnasındayken odadan çıkış isteği:
 globalVariables.escapeFromTheRoom = function(io, clientID, data) {
     // Oyuncuyu odadan siliyoruz:
-    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.playerID).remove()
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.playerID).update({
+        isTheRoleOpenToEveryone: true,
+        situation: 3
+    })
     // Sonrasında client'e çıkış yapması için emit atıyoruz:
     io.sockets.to(clientID).emit("escapeFromTheRoom")
 }
