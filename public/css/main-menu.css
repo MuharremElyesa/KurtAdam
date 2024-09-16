@@ -1,0 +1,14 @@
+#player-name-text{
+    display: inline-block;
+    width: fit-content;
+    overflow: visible;
+}
+
+.player-name-text-padding-left{
+    margin-left: 100%;   /*Başlangıç boşluğu*/
+}
+
+.container-ban {
+    display: block !important;  /* Bootstrap hizalamasını etkisiz kılar */
+    width: auto !important;     /* Bootstrap'in genişlik sınırını kaldırır */
+}

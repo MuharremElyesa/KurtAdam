@@ -8,6 +8,13 @@ enterGameButton.addEventListener("click", function() {
     window.location.href="/takmaIsimIleGiris?nickName="+nickNameInput.value
 })
 
+// Enter tuşuna basıldığında oyuna katıl butonu çalışır:
+nickNameInput.addEventListener("keypress", function(event){
+    if(event.key === "Enter"){
+        window.location.href="/takmaIsimIleGiris?nickName="+nickNameInput.value
+    }
+})
+
 nickNameInput.addEventListener("keyup", function() {
     enterTheGame()
 })
