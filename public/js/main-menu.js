@@ -74,3 +74,35 @@ socket.on("returnJoinTheRoom", ()=>{
 socket.on("returnCouldNotJoinTheRoom", ()=>{
     alert("Girdiğiniz oda kodu bulunamadı.")
 })
+
+// Oyuncunun adı uzunsa marquee animasyonu uyguluyoruz:
+function playerNameLengthCheck_marquee() {
+    const container = document.querySelector('.cerceve-ici')
+    const text = document.getElementById('player-name-text')
+
+    // Metin genişliği ile container genişliğini karşılaştır
+    if (text.scrollWidth > container.clientWidth) {
+
+        text.classList.add('player-name-text-padding-left')
+
+        text.style.minWidth=text.clientWidth+"px;"
+
+        const metinUzunlugu = text.scrollWidth;
+        const containerGenisligi = container.clientWidth;
+
+        // Animasyon süresini metnin uzunluğuna göre ayarla
+        const animasyonSuresi = (metinUzunlugu + containerGenisligi) / 200; // 100, hız oranı, değiştirilebilir
+
+        // Animasyon süresini CSS olarak ayarla
+        text.style.animation = `marquee ${animasyonSuresi}s linear infinite`;
+    } else {
+        text.classList.remove('player-name-text-padding-left')
+        text.style.animationDuration = ''; // Süreyi sıfırla
+    }
+}
+
+// Sayfa yüklendiğinde kontrol et
+window.onload = playerNameLengthCheck_marquee;
+
+// Eğer pencere boyutlandırılırsa tekrar kontrol et
+window.onresize = playerNameLengthCheck_marquee;

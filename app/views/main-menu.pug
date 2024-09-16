@@ -10,15 +10,18 @@ html(lang="tr")
         link(rel="stylesheet", type="text/css", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
         //- global-config.css:
         link(rel="stylesheet", href="css/global-config.css")
+        //- main-menu.css:
+        link(rel="stylesheet", href="css/main-menu.css")
         //- Socket.io CDN:
         script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js' integrity='sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ==' crossorigin='anonymous' referrerpolicy='no-referrer')
         title= gameName+" Ana Sayfa"
 
-    body(onresize="ekranGenisligiAyarlamasi()")#body
+    body#body
         .container-fluid.cerceve
             .cerceve-ici.row.justify-content-center
                 //- img.col-12.p-2.m-2(src=playerPhoto)
-                h1.col-12.text-center.text-shadow-white=playerName
+                .container-ban
+                    h1#player-name-text.text-shadow-white=playerName
             .col-12
                 input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız')
                 button#join-room-button.btn.btn-primary.col-12.mt-3(onclick='joinTheRoom()') Odaya Katıl

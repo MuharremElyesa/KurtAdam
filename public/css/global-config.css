@@ -32,11 +32,14 @@
     border-left: none;
     border-right: none;
     width: 100%;
+    max-height: 90vh;
 }
 
 /* Çerçeve içi */
 .cerceve-ici{
     background-color: rgba(21, 47, 197, 0.404);
+    overflow: hidden;
+    white-space: nowrap;
 }
 /* Çerçeve Başlığı */
 .text-shadow-white{
@@ -47,4 +50,14 @@
     width: 96px;
     box-shadow: 0px 0px 10px rgb(1, 16, 31);
     border-radius: 48px;
+}
+
+/* Marquee animasyonu: */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-200%);
+    }
 }
