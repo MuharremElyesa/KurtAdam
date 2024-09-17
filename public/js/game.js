@@ -187,7 +187,7 @@ function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime, /
             // Gecenin bitmesine kalan süre:
             case "night":
 
-                if (playerRole == "wolf" && whatDay > 1) {
+                if (playerRole == "wolf" && whatDay > 0) {
                     counterBox.innerHTML = "Kurt oylaması: " + sure + " Saniye!"
                 }else{
                     counterBox.innerHTML = "Gecenin bitmesine: " + sure + " Saniye!"
@@ -276,7 +276,7 @@ socket.emit("listContats", {
 socket.on("sendListContats", (data) => {
 
     // İç değişkenler:
-    var isItTimeToVote = false
+    var isItTimeToVote = [false]
     var voteClickFunction
     var mine
     var votedata
@@ -292,11 +292,16 @@ socket.on("sendListContats", (data) => {
     var keys = Object.keys(data.data)
 
     // Oylama zamanında mıyız?:
-    if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 1) {
-        isItTimeToVote = true
+    if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 0) {
+        isItTimeToVote[0] = true
+        isItTimeToVote[1] = "wolfVote"
     }else if (data.data.gameConfig.voteControl == false) {
-        isItTimeToVote = true
+        isItTimeToVote[0] = true
+        isItTimeToVote[1] = "peasantVote"
     }
+    console.log("playerRole:"+playerRole)
+    console.log("control:"+data.data.gameConfig.nightControl)
+    console.log("gün:"+data.data.gameConfig.whichDay)
 
     // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
     votedata = votingInformationEditor(data)
@@ -396,8 +401,8 @@ socket.on("sendListContats", (data) => {
 
 
         // Oylama esnasında mıyız?:
-        if (isItTimeToVote == true) {
-            voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'peasantVote')"`
+        if (isItTimeToVote[0] == true) {
+            voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'${isItTimeToVote[1]}')"`
         } else {
             voteClickFunction = ""
         }
@@ -603,6 +608,17 @@ function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVotin
                     votedPerson: votedPerson, /*Oylanan kişi*/
                     personVoting: personVoting, /*Oylayan kişi*/
                     whoDoesItCover: "all" /*Kimler oylayabilir ve görebilir?*/
+                })
+                break;
+
+            // Kurt oylaması:
+            case "wolfVote":
+                socket.emit("voting",{
+                    enteredRoomKey: roomKey, /*Hangi oda?*/
+                    whichVoteIsThis: whichVoteIsThis, /*Hangi oylama? (kurt oylaması, köylü oylaması gibi)*/
+                    votedPerson: votedPerson, /*Oylanan kişi*/
+                    personVoting: personVoting, /*Oylayan kişi*/
+                    whoDoesItCover: "wolf" /*Kimler oylayabilir ve görebilir?*/
                 })
                 break;
         
