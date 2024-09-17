@@ -27,7 +27,7 @@
         // Gündüz süresi:
             exports.dayTime = 3 /*30*/
         // Gece süresi:
-            exports.nightTime = 3 /*30*/
+            exports.nightTime = 15 /*30*/
         // Oylama süresi:
             exports.voteTime = 3 /*30*/
     

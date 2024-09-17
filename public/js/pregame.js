@@ -41,6 +41,7 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
         quitButton.innerHTML="Ayrıl"
     }
     admin = false
+    playerNameLengthCheck_marquee()
 })
 
 // Oda yoksa veya beklenmedik bir şekilde kapandıysa oyuncuyu ana menüye yönlendiriyoruz:
@@ -61,27 +62,31 @@ function startGame() {
 
 // Oyuncunun adı uzunsa marquee animasyonu uyguluyoruz:
 function playerNameLengthCheck_marquee() {
-    const container = document.querySelector(".pre-game-participants-list-box")
-    const text = document.querySelector(".pre-game-participants-list-box-text")
+    const container = document.querySelectorAll(".pre-game-participants-list-box")
+    const text = document.querySelectorAll(".pre-game-participants-list-box-text")
 
+    for (let i = 0; i < text.length; i++) {
+        
     // Metin genişliği ile container genişliğini karşılaştır
-    if (text.scrollWidth > container.clientWidth) {
+    if (text[i].scrollWidth > container[i].clientWidth) {
 
-        text.classList.add('pre-game-participants-list-box-padding-left')
+        text[i].classList.add('pre-game-participants-list-box-padding-left')
 
-        text.style.minWidth=text.clientWidth+"px;"
+        text[i].style.minWidth=text[i].clientWidth+"px;"
 
-        const metinUzunlugu = text.scrollWidth;
-        const containerGenisligi = container.clientWidth;
+        const metinUzunlugu = text[i].scrollWidth;
+        const containerGenisligi = container[i].clientWidth;
 
         // Animasyon süresini metnin uzunluğuna göre ayarla
         const animasyonSuresi = (metinUzunlugu + containerGenisligi) / 200; // 100, hız oranı, değiştirilebilir
 
         // Animasyon süresini CSS olarak ayarla
-        text.style.animation = `marquee ${animasyonSuresi}s linear infinite`;
+        text[i].style.animation = `marquee ${animasyonSuresi}s linear infinite`;
     } else {
-        text.classList.remove('pre-game-participants-list-box-padding-left')
-        text.style.animationDuration = ''; // Süreyi sıfırla
+        text[i].classList.remove('pre-game-participants-list-box-padding-left')
+        text[i].style.animationDuration = ''; // Süreyi sıfırla
+    }
+
     }
 }
 

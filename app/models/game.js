@@ -36,7 +36,7 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
 
     // Client ne istediyse onu veriyoruz:
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
-        io.sockets.to(clientID).emit("sendingTime", {time: snapshot.val()[clientRequest], emit: clientRequest, control: snapshot.val()[clientRequest+"Control"]})
+        io.sockets.to(clientID).emit("sendingTime", {time: snapshot.val()[clientRequest], emit: clientRequest, control: snapshot.val()[clientRequest+"Control"], day: snapshot.val().whichDay})
     })
 
 }
@@ -93,7 +93,7 @@ globalVariables.roleDistribution = function(io, clientID, data) {
         // Eski kurtadam oyunundan alınan kaç kurt atanması gerektiğini hesap eden döngü:
         while (v3==0) {
             v1++,v2++
-           if (number_of_wolves > 0 && number_of_wolves <= 1) {
+           if (number_of_wolves > v1 && number_of_wolves <= v2) {
                 v3++
             } 
         }
