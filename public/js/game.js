@@ -76,7 +76,7 @@ socket.on("sendingTime", (data) => {
         case "toTheBeginningOfTheGame":
             if (data.control == false) {
                 // Oyunun başlamasına kalan süre sayacı:
-                timerFunction(data.time, "toTheBeginningOfTheGame")
+                timerFunction(data.time, "toTheBeginningOfTheGame", data.day)
                 break;
             }
 
@@ -84,7 +84,7 @@ socket.on("sendingTime", (data) => {
         case "showingRoles":
             if (data.control == false) {
                 // Rollerin gösterilmesi için süre:
-                timerFunction(data.time, "showingRoles")
+                timerFunction(data.time, "showingRoles", data.day)
                 break;
             }
 
@@ -92,7 +92,7 @@ socket.on("sendingTime", (data) => {
         case "night":
             if (data.control == false) {
                 // Gecenin bitmesine kalan süre:
-                timerFunction(data.time, "night")
+                timerFunction(data.time, "night", data.day)
                 break;
             }
 
@@ -100,7 +100,7 @@ socket.on("sendingTime", (data) => {
         case "day":
             if (data.control == false) {
                 // Gündüzün bitmesine kalan süre:
-                timerFunction(data.time, "day")
+                timerFunction(data.time, "day", data.day)
                 break;
             }
 
@@ -108,7 +108,7 @@ socket.on("sendingTime", (data) => {
         case "vote":
             if (data.control == false) {
                 // Oylamanın bitmesine kalan süre:
-                timerFunction(data.time, "vote")
+                timerFunction(data.time, "vote", data.day)
                 break;
             }
 
@@ -119,7 +119,7 @@ socket.on("sendingTime", (data) => {
 })
 
 // Süre fonksiyonu:
-function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime) {
+function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime, /*Gün*/ whatDay) {
 
     // Döngü değişkenleri:
     var completed1 = false
@@ -186,8 +186,14 @@ function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime) {
 
             // Gecenin bitmesine kalan süre:
             case "night":
-                counterBox.innerHTML = "Gecenin bitmesine: " + sure + " Saniye!"
 
+                if (playerRole == "wolf" && whatDay > 1) {
+                    counterBox.innerHTML = "Kurt oylaması: " + sure + " Saniye!"
+                }else{
+                    counterBox.innerHTML = "Gecenin bitmesine: " + sure + " Saniye!"
+                }
+
+                
                 // Döngüde tek seferlik çalıştırmak istediğimiz kodlar:
                 if (completed2 == false) {
 
@@ -270,7 +276,6 @@ socket.emit("listContats", {
 socket.on("sendListContats", (data) => {
 
     // İç değişkenler:
-    var no_scroll_name
     var isItTimeToVote = false
     var voteClickFunction
     var mine
@@ -278,6 +283,7 @@ socket.on("sendListContats", (data) => {
     var votedPlayer = ""
     var playersVote = ""
     var didHeVoteForMe
+    var isTheRoleOpenToEveryone = false
 
     // İşlemlere başlamadan sayfayı temizliyoruz:
     printCards.innerHTML = ""
@@ -286,7 +292,9 @@ socket.on("sendListContats", (data) => {
     var keys = Object.keys(data.data)
 
     // Oylama zamanında mıyız?:
-    if (data.data.gameConfig.voteControl == false) {
+    if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 1) {
+        isItTimeToVote = true
+    }else if (data.data.gameConfig.voteControl == false) {
         isItTimeToVote = true
     }
 
@@ -310,7 +318,7 @@ socket.on("sendListContats", (data) => {
             playerRole = data.data[keys[i]].role
             switch (playerRole) {
                 case "villager":
-                    if (playersStatus != 1) {
+                    if (playersStatus == 0) {
                         menuRoleText.innerHTML = "Köylü (Elendiniz)"
                     }else(
                         menuRoleText.innerHTML = "Köylü"
@@ -319,7 +327,7 @@ socket.on("sendListContats", (data) => {
                     break;
 
                 case "wolf":
-                    if (playersStatus != 1) {
+                    if (playersStatus == 0) {
                         menuRoleText.innerHTML = "Kurt (Elendiniz)"
                     }else(
                         menuRoleText.innerHTML = "Kurt"
@@ -386,14 +394,6 @@ socket.on("sendListContats", (data) => {
             continue
         }
 
-        // Gelen isimin karakter sayısı 9'dan büyükse kayırmalı yazıyı etkinleştiren sınıfı çağırarak getir:
-        if (data.data[keys[i]].name.length > 9) {
-            // console.log("büyük")
-            no_scroll_name = ""
-        } else {
-            // console.log("küçük ya da eşit")
-            no_scroll_name = "no-scroll"
-        }
 
         // Oylama esnasında mıyız?:
         if (isItTimeToVote == true) {
@@ -420,19 +420,29 @@ socket.on("sendListContats", (data) => {
             }
         }
 
+        // Özel rollerin birbirlerinin rolünü görmesi:
+        if (playerRole == "wolf" && data.data[keys[i]].role == "wolf") {
+            isTheRoleOpenToEveryone = true
+        }else{
+            isTheRoleOpenToEveryone = data.data[keys[i]].isTheRoleOpenToEveryone
+        }
+
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, playersVote, data.data[keys[i]].name, votedPlayer, no_scroll_name, keys[i], voteClickFunction, mine, data.data[keys[i]].isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation)
+        contactsCard += contactCardDraft(i + 1, playersVote, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
     printCards.innerHTML += contactsCard
     // Tüm işlemler bittikten sonra birdahaki döngü için contactsCard değişkenini temizliyoruz:
     contactsCard = ""
+    // Döngü sonu marquee kontrolleri:
+    playerNameLengthCheck_marquee(document.querySelectorAll(".player-name-div"),document.querySelectorAll(".player-name"))
+    playerNameLengthCheck_marquee(document.querySelectorAll(".voted-player-div"),document.querySelectorAll(".voted-player"))
 
 })
 
 // Kişi kartı taslağı:
-function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*no-scroll*/ no_scroll_name, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus) {
+function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus) {
 
     // Fonksiyon içi değişkenler:
     var roleIMG = ""
@@ -505,10 +515,10 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
             </div>
             <div class="player-info">
                 <div class="player-name-div">
-                    <div class="player-name ${no_scroll_name}">${playerName}</div>
+                    <div class="player-name">${playerName}</div>
                 </div>
                 <div class="voted-player-div ${votedPersonShowing}"><span>Oy:</span>
-                    <div class="voted-player no-scroll">${votedPlayer}</div>
+                    <div class="voted-player">${votedPlayer}</div>
                 </div>
                 <div class="player-role ${roleDivHider}"><img class="player-role-IMG" src="${roleIMG}"></div>
             </div>
@@ -715,4 +725,32 @@ function dyingEffect() {
     risingInfobox_spanText.innerHTML = "Öldünüz"
 
     dyingEffect_Animation.play()
+}
+
+// Oyuncunun adı uzunsa marquee animasyonu uyguluyoruz:
+function playerNameLengthCheck_marquee(container, text) {
+
+    for (let i = 0; i < text.length; i++) {
+        
+    // Metin genişliği ile container genişliğini karşılaştır
+    if (text[i].scrollWidth > container[i].clientWidth) {
+
+        text[i].classList.add('pre-game-participants-list-box-padding-left')
+
+        text[i].style.minWidth=text[i].clientWidth+"px;"
+
+        const metinUzunlugu = text[i].scrollWidth;
+        const containerGenisligi = container[i].clientWidth;
+
+        // Animasyon süresini metnin uzunluğuna göre ayarla
+        const animasyonSuresi = (metinUzunlugu + containerGenisligi) / 100; // 100, hız oranı, değiştirilebilir
+
+        // Animasyon süresini CSS olarak ayarla
+        text[i].style.animation = `marquee ${animasyonSuresi}s linear infinite`;
+    } else {
+        text[i].classList.remove('pre-game-participants-list-box-padding-left')
+        text[i].style.animationDuration = ''; // Süreyi sıfırla
+    }
+
+    }
 }

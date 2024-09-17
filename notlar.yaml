@@ -99,8 +99,15 @@
 
 # 5 kişi ve üstünde oyun rol dağıtım aşamasında çöküyor. Düzeltilecek.
 
-# Oyun içi marquee efektlerine optimizasyon yapılacak.
-
-# Oyun öncesi ekrana da marquee uygulanacak.
 
 # Beklenmedik bi şekilde oyuncu tarayıcıyı kapatırsa ya da başka bir durum meydana gelirse oyuncuyu çıktı olarak işaretlicez.
+
+# ico ayarlanacak
+
+# Bir odaya girildiğinde ancak oyuna girmeden ayrıl deyip ana enüye dönüp tekrar başka bir odaya girildiğinde sorunlar oluyor gibime geldi. Bi bakılacak.
+
+# Admin atamasında sıkıntılar var gibime geliyor. (oyundan çıkma, oyun öncesi ekranda)
+
+# Kurtlar birbirine oy verirken başka bir kurda gece oy veremez.
+
+# Sonraki girişte game.js client tarafında 400 satırdan peasantVote kısmını değiştirip kurt oylamasına devam edeceğiz.
