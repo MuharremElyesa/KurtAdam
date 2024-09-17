@@ -111,3 +111,4 @@
 # Kurtlar birbirine oy verirken başka bir kurda gece oy veremez.
 
 # Sonraki girişte game.js client tarafında 400 satırdan peasantVote kısmını değiştirip kurt oylamasına devam edeceğiz.
+# Oylama kontrolunde, oyuncu rolu kontrolden önce alınamadığı için sorunlar oluyor. Bu sorun çözülüp başka sorunlar var mı diye bakılacak.

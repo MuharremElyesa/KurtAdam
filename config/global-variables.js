@@ -18,7 +18,7 @@
             wolf: "wolf"
         }
     // Kaç kişide bir kurt rolü atanacağını belirliyoruz:
-        exports.how_many_people_have_a_wolf = 5
+        exports.how_many_people_have_a_wolf = 2 /*5*/
     // Oyundaki süre değerleri:
         // Oyunun başlamasına kalan süre:
             exports.time_left_until_the_game_starts = 5 /*10*/
@@ -27,9 +27,9 @@
         // Gündüz süresi:
             exports.dayTime = 3 /*30*/
         // Gece süresi:
-            exports.nightTime = 15 /*30*/
+            exports.nightTime = 30 /*30*/
         // Oylama süresi:
-            exports.voteTime = 3 /*30*/
+            exports.voteTime = 10 /*30*/
     
 
 // Fonksiyonlar

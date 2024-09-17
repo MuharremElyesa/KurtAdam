@@ -238,23 +238,11 @@ globalVariables.voting = function(io, clientID, data) {
             // Vermediyse veriyoruz:
             }else{
 
-                // Hangi oylama?:
-                switch (data.whichVoteIsThis) {
-
-                    // Köy oylaması:
-                    case "peasantVote":
-
-                        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).update({
-                            votedPerson: data.votedPerson,/*Oy verdiği kişinin ID'si*/
-                            whoDoesItCover: data.whoDoesItCover,/*Oylamayı kimler görebilir?*/
-                            whichVoteIsThis: data.whichVoteIsThis/*Verilen oy türü (köy oylaması, kurt oylaması gibi.)*/
-                        })
-
-                        break;
-                
-                    default:
-                        break;
-                }
+                firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.personVoting).update({
+                    votedPerson: data.votedPerson,/*Oy verdiği kişinin ID'si*/
+                    whoDoesItCover: data.whoDoesItCover,/*Oylamayı kimler görebilir?*/
+                    whichVoteIsThis: data.whichVoteIsThis/*Verilen oy türü (köy oylaması, kurt oylaması gibi.)*/
+                })
                 
             }
         })
