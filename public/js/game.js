@@ -281,15 +281,20 @@ socket.on("sendListContats", (data) => {
     var mine
     var votedata
     var votedPlayer = ""
-    var playersVote = ""
+    var playersVoteNumber = ""
     var didHeVoteForMe
     var isTheRoleOpenToEveryone = false
+
+    playerRole = data.data[browserID].role
 
     // İşlemlere başlamadan sayfayı temizliyoruz:
     printCards.innerHTML = ""
 
     // Gelen verilerinin anahtarları alındı:
     var keys = Object.keys(data.data)
+
+    // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
+    votedata = votingInformationEditor(data)
 
     // Oylama zamanında mıyız?:
     if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 0) {
@@ -299,12 +304,6 @@ socket.on("sendListContats", (data) => {
         isItTimeToVote[0] = true
         isItTimeToVote[1] = "peasantVote"
     }
-    console.log("playerRole:"+playerRole)
-    console.log("control:"+data.data.gameConfig.nightControl)
-    console.log("gün:"+data.data.gameConfig.whichDay)
-
-    // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
-    votedata = votingInformationEditor(data)
 
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
@@ -416,7 +415,7 @@ socket.on("sendListContats", (data) => {
                 votedPlayer = votedata[ii][Object.keys(votedata[ii])[0]].votedPersonName
 
                 // Kişinin aldığı oy sayısı:
-                playersVote = votedata[ii][Object.keys(votedata[ii])[0]].theNumberOfVotesThePlayerReceived
+                playersVoteNumber = votedata[ii][Object.keys(votedata[ii])[0]].theNumberOfVotesThePlayerReceived
 
                 // Oyuncu bize mi oy verdi?:
                 didHeVoteForMe = votedata[ii][Object.keys(votedata[ii])[0]].didHeVoteForMe
@@ -433,7 +432,7 @@ socket.on("sendListContats", (data) => {
         }
 
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, playersVote, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation)
+        contactsCard += contactCardDraft(i + 1, playersVoteNumber, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
@@ -447,7 +446,7 @@ socket.on("sendListContats", (data) => {
 })
 
 // Kişi kartı taslağı:
-function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ playersVote, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus) {
+function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ numberOfVotesReceived, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus) {
 
     // Fonksiyon içi değişkenler:
     var roleIMG = ""
@@ -476,21 +475,22 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
 
     // Bir oylama varsa bizi bağlıyor mu diye kontrol ediyoruz. Bağlıyorsa gösteriyoruz  (true döndüyse görebildiğimiz anlamına geliyor):
     if (shouldWeSeeTheRole(whoDoesItCover)) {
+
         if (votedPlayer!="") {
             votedPersonShowing = ""
         }
-    }
 
-    // Kişide oy sayısı bilgisi varsa yazdırıyoruz:
-    if (playersVote != 0) {
-        playersVoteHider = ""
-    }
+        // Kişide oy sayısı bilgisi varsa yazdırıyoruz:
+        if (numberOfVotesReceived != 0) {
+            playersVoteHider = ""
+        }
 
-    // Kişi bize mi oy vermiş?:
-    if (didHeVoteForMe == true) {
-        frameOfPlayersWhoVotedForUs = " style='box-shadow: 0px 0px 10px rgb(255, 0, 0);'"
-    }
+        // Kişi bize mi oy vermiş?:
+        if (didHeVoteForMe == true) {
+            frameOfPlayersWhoVotedForUs = " style='box-shadow: 0px 0px 10px rgb(255, 0, 0);'"
+        }
 
+    }
     // Biz oyunda değilsek bazı işlemleri yapamamamız gerekiyor. Bunu engelleyen sorgu:
     if (playersStatus != 1) {
         voteClickFunction = ""
@@ -516,7 +516,7 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
                 <div class="player-no">${playerNumber}</div>
                 <div class="player-character">
                 ${playerPhoto}
-                <div class="players-vote ${playersVoteHider}">${playersVote}</div>
+                <div class="players-vote ${playersVoteHider}">${numberOfVotesReceived}</div>
             </div>
             <div class="player-info">
                 <div class="player-name-div">
@@ -653,6 +653,9 @@ function shouldWeSeeTheRole(votingType) {
         case "all":
             return true
     
+        case "wolf":
+            return playerRole == "wolf"
+
         default:
             return false
     }

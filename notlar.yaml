@@ -112,3 +112,29 @@
 
 # Sonraki girişte game.js client tarafında 400 satırdan peasantVote kısmını değiştirip kurt oylamasına devam edeceğiz.
 # Oylama kontrolunde, oyuncu rolu kontrolden önce alınamadığı için sorunlar oluyor. Bu sorun çözülüp başka sorunlar var mı diye bakılacak.
+# 1 kişi ise oyunu hiç başlatma
+
+# Kurt oylamasında (köylü oylamasında da olabilir daha test etmedim) bazen oylama takılıyor. Bizden sonraki kişiye oy verdiğimizde düzeliyor. Çözülecek. !!!
+
+# numberOfVotesReceived değişkeni 477. satırdan sonra sıfırlanıyor. Çözülecek. !!!
+
+# iki ana sorun
+#   1 -> oylamada oy sayısının gösterildiği alanda çok değişik bir değişken sorunu var
+#   2 -> bazen kurt oylamasında (köyde de olabilir, bakılacak) kendinden sonraki kartlardan birine oy vermeden oylama aktif olmuyor.
+
+# dying effect animasyonunun adı değişecek.
+
+// Bir oylamayı biz görmelimiyiz diye kontrol eden yardımcı fonksiyon:
+function shouldWeSeeTheRole(votingType) {
+    switch (votingType) {
+        case "all":
+            return true
+    
+        case "wolf":
+            return playerRole == "wolf"
+
+        default:
+            return false
+    }
+}
+# Sorun bu kodda. Sonraki girişte kurcalanacak.
