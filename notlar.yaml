@@ -53,10 +53,10 @@
 }
 
 [playerID]:{
-    votedPersonID: votedPersonID,
-    votedPersonName: votedPersonName,
-    theNumberOfVotesThePlayerReceived: theNumberOfVotesThePlayerReceived,
-    didHeVoteForMe: didHeVoteForMe
+    votedPersonID: votedPersonID, (oylanan Kişi Kimliği)
+    votedPersonName: votedPersonName, (oylanan Kişi İsmi)
+    theNumberOfVotesThePlayerReceived: theNumberOfVotesThePlayerReceived, (kişi kaç oy aldı)
+    didHeVoteForMe: didHeVoteForMe (bize mi oy verdi)
 }
 
 # Oylama bilgilerinin ekranda nasıl gösterileceği düşünülecek.
@@ -124,17 +124,37 @@
 
 # dying effect animasyonunun adı değişecek.
 
-// Bir oylamayı biz görmelimiyiz diye kontrol eden yardımcı fonksiyon:
-function shouldWeSeeTheRole(votingType) {
-    switch (votingType) {
-        case "all":
-            return true
-    
-        case "wolf":
-            return playerRole == "wolf"
 
-        default:
-            return false
-    }
-}
-# Sorun bu kodda. Sonraki girişte kurcalanacak.
+# Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
+
+# clientteki shouldWeSeeTheRole fonksiyonu şu anda boşta
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Vaziyet çok karıştı. Sonraki girişte tamamen farklı bir oylama bizi ilgilendiriyor mu olayı düşünülecek.
