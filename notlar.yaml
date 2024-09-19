@@ -116,45 +116,10 @@
 
 # Kurt oylamasında (köylü oylamasında da olabilir daha test etmedim) bazen oylama takılıyor. Bizden sonraki kişiye oy verdiğimizde düzeliyor. Çözülecek. !!!
 
-# numberOfVotesReceived değişkeni 477. satırdan sonra sıfırlanıyor. Çözülecek. !!!
-
-# iki ana sorun
-#   1 -> oylamada oy sayısının gösterildiği alanda çok değişik bir değişken sorunu var
-#   2 -> bazen kurt oylamasında (köyde de olabilir, bakılacak) kendinden sonraki kartlardan birine oy vermeden oylama aktif olmuyor.
-
 # dying effect animasyonunun adı değişecek.
 
 
 # Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
 
-# clientteki shouldWeSeeTheRole fonksiyonu şu anda boşta
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Vaziyet çok karıştı. Sonraki girişte tamamen farklı bir oylama bizi ilgilendiriyor mu olayı düşünülecek.
+# kurtlar birbirine oy veremez.
+# kurt oyu da artık öldürebilsin.
