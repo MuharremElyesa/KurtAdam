@@ -42,11 +42,11 @@ const risingInfobox_innerFrame = document.getElementById("risingInfobox_innerFra
 const risingInfobox_spanText = document.getElementById("risingInfobox_spanText")
 // Ölüm efekti (KeyframeEffect):
 const dyingEffect_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFrame, [
-    {opacity: 0}, // Başlangıçta opacity (0).
-    {opacity: 1}, // Sonra (1)'e çıkıyor.
-    {opacity: 0}, // Bitiş (0).
+    { opacity: 0 }, // Başlangıçta opacity (0).
+    { opacity: 1 }, // Sonra (1)'e çıkıyor.
+    { opacity: 0 }, // Bitiş (0).
 ],
-{ duration: 3000 } // Animasyon süresi.
+    { duration: 3000 } // Animasyon süresi.
 )
 // Ölüm efekti (Animation)
 const dyingEffect_Animation = new Animation(dyingEffect_KeyframeEffect)
@@ -189,11 +189,11 @@ function timerFunction(/*Süre değeri*/ time,/*Sayılan zaman ne?*/ whatTime, /
 
                 if (playerRole == "wolf" && whatDay > 0) {
                     counterBox.innerHTML = "Kurt oylaması: " + sure + " Saniye!"
-                }else{
+                } else {
                     counterBox.innerHTML = "Gecenin bitmesine: " + sure + " Saniye!"
                 }
 
-                
+
                 // Döngüde tek seferlik çalıştırmak istediğimiz kodlar:
                 if (completed2 == false) {
 
@@ -277,10 +277,10 @@ socket.on("sendListContats", (data) => {
 
     // İç değişkenler:
     var isItTimeToVote = [false]
-    var voteClickFunction
+    var voteClickFunction = ""
     var mine
     var votedata
-    var votedPlayerIDs
+    var votingGroup
     var votedPlayer = ""
     var playersVoteNumber = ""
     var didHeVoteForMe
@@ -297,11 +297,14 @@ socket.on("sendListContats", (data) => {
     // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
     votedata = votingInformationEditor(data)
 
+    // Oyları; kurt oyları alanlar ve köy oyları alanlar gibi gruplandıran fonksiyon:
+    votingGroup = voteGrouper(data.data)
+
     // Oylama zamanında mıyız?:
     if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 0) {
         isItTimeToVote[0] = true
         isItTimeToVote[1] = "wolfVote"
-    }else if (data.data.gameConfig.voteControl == false) {
+    } else if (data.data.gameConfig.voteControl == false) {
         isItTimeToVote[0] = true
         isItTimeToVote[1] = "peasantVote"
     }
@@ -325,7 +328,7 @@ socket.on("sendListContats", (data) => {
                 case "villager":
                     if (playersStatus == 0) {
                         menuRoleText.innerHTML = "Köylü (Elendiniz)"
-                    }else(
+                    } else (
                         menuRoleText.innerHTML = "Köylü"
                     )
                     menuRoleImg.src = "img/villager.png"
@@ -334,7 +337,7 @@ socket.on("sendListContats", (data) => {
                 case "wolf":
                     if (playersStatus == 0) {
                         menuRoleText.innerHTML = "Kurt (Elendiniz)"
-                    }else(
+                    } else (
                         menuRoleText.innerHTML = "Kurt"
                     )
                     menuRoleImg.src = "img/wolf.png"
@@ -348,7 +351,7 @@ socket.on("sendListContats", (data) => {
             0: Kendimizi belli eden kart gölgesi.
             1: Kendimizin rölünü gösteren kod.
             */
-            mine = [" style='box-shadow: 0px 0px 10px rgb(0, 0, 255);'",playerRole]
+            mine = [" style='box-shadow: 0px 0px 10px rgb(0, 0, 255);'", playerRole]
 
             // Kişi şu anda öldüyse:
             if (data.data[keys[i]].situation == 0 && playersStatus == 1) {
@@ -358,7 +361,7 @@ socket.on("sendListContats", (data) => {
             // Kişinin durumunun son halini tarayıcımıza da kayıt ediyoruz:
             playersStatus = data.data[keys[i]].situation
 
-        }else{
+        } else {
             mine = ""
         }
 
@@ -409,7 +412,7 @@ socket.on("sendListContats", (data) => {
 
         // Oy bilgileri varsa onları da tespit edip karta gönderiyoruz:
         for (let ii = 0; ii < votedata.length; ii++) {
-            if(Object.keys(votedata[ii]) == keys[i]){
+            if (Object.keys(votedata[ii]) == keys[i]) {
 
                 // Oylanan oyuncu:
                 votedPlayer = votedata[ii][Object.keys(votedata[ii])[0]].votedPersonName
@@ -427,12 +430,12 @@ socket.on("sendListContats", (data) => {
         // Özel rollerin birbirlerinin rolünü görmesi:
         if (playerRole == "wolf" && data.data[keys[i]].role == "wolf") {
             isTheRoleOpenToEveryone = true
-        }else{
+        } else {
             isTheRoleOpenToEveryone = data.data[keys[i]].isTheRoleOpenToEveryone
         }
 
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, playersVoteNumber, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation, votedPlayerIDs)
+        contactsCard += contactCardDraft(i + 1, playersVoteNumber, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation, votingGroup)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
@@ -440,8 +443,8 @@ socket.on("sendListContats", (data) => {
     // Tüm işlemler bittikten sonra birdahaki döngü için contactsCard değişkenini temizliyoruz:
     contactsCard = ""
     // Döngü sonu marquee kontrolleri:
-    playerNameLengthCheck_marquee(document.querySelectorAll(".player-name-div"),document.querySelectorAll(".player-name"))
-    playerNameLengthCheck_marquee(document.querySelectorAll(".voted-player-div"),document.querySelectorAll(".voted-player"))
+    playerNameLengthCheck_marquee(document.querySelectorAll(".player-name-div"), document.querySelectorAll(".player-name"))
+    playerNameLengthCheck_marquee(document.querySelectorAll(".voted-player-div"), document.querySelectorAll(".voted-player"))
 
 })
 
@@ -463,29 +466,34 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
     // Kendimiz isek oyuncu kartındaki rolumuzu kendimize açıyoruz:
     if (roleImageFinder(IsItMe[1]) != null) {
         roleIMG = roleImageFinder(IsItMe[1])
-    }else{
-        if (isTheRoleOpenToEveryone==false) {
+    } else {
+        if (isTheRoleOpenToEveryone == false) {
             roleDivHider = " d-none"
-        }else{
+        } else {
             if (roleImageFinder(playerRole) != null) {
                 roleIMG = roleImageFinder(playerRole)
             }
         }
     }
 
-    // Oylanan oyuncu varsa göster:
-    if (votedPlayer!="") {
-        votedPersonShowing = ""
-    }
+    // Oylama bizi de kapsıyorsa gösterilecek bilgiler gözüküyor:
+    if (voteClickFunction != "") {
 
-    // Kişide oy sayısı bilgisi varsa yazdırıyoruz:
-    if (numberOfVotesReceived > 0) {
-        playersVoteHider = ""
-    }
+        // Oylanan oyuncu varsa göster:
+        if (votedPlayer != "") {
+            votedPersonShowing = ""
+        }
 
-    // Kişi bize mi oy vermiş?:
-    if (didHeVoteForMe == true) {
-        frameOfPlayersWhoVotedForUs = " style='box-shadow: 0px 0px 10px rgb(255, 0, 0);'"
+        // Kişide oy sayısı bilgisi varsa yazdırıyoruz:
+        if (numberOfVotesReceived > 0) {
+            playersVoteHider = ""
+        }
+
+        // Kişi bize mi oy vermiş?:
+        if (didHeVoteForMe == true) {
+            frameOfPlayersWhoVotedForUs = " style='box-shadow: 0px 0px 10px rgb(255, 0, 0);'"
+        }
+        
     }
 
     // Biz oyunda değilsek bazı işlemleri yapamamamız gerekiyor. Bunu engelleyen sorgu:
@@ -498,11 +506,11 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
         voteClickFunction = ""
         playerPhoto = playerPhoto_tombstone
         playerCardOpacity = " style='opacity:0.5;'"
-    }else if(pStatus == 3){
+    } else if (pStatus == 3) {
         voteClickFunction = ""
         playerPhoto = playerPhoto_cameOut
         playerCardOpacity = " style='opacity:0.5;'"
-    }else{
+    } else {
         playerPhoto = playerPhoto_player
     }
 
@@ -599,7 +607,7 @@ function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVotin
         switch (whichVoteIsThis) {
             // Köy oylaması:
             case "peasantVote":
-                socket.emit("voting",{
+                socket.emit("voting", {
                     enteredRoomKey: roomKey, /*Hangi oda?*/
                     whichVoteIsThis: whichVoteIsThis, /*Hangi oylama? (kurt oylaması, köylü oylaması gibi)*/
                     votedPerson: votedPerson, /*Oylanan kişi*/
@@ -610,7 +618,7 @@ function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVotin
 
             // Kurt oylaması:
             case "wolfVote":
-                socket.emit("voting",{
+                socket.emit("voting", {
                     enteredRoomKey: roomKey, /*Hangi oda?*/
                     whichVoteIsThis: whichVoteIsThis, /*Hangi oylama? (kurt oylaması, köylü oylaması gibi)*/
                     votedPerson: votedPerson, /*Oylanan kişi*/
@@ -618,7 +626,7 @@ function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVotin
                     whoDoesItCover: "wolf" /*Kimler oylayabilir ve görebilir?*/
                 })
                 break;
-        
+
             default:
                 break;
         }
@@ -642,20 +650,6 @@ function roleImageFinder(unknownRole) {
 
     }
 
-}
-
-// Bir oylamayı biz görmelimiyiz diye kontrol eden yardımcı fonksiyon:
-function shouldWeSeeTheRole(votingType) {
-    switch (votingType) {
-        case "all":
-            return true
-    
-        case "wolf":
-            return playerRole == "wolf"
-
-        default:
-            return false
-    }
 }
 
 // Oy bilglerini düzenleyen yardımcı fonksiyon:
@@ -683,10 +677,10 @@ function votingInformationEditor(voteData) {
         // Oylanan kişinin ID'si:
         votedPersonID = voteData.data[keys[i]].votedPerson
         // Oylanan kişinin İsmi:
-        votedPersonName=""
+        votedPersonName = ""
         if (voteData.data[votedPersonID]) {
             votedPersonName = voteData.data[votedPersonID].name
-        }else{
+        } else {
             votedPersonName = ""
         }
 
@@ -704,17 +698,17 @@ function votingInformationEditor(voteData) {
             if (voteData.data[keys[ii]].votedPerson == keys[i]) {
                 theNumberOfVotesThePlayerReceived++
             }
-            
+
         }
 
         if (votedPersonID == browserID) {
             didHeVoteForMe = true
-        }else{
+        } else {
             didHeVoteForMe = false
         }
-        
+
         dataToBeSent.push({
-            [playerID]:{
+            [playerID]: {
                 votedPersonID: votedPersonID,
                 votedPersonName: votedPersonName,
                 theNumberOfVotesThePlayerReceived: theNumberOfVotesThePlayerReceived,
@@ -747,26 +741,60 @@ function dyingEffect() {
 function playerNameLengthCheck_marquee(container, text) {
 
     for (let i = 0; i < text.length; i++) {
-        
-    // Metin genişliği ile container genişliğini karşılaştır
-    if (text[i].scrollWidth > container[i].clientWidth) {
 
-        text[i].classList.add('pre-game-participants-list-box-padding-left')
+        // Metin genişliği ile container genişliğini karşılaştır
+        if (text[i].scrollWidth > container[i].clientWidth) {
 
-        text[i].style.minWidth=text[i].clientWidth+"px;"
+            text[i].classList.add('pre-game-participants-list-box-padding-left')
 
-        const metinUzunlugu = text[i].scrollWidth;
-        const containerGenisligi = container[i].clientWidth;
+            text[i].style.minWidth = text[i].clientWidth + "px;"
 
-        // Animasyon süresini metnin uzunluğuna göre ayarla
-        const animasyonSuresi = (metinUzunlugu + containerGenisligi) / 100; // 100, hız oranı, değiştirilebilir
+            const metinUzunlugu = text[i].scrollWidth;
+            const containerGenisligi = container[i].clientWidth;
 
-        // Animasyon süresini CSS olarak ayarla
-        text[i].style.animation = `marquee ${animasyonSuresi}s linear infinite`;
-    } else {
-        text[i].classList.remove('pre-game-participants-list-box-padding-left')
-        text[i].style.animationDuration = ''; // Süreyi sıfırla
+            // Animasyon süresini metnin uzunluğuna göre ayarla
+            const animasyonSuresi = (metinUzunlugu + containerGenisligi) / 100; // 100, hız oranı, değiştirilebilir
+
+            // Animasyon süresini CSS olarak ayarla
+            text[i].style.animation = `marquee ${animasyonSuresi}s linear infinite`;
+        } else {
+            text[i].classList.remove('pre-game-participants-list-box-padding-left')
+            text[i].style.animationDuration = ''; // Süreyi sıfırla
+        }
+
+    }
+}
+
+// Oyları gruplayan yardımcı fonksiyon:
+function voteGrouper(voteData) {
+
+    // Fonksiyon içi değişkenler:
+    let keys = Object.keys(voteData)
+    let whoDoesItCover_all = []
+    let whoDoesItCover_wolf = []
+
+    // Bilgileri çeviriyoruz:
+    for (let i = 0; i < keys.length; i++) {
+
+        // Verilmiş bir oy türü varsa tespit ediyoruz:
+        if (voteData[keys[i]].whoDoesItCover != undefined) {
+
+            switch (voteData[keys[i]].whoDoesItCover) {
+                case "all":
+                    if (whoDoesItCover_all.indexOf(voteData[keys[i]].votedPerson) === -1) {
+                        whoDoesItCover_all.push(voteData[keys[i]].votedPerson)
+                    }
+                    break;
+
+                case "wolf":
+                    if (whoDoesItCover_wolf.indexOf(voteData[keys[i]].votedPerson) === -1) {
+                        whoDoesItCover_wolf.push(voteData[keys[i]].votedPerson)
+                    }
+                    break;
+            }
+
+        }
     }
 
-    }
+    return {whoDoesItCover_all, whoDoesItCover_wolf}
 }
