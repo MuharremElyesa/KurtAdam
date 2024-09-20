@@ -44,7 +44,8 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
 // Kişileri client'e gönderen socket:
 globalVariables.listContats = function(io, clientID, data) {
 
-    if (data.leave == "leave") {
+    // Kişi çıktıysa ya da oyun bittiyse on fonksiyonu durduruluyor:
+    if (data.leave == "leave" || data.game == "finished") {
         firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).off()
     }else{
         firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).on("value", (snapshot)=>{
@@ -363,7 +364,34 @@ function votingResult(voteArray) {
 
 // Kalan herkes aynı takımdan mı kontrolu, herkes aynı takımda ise oyun bitmiştir:
 function isEveryoneOnTheSameTeam(enteredRoomKey) {
-    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", ()=>{
-        // bu alanda sorgu yapılacak.
+    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
+
+        // Fonksiyon içi değişkenler:
+        let keys = Object.keys(snapshot.val())
+        let roles = []
+
+        // Her canlı kişinin rolünü bir diziye atıyoruz:
+        for (let i = 0; i < keys.length; i++) {
+            
+            // gameConfig atlanıyor:
+            if (keys[i] == "gameConfig") {
+                continue
+            }
+            
+            // Kişi ölü değilse rolünü roles dizisine alıyoruz:
+            if (snapshot.val()[keys[i]].situation == 1) {
+                roles.push(snapshot.val()[keys[i]].role)
+            }
+
+        }
+
+        // Gelen tüm roller aynı ise oyun bitmiştir:
+        if (roles.every(item => item === roles[0]) == true) {
+            firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey+"/gameConfig").update({
+                situation: 2,
+                winningRole: roles[0]
+            })
+        }
+
     })
 }

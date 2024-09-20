@@ -365,8 +365,13 @@ socket.on("sendListContats", (data) => {
             mine = ""
         }
 
-        // Gelen değer oyuncu değilse (yani "gameConfig"e eşitse) döngüyü atla:
+        // Gelen değer oyuncu değilse (yani "gameConfig"e eşitse) yapılacak işlemler:
         if (keys[i] == "gameConfig") {
+
+            // Oyun bitti mi kontrolü (oyun bittiyse on fonksiyonunu kapatıp, oyun bitti ekranını çıkartıyoruz):
+            if (data.data[keys[i]].situation == 2) {
+                gameOver(data.data[keys[i]].winningRole)
+            }
 
             // Hangi zaman diliminde olduğumuzu tespit ediyoruz:
             // Rol gösterme süresinin geçip geçmediğine bakıyoruz:
@@ -769,6 +774,18 @@ function playerNameLengthCheck_marquee(container, text) {
         }
 
     }
+}
+
+// Bitiş ekranı fonksiyonu:
+function gameOver(winnerRole) {
+
+    // BİTİŞ EKRANI YAZILACAK
+
+    socket.emit("listContats", {
+        enteredRoomKey: roomKey,
+        game: "finished"
+    })
+
 }
 
 // Oyları gruplayan yardımcı fonksiyon:
