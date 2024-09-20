@@ -121,5 +121,8 @@
 
 # Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
 
-# kurtlar birbirine oy veremez.
-# kurt oyu da artık öldürebilsin.
+
+# Oyun öncesi ekranda bizim olduğumuzu belirten bir gölge eklenebilir.
+# admin dağıtımında oyun öncesinde de sonrasında da sorun var.
+
+# Her şey rayına oturdu çok şükür. Sonraki girişte herkes aynı takımda mı kontrolu yapılacak.

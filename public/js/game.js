@@ -280,7 +280,7 @@ socket.on("sendListContats", (data) => {
     var voteClickFunction = ""
     var mine
     var votedata
-    var votingGroup
+    // var votingGroup
     var votedPlayer = ""
     var playersVoteNumber = ""
     var didHeVoteForMe
@@ -298,7 +298,7 @@ socket.on("sendListContats", (data) => {
     votedata = votingInformationEditor(data)
 
     // Oyları; kurt oyları alanlar ve köy oyları alanlar gibi gruplandıran fonksiyon:
-    votingGroup = voteGrouper(data.data)
+    // votingGroup = voteGrouper(data.data)
 
     // Oylama zamanında mıyız?:
     if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 0) {
@@ -404,7 +404,13 @@ socket.on("sendListContats", (data) => {
 
         // Oylama esnasında mıyız?:
         if (isItTimeToVote[0] == true) {
-            voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'${isItTimeToVote[1]}')"`
+            // Oylama kurt oyu ise kurtlar birbirine oy vermesin diye diğer kurtlara oylama fonksiyonu koymuyoruz:
+            if (isItTimeToVote[1] == "wolfVote" && data.data[keys[i]].role == "wolf") {
+                voteClickFunction = ""
+            }else{
+                voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'${isItTimeToVote[1]}')"`
+            }
+            
         } else {
             voteClickFunction = ""
         }
@@ -435,7 +441,7 @@ socket.on("sendListContats", (data) => {
         }
 
         // Burada da aşağıda hazırlanmış olan contactCardDraft fonksiyonuna kontrollerden geçirdiğimiz değişkenleri göndererek contactsCard isimli değişkene ek olarak ekliyoruz:
-        contactsCard += contactCardDraft(i + 1, playersVoteNumber, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, data.data[keys[i]].whoDoesItCover, didHeVoteForMe, data.data[keys[i]].situation, votingGroup)
+        contactsCard += contactCardDraft(i + 1, playersVoteNumber, data.data[keys[i]].name, votedPlayer, keys[i], voteClickFunction, mine, isTheRoleOpenToEveryone, data.data[keys[i]].role, didHeVoteForMe, data.data[keys[i]].situation)
 
     }
     // Döngü bitikten sonra hazırladığımız değişkeni sayfamıza yazdırıyoruz:
@@ -449,7 +455,7 @@ socket.on("sendListContats", (data) => {
 })
 
 // Kişi kartı taslağı:
-function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ numberOfVotesReceived, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oylama varsa kimler görebilir?*/ whoDoesItCover, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus, /*Oylanan oyuncu dizisi*/ votedPlayerArray) {
+function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Sayısı*/ numberOfVotesReceived, /*Oyuncunun İsmi*/ playerName, /*Oylanan Oyuncu*/ votedPlayer, /*Oyuncunun benzersiz numarası*/ playerID, /*Oylama zamanında isek eklenen oylama fonksiyonu*/ voteClickFunction, /*Ben miyim?*/ IsItMe, /*Rol herkese açık mı?*/ isTheRoleOpenToEveryone, /*Oyuncunun rolu*/ playerRole, /*Oyuncu bize mi oy vermiş?*/ didHeVoteForMe, /*Oyuncunun durumu (Ölü, canlı, izleyici gibi)*/ pStatus) {
 
     // Fonksiyon içi değişkenler:
     var roleIMG = ""
@@ -601,7 +607,7 @@ socket.on("escapeFromTheRoom", () => {
 function toVote(/*Oy verilen kişi*/ votedPerson, /*Oy veren kişi*/ personVoting, /*Bu ne oylaması?*/ whichVoteIsThis) {
 
     // Kendine oy veremezsin :):
-    if (/*votedPerson != personVoting*/true) {
+    if (votedPerson != personVoting) {
 
         // Hangi oylama?:
         switch (whichVoteIsThis) {
@@ -766,35 +772,35 @@ function playerNameLengthCheck_marquee(container, text) {
 }
 
 // Oyları gruplayan yardımcı fonksiyon:
-function voteGrouper(voteData) {
+// function voteGrouper(voteData) {
 
-    // Fonksiyon içi değişkenler:
-    let keys = Object.keys(voteData)
-    let whoDoesItCover_all = []
-    let whoDoesItCover_wolf = []
+//     // Fonksiyon içi değişkenler:
+//     let keys = Object.keys(voteData)
+//     let whoDoesItCover_all = []
+//     let whoDoesItCover_wolf = []
 
-    // Bilgileri çeviriyoruz:
-    for (let i = 0; i < keys.length; i++) {
+//     // Bilgileri çeviriyoruz:
+//     for (let i = 0; i < keys.length; i++) {
 
-        // Verilmiş bir oy türü varsa tespit ediyoruz:
-        if (voteData[keys[i]].whoDoesItCover != undefined) {
+//         // Verilmiş bir oy türü varsa tespit ediyoruz:
+//         if (voteData[keys[i]].whoDoesItCover != undefined) {
 
-            switch (voteData[keys[i]].whoDoesItCover) {
-                case "all":
-                    if (whoDoesItCover_all.indexOf(voteData[keys[i]].votedPerson) === -1) {
-                        whoDoesItCover_all.push(voteData[keys[i]].votedPerson)
-                    }
-                    break;
+//             switch (voteData[keys[i]].whoDoesItCover) {
+//                 case "all":
+//                     if (whoDoesItCover_all.indexOf(voteData[keys[i]].votedPerson) === -1) {
+//                         whoDoesItCover_all.push(voteData[keys[i]].votedPerson)
+//                     }
+//                     break;
 
-                case "wolf":
-                    if (whoDoesItCover_wolf.indexOf(voteData[keys[i]].votedPerson) === -1) {
-                        whoDoesItCover_wolf.push(voteData[keys[i]].votedPerson)
-                    }
-                    break;
-            }
+//                 case "wolf":
+//                     if (whoDoesItCover_wolf.indexOf(voteData[keys[i]].votedPerson) === -1) {
+//                         whoDoesItCover_wolf.push(voteData[keys[i]].votedPerson)
+//                     }
+//                     break;
+//             }
 
-        }
-    }
+//         }
+//     }
 
-    return {whoDoesItCover_all, whoDoesItCover_wolf}
-}
+//     return {whoDoesItCover_all, whoDoesItCover_wolf}
+// }
