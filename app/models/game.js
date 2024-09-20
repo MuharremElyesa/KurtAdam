@@ -160,8 +160,7 @@ function timeKeeper(/*Koyulacak zaman*/ timeToBePlaced) {
 globalVariables.night = function(io, clientID, data) {
 
     endOfStageVoteControl(data.enteredRoomKey)
-    // BU KISIMA VE SONRAKİ DİĞER KONTROL NOKTALARINA KALAN KİŞİLER AYNI TAKIMDA MI SORGUSU YAPILACAK.
-
+    isEveryoneOnTheSameTeam(data.enteredRoomKey)
     voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").update({
         showingRolesControl: true,
@@ -173,6 +172,9 @@ globalVariables.night = function(io, clientID, data) {
 
 // Gündüz:
 globalVariables.day = function(io, clientID, data) {
+
+    endOfStageVoteControl(data.enteredRoomKey)
+    isEveryoneOnTheSameTeam(data.enteredRoomKey)
     voteResetter(data.enteredRoomKey)
     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
         // console.log(snapshot.val().whichDay)
@@ -205,6 +207,8 @@ globalVariables.escapeFromTheRoom = function(io, clientID, data) {
         isTheRoleOpenToEveryone: true,
         situation: 3
     })
+    // Çıkış yapıldıktan sonra kalan kişiler aynı takıma mı sorgusu:
+    isEveryoneOnTheSameTeam(data.enteredRoomKey)
     // Sonrasında client'e çıkış yapması için emit atıyoruz:
     io.sockets.to(clientID).emit("escapeFromTheRoom")
 }
@@ -269,11 +273,12 @@ function voteResetter(enteredRoomKey) {
     })
 }
 
-// Her evre sonunda oylama varsa en çok oy alan kişiyi oyuncan çıkaran ve eğer biri oyundan çıkarsa kalan kişiler aynı takımdan mı kontrolunu sağlayan yardımcı fonksiyon:
+// Her evre sonunda oylama varsa en çok oy alan kişiyi oyuncan çıkaran yardımcı fonksiyon:
 function endOfStageVoteControl(enteredRoomKey) {
     firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
         var keys = Object.keys(snapshot.val())
         var peasantVote = []
+        var wolfVote = []
 
         for (let i = 0; i < keys.length; i++) {
 
@@ -287,6 +292,10 @@ function endOfStageVoteControl(enteredRoomKey) {
                     case "peasantVote":
                         peasantVote.push(snapshot.val()[keys[i]].votedPerson)
                         break;
+
+                    case "wolfVote":
+                        wolfVote.push(snapshot.val()[keys[i]].votedPerson)
+                        break;
                 
                     default:
                         break;
@@ -295,22 +304,27 @@ function endOfStageVoteControl(enteredRoomKey) {
             }
         }
 
-        if (peasantVote.length != 0) {
+        functionThatKillsThePersonWithTheMostVotes(peasantVote, enteredRoomKey)
+        functionThatKillsThePersonWithTheMostVotes(wolfVote, enteredRoomKey)
+    })
+}
+
+// Rollere göre en çok oy alan kişiyi öldüren fonksiyon:
+function functionThatKillsThePersonWithTheMostVotes(voteData, enteredRoomKey) {
+    if (voteData.length != 0) {
             
-            var peasantVotingResult = votingResult(peasantVote)
+        var votingResultVar = votingResult(voteData)
 
-            if (peasantVotingResult) {
+        if (votingResultVar) {
 
-                firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(peasantVotingResult).update({
-                    isTheRoleOpenToEveryone: true,    
-                    situation: 0
-                })
-
-            }
+            firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).child(votingResultVar).update({
+                isTheRoleOpenToEveryone: true,    
+                situation: 0
+            })
 
         }
-        
-    })
+
+    }
 }
 
 // Oylama dizisinde kimin en çok oy aldığını tespit eden yardımcı fonksiyon (Bu kısım ChatGPT'ye yazdırılmıştır):
@@ -345,4 +359,11 @@ function votingResult(voteArray) {
 
     // Eğer aynı sayıda en çok geçen isim varsa null döndür
     return ayniSayiDurumu ? null : maxIsim;
+}
+
+// Kalan herkes aynı takımdan mı kontrolu, herkes aynı takımda ise oyun bitmiştir:
+function isEveryoneOnTheSameTeam(enteredRoomKey) {
+    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", ()=>{
+        // bu alanda sorgu yapılacak.
+    })
 }
