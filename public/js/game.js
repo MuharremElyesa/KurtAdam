@@ -50,6 +50,18 @@ const dyingEffect_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFrame, 
 )
 // Ölüm efekti (Animation)
 const dyingEffect_Animation = new Animation(dyingEffect_KeyframeEffect)
+// Oyun sonu kazanan ekranı efekti (KeyframeEffect):
+const gameOverScreen_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFrame, [
+    { opacity: 0 }, // Başlangıçta opacity (0).
+    { opacity: 1 } // Sonra ise (1)
+],
+    {
+        duration: 3000, // Animasyon süresi
+        fill: "forwards" // Animasyonun bittiği yerde kalmasını sağlıyor
+    }
+)
+// Oyun sonu ekranı (Animation):
+const gameOverScreen_Animation = new Animation(gameOverScreen_KeyframeEffect)
 
 // Oyunun başlaması için kalan süre sorgusu:
 socket.emit("timeQuery", {
@@ -779,7 +791,12 @@ function playerNameLengthCheck_marquee(container, text) {
 // Bitiş ekranı fonksiyonu:
 function gameOver(winnerRole) {
 
-    // BİTİŞ EKRANI YAZILACAK
+    risingInfobox_outerFrame.style.backgroundColor = "green"
+    risingInfobox_innerFrame.style.backgroundColor = "blackgreen"
+    risingInfobox_spanText.style.backgroundColor = "transparent"
+    risingInfobox_spanText.innerHTML = "Kazanan :"+ winnerRole
+
+    gameOverScreen_Animation.play()
 
     socket.emit("listContats", {
         enteredRoomKey: roomKey,
