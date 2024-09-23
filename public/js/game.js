@@ -20,6 +20,8 @@ const menuRoleText = document.getElementById("menu-role-text")
 const menuRoleImg = document.getElementById("menu-role-img")
 // Munu, oyundan ayrıl butonu:
 const menuLeaveTheGame = document.getElementById("menu-leave-the-game")
+// Menu, oyun sonu ekranını göster butonu:
+const menuShowEndGameScreen = document.getElementById("menu-show-end-game-screen")
 // Gün sayacı divi:
 const dayCounterDiv = document.getElementById("day-counter")
 // Serverdan gelen kişi bilgilerinin tutulduğu değişken:
@@ -40,6 +42,8 @@ const risingInfobox_outerFrame = document.getElementById("risingInfobox_outerFra
 const risingInfobox_innerFrame = document.getElementById("risingInfobox_innerFrame")
 // Yükselen bilgi kutusu - Span metni:
 const risingInfobox_spanText = document.getElementById("risingInfobox_spanText")
+// Yükselen bilgi kutusu - Butonlar kutusu:
+const risingInfobox_divbox = document.getElementById("risingInfobox_divbox")
 // Ölüm efekti (KeyframeEffect):
 const dyingEffect_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFrame, [
     { opacity: 0 }, // Başlangıçta opacity (0).
@@ -324,7 +328,6 @@ socket.on("sendListContats", (data) => {
     // Gelen anahtarlar kadar döngüyü döndürüyoruz:
     for (let i = 0; i < keys.length; i++) {
 
-
         // Gelen değer bizsek yapılacak işlemler:
         if (keys[i] == browserID) {
 
@@ -335,7 +338,6 @@ socket.on("sendListContats", (data) => {
                 adminControl = false
             }
 
-            playerRole = data.data[keys[i]].role
             switch (playerRole) {
                 case "villager":
                     if (playersStatus == 0) {
@@ -379,11 +381,6 @@ socket.on("sendListContats", (data) => {
 
         // Gelen değer oyuncu değilse (yani "gameConfig"e eşitse) yapılacak işlemler:
         if (keys[i] == "gameConfig") {
-
-            // Oyun bitti mi kontrolü (oyun bittiyse on fonksiyonunu kapatıp, oyun bitti ekranını çıkartıyoruz):
-            if (data.data[keys[i]].situation == 2) {
-                gameOver(data.data[keys[i]].winningRole)
-            }
 
             // Hangi zaman diliminde olduğumuzu tespit ediyoruz:
             // Rol gösterme süresinin geçip geçmediğine bakıyoruz:
@@ -432,7 +429,6 @@ socket.on("sendListContats", (data) => {
             voteClickFunction = ""
         }
 
-
         // Oy bilgileri varsa onları da tespit edip karta gönderiyoruz:
         for (let ii = 0; ii < votedata.length; ii++) {
             if (Object.keys(votedata[ii]) == keys[i]) {
@@ -468,6 +464,11 @@ socket.on("sendListContats", (data) => {
     // Döngü sonu marquee kontrolleri:
     playerNameLengthCheck_marquee(document.querySelectorAll(".player-name-div"), document.querySelectorAll(".player-name"))
     playerNameLengthCheck_marquee(document.querySelectorAll(".voted-player-div"), document.querySelectorAll(".voted-player"))
+
+    // Oyun bitti mi kontrolü (oyun bittiyse on fonksiyonunu kapatıp, oyun bitti ekranını çıkartıyoruz):
+    if (data.data.gameConfig.situation == 2) {
+        gameOver(data.data.gameConfig.winningRole)
+    }
 
 })
 
@@ -605,11 +606,16 @@ function vote() {
 
 // Oyunda iken oyundan ayrılma iseği:
 menuLeaveTheGame.addEventListener("click", () => {
+    leaveGame()
+})
+
+// Oyunda ayrılma fonksiyonu:
+function leaveGame() {
     socket.emit("escapeFromTheRoom", {
         enteredRoomKey: roomKey,
         playerID: browserID
     })
-})
+}
 
 // Oyunda iken oyundan ayrılma iseğine gelen cevap:
 socket.on("escapeFromTheRoom", () => {
@@ -791,10 +797,31 @@ function playerNameLengthCheck_marquee(container, text) {
 // Bitiş ekranı fonksiyonu:
 function gameOver(winnerRole) {
 
-    risingInfobox_outerFrame.style.backgroundColor = "green"
-    risingInfobox_innerFrame.style.backgroundColor = "blackgreen"
+    switch (winnerRole) {
+        case "wolf":
+            winnerRole = "Kurt Takımı!"
+            risingInfobox_innerFrame.style.backgroundColor = "red"
+            risingInfobox_outerFrame.style.backgroundColor = "rgba(255, 0, 0, 0.5)"
+            break;
+
+        case "villager":
+            winnerRole = "Köy Takımı!"
+            risingInfobox_innerFrame.style.backgroundColor = "blue"
+            risingInfobox_outerFrame.style.backgroundColor = "rgba(0, 0, 255, 0.5)"
+            break;
+    
+        default:
+            break;
+    }
+
+    risingInfobox_outerFrame.style.backdropFilter = "blur(10px)"
+    risingInfobox_divbox.style.backgroundColor = "transparent"
     risingInfobox_spanText.style.backgroundColor = "transparent"
-    risingInfobox_spanText.innerHTML = "Kazanan :"+ winnerRole
+    risingInfobox_spanText.style.color = "whitesmoke"
+    risingInfobox_divbox.classList.remove("d-none")
+    risingInfobox_spanText.innerHTML = "Kazanan: "+ winnerRole
+    
+    menuShowEndGameScreen.classList.remove("d-none")
 
     gameOverScreen_Animation.play()
 
@@ -804,6 +831,36 @@ function gameOver(winnerRole) {
     })
 
 }
+
+// risingInfobox_innerFrame'i yeniden boyutlandıran fonksiyon:
+function risingInfobox_heightAdjustment() {
+    if (innerHeight > 463) {
+        risingInfobox_innerFrame.style.height = null
+    }else{
+        risingInfobox_innerFrame.style.height = "100vh"
+    }
+}
+
+// Başlangıçta bir kere manuel çalıştırıyoruz:
+risingInfobox_heightAdjustment()
+
+// Pencere yeniden boyutlandırıldığında risingInfobox_innerFrame'i yeniden boyutlandıran fonksiyon:
+window.addEventListener('resize', risingInfobox_heightAdjustment)
+
+// Oyun sonu ekranındaki Oyun ekranını göster butonu:
+document.getElementById("risingInfobox_returnToGameScreenButton").addEventListener("click", ()=>{
+    risingInfobox_outerFrame.classList.add("d-none")
+})
+
+// Oyun sonu ekranındaki Ana menüye dön butonu:
+document.getElementById("risingInfobox_returnToMainMenuButton").addEventListener("click", ()=>{
+    leaveGame()
+})
+
+// Oyun bitince menude beliren oyun sonu ekranını göster butonu işlevi:
+menuShowEndGameScreen.addEventListener("click", ()=>{
+    risingInfobox_outerFrame.classList.remove("d-none")
+})
 
 // Oyları gruplayan yardımcı fonksiyon:
 // function voteGrouper(voteData) {

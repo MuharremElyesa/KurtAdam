@@ -108,16 +108,9 @@
 
 # Admin atamasında sıkıntılar var gibime geliyor. (oyundan çıkma, oyun öncesi ekranda)
 
-# Kurtlar birbirine oy verirken başka bir kurda gece oy veremez.
-
-# Sonraki girişte game.js client tarafında 400 satırdan peasantVote kısmını değiştirip kurt oylamasına devam edeceğiz.
-# Oylama kontrolunde, oyuncu rolu kontrolden önce alınamadığı için sorunlar oluyor. Bu sorun çözülüp başka sorunlar var mı diye bakılacak.
 # 1 kişi ise oyunu hiç başlatma
 
 # Kurt oylamasında (köylü oylamasında da olabilir daha test etmedim) bazen oylama takılıyor. Bizden sonraki kişiye oy verdiğimizde düzeliyor. Çözülecek. !!!
-
-# dying effect animasyonunun adı değişecek.
-
 
 # Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
 
@@ -125,13 +118,14 @@
 # Oyun öncesi ekranda bizim olduğumuzu belirten bir gölge eklenebilir.
 # admin dağıtımında oyun öncesinde de sonrasında da sorun var.
 
-# Her şey rayına oturdu çok şükür. Sonraki girişte herkes aynı takımda mı kontrolu yapılacak.
+
 # Kurt oylamasında kimin oy verdiği gözükmüyor.
 # Dün gece kimse ölmedi, eşit oy gibi mesajlar yazılacak.
-# Oyun bitince herkesin rolu açık olsun.
 # Menüde rolün kullanım klavuzu da yer alsın.
 
 # Sonraki girişte 782'den oyun sonu ekranından devam edicez.
-# Ekran yan döndüğünde bitiş ekranı güzel görünücek.
 # Oyun bittiyse. Oyuncu oyunu görmeyi seçtiyse, gene oyun onu ekranını görebilecek.
 # Kurt dağıtım çarpanı değişicek.
+# Kişiye özel kazandınız ya da kaybettiniz bilgisi eklenebilir.
+
+# Sonraki girişte Oyun sonu ekranına kazandınız, kaybettiniz gibi mesaj yazdırılacak.

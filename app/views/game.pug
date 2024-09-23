@@ -49,15 +49,17 @@ html(lang="tr")
                     .row
                         img#menu-role-img.m-auto.mb-3
                         h1#menu-role-text.col-12.text-center
-                        button#menu-leave-the-game.btn.btn-danger.col-12 Oyundan Ayrıl!
+                        button#menu-show-end-game-screen.btn.btn-primary.col-12.my-1.d-none Oyun Sonu Ekranını Göster
+                        button#menu-leave-the-game.btn.btn-danger.col-12.my-1 Oyundan Ayrıl!
                         
         //- Yükselen bilgi kutusu:
         #risingInfobox_outerFrame.d-flex
             #risingInfobox_innerFrame.my-auto.d-flex.py-1
                 span#risingInfobox_spanText.my-auto.text-center
-            #risingInfobox_divbox
-                button.btn.btn-success.col-12.my-1 Oyun Ekranına Dön
-                button.btn.btn-danger.col-12.mb-2.mt-1 Ana Menüye Dön
+            #risingInfobox_divbox.justify-content-center.d-none
+                center
+                    button#risingInfobox_returnToGameScreenButton.btn.btn-success.col-11.my-1 Oyun Ekranına Dön
+                    button#risingInfobox_returnToMainMenuButton.btn.btn-danger.col-11.mb-2.mt-1 Ana Menüye Dön
 
         //- Bootstrap JS ve Popper JS:
         script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")

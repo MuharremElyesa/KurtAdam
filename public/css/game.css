@@ -284,4 +284,5 @@ body{
     width: 100%;
     position: absolute;
     bottom: 0;
+    pointer-events: auto;
 }
