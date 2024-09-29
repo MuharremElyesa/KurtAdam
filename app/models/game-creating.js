@@ -84,7 +84,8 @@ globalVariables.joinTheRoom = function(io, clientID, data){
                         [data.playerID]: {
                             admin: false,
                             name: data.playerName,
-                            situation: 1
+                            situation: 1,
+                            statusInformation: false
                         }
                     })
                     kontrol = true
@@ -123,6 +124,7 @@ router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
             name: req.query.playerName,
             situation: 1,
             admin: true,
+            statusInformation: false
         },
         gameConfig: {
             situation: 0,
@@ -203,44 +205,63 @@ router.get("/odayaKatil"/*, globalVariables.isLoggedIn*/, (req, res) => {
 
 router.get("/odadanAyriliniyor", (req, res)=>{
     firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(req.query.playerID).remove()
-    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).once("value", (snapshot)=>{
 
-        if (snapshot.exists()) {
-            var keys = Object.keys(snapshot.val())
+    if (req.query.isItAdmin == true) {
 
+        firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).once("value", (snapshot)=>{
 
-            for (let i = 0; i < keys.length; i++) {
-                // console.log(keys[i])
-                if (snapshot.val()[keys[i]].admin == false) {
-                    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(keys[i]).update({admin: true})
-                    break
+            if (snapshot.exists()) {
+                var keys = Object.keys(snapshot.val())
+    
+    
+                for (let i = 0; i < keys.length; i++) {
+    
+                    if(keys[i] == "gameConfig"){
+                        continue
+                    }
+    
+                    if (snapshot.val()[keys[i]].admin == false) {
+                        firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(keys[i]).update({admin: true})
+                        break
+                    }
+                    
                 }
-                
+    
+                if (keys.length == 1 && keys == "gameConfig") {
+                    firebaseAdmin.database().ref("roomKeys/").child(req.query.enteredRoomKey).remove()
+                }
+        
+                res.render("main-menu", {
+                    gameName: globalVariables.gameName,
+                    playerName: req.query.playerName,
+                    // playerPhoto: playerPhoto,
+                    playerID: req.query.playerID
+                    // first: false
+                })
+                res.end()
+        
+            }else{
+                res.render("main-menu", {
+                    gameName: globalVariables.gameName,
+                    playerName: req.query.playerName,
+                    // playerPhoto: playerPhoto,
+                    playerID: req.query.playerID
+                    // first: false
+                })
+                res.end()
             }
+        })
+    }else{
+        res.render("main-menu", {
+            gameName: globalVariables.gameName,
+            playerName: req.query.playerName,
+            // playerPhoto: playerPhoto,
+            playerID: req.query.playerID
+            // first: false
+        })
+        res.end() 
+    }
 
-            if (keys.length == 1 && keys == "gameConfig") {
-                firebaseAdmin.database().ref("roomKeys/").child(req.query.enteredRoomKey).remove()
-            }
-    
-            res.render("main-menu", {
-                gameName: globalVariables.gameName,
-                playerName: req.query.playerName,
-                // playerPhoto: playerPhoto,
-                playerID: req.query.playerID
-                // first: false
-            })
-            res.end()
-    
-        }else{
-            res.render("main-menu", {
-                gameName: globalVariables.gameName,
-                playerName: req.query.playerName,
-                // playerPhoto: playerPhoto,
-                playerID: req.query.playerID
-                // first: false
-            })
-        }
-    })
 })
 
 router.get("/oyunuBaslat", (req, res)=>{

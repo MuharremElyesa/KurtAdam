@@ -62,12 +62,18 @@ body{
     position: fixed;
     z-index: 100;
     padding: 20px;
+    overflow-y: auto;
 }
 
 /* Menu, rol resmi */
 #menu-role-img{
     height: 120px;
     width: 120px;
+}
+
+/* Menu, rol bilgisi başlığı */
+#menu-role-information-title{
+    color:rgb(172, 0, 0);
 }
 
 /* Oyuncu kartı, konteynırı: */
@@ -252,7 +258,7 @@ body{
 
 /* Yükselen bilgi kutusu - Dış çerçeve */
 #risingInfobox_outerFrame{
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100vh;
     pointer-events: none;

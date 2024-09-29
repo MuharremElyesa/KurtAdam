@@ -17,3 +17,7 @@
     display: inline-block;
     width: auto;
 }
+
+.custom-frame-shadow{
+    box-shadow: 0px 0px 30px rgb(0, 102, 255);
+}
