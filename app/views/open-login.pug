@@ -17,7 +17,7 @@ html(lang="tr")
                 h1.text-center= gameName+" Oyununa Hoş Geldiniz"
                 h4.modal-title.text-center Devam Etmek İçin Lütfen Takma İsim Girin:
             .row.p-2
-                input#nick-name-input.m-auto.mt-3.form-control.col-12(type="text", name="nick-name")
+                input#nick-name-input.m-auto.mt-3.form-control.col-12(type="text", name="nick-name" autofocus)
                 span#nick-name-error-span.text-center.col-12.my-1 <, >, \, -, +, = ve . karakterleri haricinde karakterleri kullanın.
                 button#enter-game-button.form-control.mb-2.mt-3.btn.btn-success Oyuna Gir
                 //- Şimdilik Askıya Alınan Google ile Giriş Yap Butonu

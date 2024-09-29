@@ -86,4 +86,9 @@ io.on("connection", (connectedSocket) => {
     connectedSocket.on("voting", (data)=>{
         globalVariables.voting(io, clientID, data)
     })
+
+    // Öldü bilgisi tamamlayıcısı:
+    connectedSocket.on("deathInformationComplement", (data)=>{
+        globalVariables.deathInformationComplement(io, clientID, data)
+    })
 })

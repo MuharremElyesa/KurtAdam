@@ -1,3 +1,5 @@
+// DEĞİŞKENLER:
+
 // Ana sayaç:
 const counterBox = document.getElementById("counter-box")
 // Kişilerin kartlarını yazdıracağımız element:
@@ -18,6 +20,8 @@ const menu = document.getElementById("menu")
 const menuRoleText = document.getElementById("menu-role-text")
 // Menu, rol resmi:
 const menuRoleImg = document.getElementById("menu-role-img")
+// Menu, rol bilgisi:
+const menuRoleInformation = document.getElementById("menu-role-information")
 // Munu, oyundan ayrıl butonu:
 const menuLeaveTheGame = document.getElementById("menu-leave-the-game")
 // Menu, oyun sonu ekranını göster butonu:
@@ -66,6 +70,26 @@ const gameOverScreen_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFram
 )
 // Oyun sonu ekranı (Animation):
 const gameOverScreen_Animation = new Animation(gameOverScreen_KeyframeEffect)
+// Bir oyuncunun öldüğü bilgisi (KeyframeEffect):
+const deceasedPlayerInformation_KeyframeEffect = new KeyframeEffect(risingInfobox_outerFrame, [
+    { opacity: 0 }, // Başlangıçta opacity (0).
+    { opacity: 1 }, // Sonra (1)'e çıkıyor.
+],
+    {
+        duration: 3000, // Animasyon süresi
+        easing: "ease-out"
+    }
+)
+// Bir oyuncunun öldüğü bilgisi (Animation):
+const deceasedPlayerInformation_Animation = new Animation(deceasedPlayerInformation_KeyframeEffect)
+// Köylü rolü açıklaması:
+const villagerRoleInformation = "Sen bir Köylü'sün! Ve bir köylü olarak takımcak göreviniz kurtların kimler olduğunu tartışma anında tespit edip oy birliği ile kurtları asmanız. Ancak dikkatli olun. Kurt olmadığı halde kurt zannedip birbirinizi de asmanız mümkün. Aranızda hiç bir kurt kalmadığında oyunu kazanırsınız."
+// Kurt rolü açıklaması:
+const wolfRoleInformation = "Sen bir Kurt'sun! Kurt olduğun için rolün gereği diğer kurtların da kim olduklarını görebilirsiniz. Göreviniz tüm Köylü'leri eleyip sadece Kurt'lar olarak kalmanız. Kurt rolünün başka bir özelliği gereği gece olduğunda (ilk gece hariç) sadece Kurt'lar olarak kendi aranızda oylama yapabilirsiniz. Gün içinde de köylü oylamasına katılabiliyorsunuz. Orda da köylüleri kendinizi onlardan olduğunuza inandırıp kurtulabilirsiniz. Sadece Kurt'lar olarak kalırsanız kazanırsınız."
+
+
+
+// --------------------------------------------------------------------------------
 
 // Oyunun başlaması için kalan süre sorgusu:
 socket.emit("timeQuery", {
@@ -296,7 +320,6 @@ socket.on("sendListContats", (data) => {
     var voteClickFunction = ""
     var mine
     var votedata
-    // var votingGroup
     var votedPlayer = ""
     var playersVoteNumber = ""
     var didHeVoteForMe
@@ -312,9 +335,6 @@ socket.on("sendListContats", (data) => {
 
     // Oy sayıları, kimin kime verdiği gibi bilgileri ayarlayan fonksiyon:
     votedata = votingInformationEditor(data)
-
-    // Oyları; kurt oyları alanlar ve köy oyları alanlar gibi gruplandıran fonksiyon:
-    // votingGroup = voteGrouper(data.data)
 
     // Oylama zamanında mıyız?:
     if (playerRole == "wolf" && data.data.gameConfig.nightControl == false && data.data.gameConfig.whichDay > 0) {
@@ -338,22 +358,24 @@ socket.on("sendListContats", (data) => {
                 adminControl = false
             }
 
-            switch (playerRole) {
+            switch (data.data[keys[i]].role) {
                 case "villager":
-                    if (playersStatus == 0) {
+                    if (data.data[keys[i]].situation == 0) {
                         menuRoleText.innerHTML = "Köylü (Elendiniz)"
                     } else (
                         menuRoleText.innerHTML = "Köylü"
                     )
+                    menuRoleInformation.innerHTML = villagerRoleInformation
                     menuRoleImg.src = "img/villager.png"
                     break;
 
                 case "wolf":
-                    if (playersStatus == 0) {
+                    if (data.data[keys[i]].situation == 0) {
                         menuRoleText.innerHTML = "Kurt (Elendiniz)"
                     } else (
                         menuRoleText.innerHTML = "Kurt"
                     )
+                    menuRoleInformation.innerHTML = wolfRoleInformation
                     menuRoleImg.src = "img/wolf.png"
                     break;
 
@@ -374,6 +396,7 @@ socket.on("sendListContats", (data) => {
 
             // Kişinin durumunun son halini tarayıcımıza da kayıt ediyoruz:
             playersStatus = data.data[keys[i]].situation
+            playerRole = data.data[keys[i]].role
 
         } else {
             mine = ""
@@ -418,8 +441,12 @@ socket.on("sendListContats", (data) => {
 
         // Oylama esnasında mıyız?:
         if (isItTimeToVote[0] == true) {
+
+            // Kendimiz isek her türlü onclick dolu geliyor. Sebebi oy gösteriminden kaynaklanıyor:
+            if (keys[i] == browserID) {
+                voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'${isItTimeToVote[1]}')"`
             // Oylama kurt oyu ise kurtlar birbirine oy vermesin diye diğer kurtlara oylama fonksiyonu koymuyoruz:
-            if (isItTimeToVote[1] == "wolfVote" && data.data[keys[i]].role == "wolf") {
+            }else if (isItTimeToVote[1] == "wolfVote" && data.data[keys[i]].role == "wolf") {
                 voteClickFunction = ""
             }else{
                 voteClickFunction = ` onclick="toVote('${keys[i]}',browserID,'${isItTimeToVote[1]}')"`
@@ -468,6 +495,30 @@ socket.on("sendListContats", (data) => {
     // Oyun bitti mi kontrolü (oyun bittiyse on fonksiyonunu kapatıp, oyun bitti ekranını çıkartıyoruz):
     if (data.data.gameConfig.situation == 2) {
         gameOver(data.data.gameConfig.winningRole)
+    }
+
+})
+
+// Serverden gelen son değişiklikler bilgisi:
+socket.on("latestChanges", (data) => {
+
+    // Değişen değerdeki situation 0'sa ve bu bildirim daha önceden gösterilmediyse ve bu olay biz değilsek risingInfobox'da ölen kişinin verisini gösteriyoruz:
+    if(data.data.situation == 0 && data.data.statusInformation == false && data.changingData != browserID){
+
+        risingInfobox_outerFrame.style.backgroundColor = "transparent"
+        risingInfobox_innerFrame.style.backgroundColor = "red"
+        risingInfobox_spanText.style.backgroundColor = "transparent"
+        risingInfobox_spanText.innerHTML = data.data.name + " Öldü"
+
+        deceasedPlayerInformation_Animation.play()
+
+        if (adminControl == true) {
+            socket.emit("deathInformationComplement", {
+                enteredRoomKey: roomKey,
+                playerID: data.changingData
+            })
+        }
+
     }
 
 })
@@ -609,11 +660,12 @@ menuLeaveTheGame.addEventListener("click", () => {
     leaveGame()
 })
 
-// Oyunda ayrılma fonksiyonu:
+// Oyundan ayrılma fonksiyonu:
 function leaveGame() {
     socket.emit("escapeFromTheRoom", {
         enteredRoomKey: roomKey,
-        playerID: browserID
+        playerID: browserID,
+        isItAdmin: adminControl
     })
 }
 
@@ -799,13 +851,13 @@ function gameOver(winnerRole) {
 
     switch (winnerRole) {
         case "wolf":
-            winnerRole = "Kurt Takımı!"
+            playerRole == "wolf" ? winnerRole = "Kurt Takımı! <br> Kazandınız!" : winnerRole = "Kurt Takımı! <br> Kaybettiniz!"
             risingInfobox_innerFrame.style.backgroundColor = "red"
             risingInfobox_outerFrame.style.backgroundColor = "rgba(255, 0, 0, 0.5)"
             break;
 
         case "villager":
-            winnerRole = "Köy Takımı!"
+            playerRole == "villager" ? winnerRole = "Köy Takımı! <br> Kazandınız!" : winnerRole = "Köy Takımı! <br> Kaybettiniz!"
             risingInfobox_innerFrame.style.backgroundColor = "blue"
             risingInfobox_outerFrame.style.backgroundColor = "rgba(0, 0, 255, 0.5)"
             break;
@@ -815,6 +867,7 @@ function gameOver(winnerRole) {
     }
 
     risingInfobox_outerFrame.style.backdropFilter = "blur(10px)"
+    risingInfobox_outerFrame.style.pointerEvents = "auto"
     risingInfobox_divbox.style.backgroundColor = "transparent"
     risingInfobox_spanText.style.backgroundColor = "transparent"
     risingInfobox_spanText.style.color = "whitesmoke"
@@ -861,37 +914,3 @@ document.getElementById("risingInfobox_returnToMainMenuButton").addEventListener
 menuShowEndGameScreen.addEventListener("click", ()=>{
     risingInfobox_outerFrame.classList.remove("d-none")
 })
-
-// Oyları gruplayan yardımcı fonksiyon:
-// function voteGrouper(voteData) {
-
-//     // Fonksiyon içi değişkenler:
-//     let keys = Object.keys(voteData)
-//     let whoDoesItCover_all = []
-//     let whoDoesItCover_wolf = []
-
-//     // Bilgileri çeviriyoruz:
-//     for (let i = 0; i < keys.length; i++) {
-
-//         // Verilmiş bir oy türü varsa tespit ediyoruz:
-//         if (voteData[keys[i]].whoDoesItCover != undefined) {
-
-//             switch (voteData[keys[i]].whoDoesItCover) {
-//                 case "all":
-//                     if (whoDoesItCover_all.indexOf(voteData[keys[i]].votedPerson) === -1) {
-//                         whoDoesItCover_all.push(voteData[keys[i]].votedPerson)
-//                     }
-//                     break;
-
-//                 case "wolf":
-//                     if (whoDoesItCover_wolf.indexOf(voteData[keys[i]].votedPerson) === -1) {
-//                         whoDoesItCover_wolf.push(voteData[keys[i]].votedPerson)
-//                     }
-//                     break;
-//             }
-
-//         }
-//     }
-
-//     return {whoDoesItCover_all, whoDoesItCover_wolf}
-// }

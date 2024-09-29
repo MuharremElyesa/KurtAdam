@@ -35,9 +35,9 @@ globalVariables.timeQueryFunction = function(io, clientID, data) {
     }
 
     // Client ne istediyse onu veriyoruz:
-    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value", (snapshot)=>{
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey+"/gameConfig").once("value").then((snapshot)=>{
         io.sockets.to(clientID).emit("sendingTime", {time: snapshot.val()[clientRequest], emit: clientRequest, control: snapshot.val()[clientRequest+"Control"], day: snapshot.val().whichDay})
-    })
+    }).catch((error)=>{console.error(error)})
 
 }
 
@@ -54,6 +54,11 @@ globalVariables.listContats = function(io, clientID, data) {
                 if (snapshot.val()["gameConfig"].situation == 2 || (snapshot.val()["gameConfig"].creationDate) < (Date.now()-24*60*60*1000)) {
                     firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).off()
                 }  
+            }
+        })
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).on("child_changed", (snapshot)=>{
+            if (snapshot.exists() && snapshot.key != "gameConfig") {
+                io.sockets.to(clientID).emit("latestChanges", {data: snapshot.val(), changingData: snapshot.key})
             }
         })
     }
@@ -203,11 +208,51 @@ globalVariables.vote = function(io, clientID, data) {
 
 // Oyun esnasındayken odadan çıkış isteği:
 globalVariables.escapeFromTheRoom = function(io, clientID, data) {
-    // Oyuncuyu odadan siliyoruz:
-    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.playerID).update({
-        isTheRoleOpenToEveryone: true,
-        situation: 3
-    })
+
+    // Oda anahtarını kontrol için tutuyoruz:
+    const roomKeyRef = firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey)
+
+    roomKeyRef.once("value")
+    .then((roomSnapshot)=>{
+        if (roomSnapshot.exists()) {
+            // Oyuncu ID'sini kontrol için tutuyoruz:
+            const playerRef = roomKeyRef.child(data.playerID)
+
+            playerRef.once("value")
+            .then((playerSnapshot)=>{
+                if (playerSnapshot.exists()) {
+                    playerRef.update({
+                        admin: false,
+                        isTheRoleOpenToEveryone: true,
+                        situation: 3
+                    })
+                }
+            }).catch((error)=>{console.error(error)})
+        }
+    }).catch((error)=>{console.error(error)})
+
+    if (data.isItAdmin == true) {
+        firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).once("value")
+        .then((snapshot)=>{
+
+            var keys = Object.keys(snapshot.val())
+    
+            for (let i = 0; i < keys.length; i++) {
+
+                if(keys[i] == "gameConfig"){
+                    continue
+                }
+
+                if (snapshot.val()[keys[i]].admin == false) {
+                    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(keys[i]).update({admin: true})
+                    break
+                }
+                
+            }
+
+        }).catch((error)=>{console.error(error)})
+    }    
+
     // Çıkış yapıldıktan sonra kalan kişiler aynı takıma mı sorgusu:
     isEveryoneOnTheSameTeam(data.enteredRoomKey)
     // Sonrasında client'e çıkış yapması için emit atıyoruz:
@@ -253,6 +298,15 @@ globalVariables.voting = function(io, clientID, data) {
         })
 
     }
+}
+
+// Öldü bilgisi tamamlayıcısı
+globalVariables.deathInformationComplement = function(io, clientID, data) {
+
+    firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).child(data.playerID).update({
+        statusInformation: true
+    })
+
 }
 
 // Her süre sonunda (gece, gündüz, oylama gibi) verilen oyları sıfırlayan fonksiyon:
@@ -364,7 +418,7 @@ function votingResult(voteArray) {
 
 // Kalan herkes aynı takımdan mı kontrolu, herkes aynı takımda ise oyun bitmiştir:
 function isEveryoneOnTheSameTeam(enteredRoomKey) {
-    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value", (snapshot)=>{
+    firebaseAdmin.database().ref("roomKeys/"+enteredRoomKey).once("value").then((snapshot)=>{
 
         // Fonksiyon içi değişkenler:
         let keys = Object.keys(snapshot.val())
@@ -393,5 +447,5 @@ function isEveryoneOnTheSameTeam(enteredRoomKey) {
             })
         }
 
-    })
+    }).catch((error)=>{console.error()})
 }

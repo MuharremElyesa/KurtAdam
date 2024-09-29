@@ -1,41 +1,39 @@
 # OYUN YAYINLANDIĞINDA YAPILACAKLAR:
 
 # Oyunu public olarak yayınlayınca global-socket-io(client).js deki boğlantı kodu değişecek.
-
-# -------------------------------------------------------------------------------
-# YAPILACAKLAR:
-
-#   Oyuncu ismi sınıfı -> .player-name
-#   Oyuncu ismi animasyon iptali sınıfı -> .player-name.no-scroll
-# Oyun ekranında yenileme yapıldığında oyundan atacak mı yada bir değişiklik olacak mı?
-# game.pug dosyasına açıklama satırları yazılacak.
+# pm2 araştırılıp sunucuya kurulacak ve uygulama pm2 modulü ile çalıştırılacak.
 
 # -------------------------------------------------------------------------------
 # SONRA YAPILACAKLAR:
 
-# Oyuncu aktif mi diye her 5 saniyede bir istek alabiliriz bu sayede odada ve oyunda gerksiz boş oyuncu bulunmaz.
-# Nasıl oynanır butonu doldurulacak.
 # Oda oyun esnasında artık mevcut değilse ana sayfaya yönlendirilsin.
-# Oyuna giriş ekranındaki, oyunu başlatmadan önce olan kısımdaki kişiler taştığında scroll'u aktif et.
 # Clientteki css'de tekrar eden şeyler değişkene bağlanacak.
-# Oyun bitince dinlenen on şeysi durdurulacak.
 # Herhangi bir şekilde ana sayfaya dönülse bile on fonksiyonu durdurulacak.
 # Oda yoksa ana sayfaya yönlendir.
-# Oyuna başlandıysa odaya girilemesin.
-# Olan süre bittiyse ve o sırada oyunda admin yoksa oyun kilitleniyor. Düzeltilecek.
-# Kurtlar ilk gece hariç her gece oy verebilir ve kurtlar birbirini görür.
-# Kişi oyundan çıkmak istediğinde zaten odada kayıtlı olmayabilir. (tarayıcıyı kapatıp açtıysa aldığı ID değişiyor.) bu durumda hata vermeden odadan çıkabilmesi lazım.
-# Oyun öncesi kişilerin listelendiği ekranda aşağı kaydırma çalışıyor mu test edilecek.
-# Rol dağıtımlarının doğruluğu ve rastgeleliği kontrol edilecek.
-# Client kısmındaki, oyuncu kartlarının altındaki resimi göstermek için kullandığımız kısımda çok fazla kod tekrarı yaptık (switch case kısmında). O kısmın optimize edilmesi gerekiyor.
 # Odayı kuran kişi f5 attığında kimlik ve oda değişiyor. Ayrıca oda değişse bile eski odada kalmaya devam ediyor. Bu durum ne gibi sorunlar açar? Ama odaya katılım sağlandıysa f5 atınca aynı odada kalmaya devam ediyor.
 # Tüm kontroller client kısmında yazıldı. Bu bize ilerde hile sorunlarına fazlasıyla yol açabilir!!!
+# Her dökümana yayınlanmadan önce (ya da sonra fark etmez) açıklama satırları yazılacak.
+# Admin yenile atıp odadan çıktığında adminlik başkasına veriliyor. Burda sorun yok. Ancak eski admin tekrardan odaya katıldığında adminden adminlik düşüyor ve kimseye adminlik verilmiyor. Bu sorun çözülecek.
+# Bir odaya girildiğinde ancak oyuna girmeden ayrıl deyip ana enüye dönüp tekrar başka bir odaya girildiğinde sorunlar oluyor gibime geldi. Bi bakılacak.
+# Kurt oylamasında (köylü oylamasında da olabilir daha test etmedim) bazen oylama takılıyor. Bizden sonraki kişiye oy verdiğimizde düzeliyor. Çözülecek. !!!
+# Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
+# Oyun ekranında yenileme yapıldığında oyundan atacak mı yada bir değişiklik olacak mı?
+# Bütün veritabanı sorgularına try catch eklenecek.
+# Dün gece kimse ölmedi, eşit oy gibi mesajlar yazılacak.
 
-# game.js client 452. satırdaki if düzeltilecek.
-# game.js server 216. satırdaki if düzeltilecek.
+# -------------------------------------------------------------------------------
+# YAPILACAKLAR:
 
-# Oylama zamanında mıyız kontrolu rollere göre farklılık göstereceği için o kısmın düzenlenmesi lazım.
+# Nasıl oynanır butonu doldurulacak.
+# Oyuna başlandıysa odaya girilemesin.
+# Yayınlanmadan önce kullandığımız svg'leri atıf yapıp yapmamamız gerektiğini araştırıp, gereklilikleri yerine getirilecek. (3 tane)
+# ico ayarlanacak
+# Admin atamasında sıkıntılar var gibime geliyor. (oyundan çıkma, oyun öncesi ekranda)
+# admin dağıtımında oyun öncesinde de sonrasında da sorun var.
+# Aynı anda iki farklı oda ile test yapılacak.
 
+# -------------------------------------------------------------------------------
+# ÇEŞİTLİ TASLAKLAR:
 
 {
   oyuncu_ID++:{
@@ -59,73 +57,7 @@
     didHeVoteForMe: didHeVoteForMe (bize mi oy verdi)
 }
 
-# Oylama bilgilerinin ekranda nasıl gösterileceği düşünülecek.
+# -------------------------------------------------------------------------------
+# KARIŞIK NOTLAR & TASLAKLAR:
 
-# game.js server kısmındaki 163. satıra kalan herkes aynı takımda mı sorgusu yapılacak.
-
-# Oyun esnasındaki menünün kodları optimize edilecek (game.js, client, 302 civarı).
-
-# Birisi oyundan çıktığında da kalan herkes aynı takımda mı kontrolu yapılsın. Düşünülecek.
-
-.col-6.col-sm-4.col-md-3.col-xl-2.player-card-container
-  .player-card.m-auto
-    .player-no 1
-    .player-character
-        svg(width='256px' height='256px' viewbox='0 0 24.00 24.00' fill='none' xmlns='http://www.w3.org/2000/svg' stroke='#000000' stroke-width='0.00024000000000000003')
-            g#SVGRepo_bgCarrier(stroke-width='0')
-            g#SVGRepo_tracerCarrier(stroke-linecap='round' stroke-linejoin='round' stroke='#CCCCCC' stroke-width='0.048' style='width: 50%; height: 50%;')
-            g#SVGRepo_iconCarrier
-                path(fill-rule='evenodd' clip-rule='evenodd' d='M8 9C8 6.79086 9.79086 5 12 5C14.2091 5 16 6.79086 16 9C16 11.2091 14.2091 13 12 13C9.79086 13 8 11.2091 8 9ZM15.8243 13.6235C17.1533 12.523 18 10.8604 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 10.8604 6.84668 12.523 8.17572 13.6235C4.98421 14.7459 3 17.2474 3 20C3 20.5523 3.44772 21 4 21C4.55228 21 5 20.5523 5 20C5 17.7306 7.3553 15 12 15C16.6447 15 19 17.7306 19 20C19 20.5523 19.4477 21 20 21C20.5523 21 21 20.5523 21 20C21 17.2474 19.0158 14.7459 15.8243 13.6235Z' fill='#000000') 
-        .players-vote 13
-    .player-info
-        .player-name-div
-            .player-name.no-scroll 77MUHTAR77
-        .voted-player-div
-            span Oy:
-            .voted-player.no-scroll DENEMELİK UZUN İSİM
-        .player-role
-
-# Yayınlanmadan önce kullandığımız svg'leri atıf yapıp yapmamamız gerektiğini araştırıp, gereklilikleri yerine getirilecek. (3 tane)
-
-# Yayınlanmadan önce çeşitli animasyonlar eklenebilir.
-
-# Sonraki girişte oyun öncesi ekranındaki kişiler çoğalınca bozulan ekran düzenlenecek. İsim yazılan ekrandaki isimden sonra enter ile giriş tamamlanacak.
-
-# Her dökümana yayınlanmadan önce (ya da sonra fark etmez) açıklama satırları yazılacak.
-
-# Admin yenile atıp odadan çıktığında adminlik başkasına veriliyor. Burda sorun yok. Ancak eski admin tekrardan odaya katıldığında adminden adminlik düşüyor ve kimseye adminlik verilmiyor. Bu sorun çözülecek.
-
-# Elendiniz yazılarında sorun var.
-
-# 5 kişi ve üstünde oyun rol dağıtım aşamasında çöküyor. Düzeltilecek.
-
-
-# Beklenmedik bi şekilde oyuncu tarayıcıyı kapatırsa ya da başka bir durum meydana gelirse oyuncuyu çıktı olarak işaretlicez.
-
-# ico ayarlanacak
-
-# Bir odaya girildiğinde ancak oyuna girmeden ayrıl deyip ana enüye dönüp tekrar başka bir odaya girildiğinde sorunlar oluyor gibime geldi. Bi bakılacak.
-
-# Admin atamasında sıkıntılar var gibime geliyor. (oyundan çıkma, oyun öncesi ekranda)
-
-# 1 kişi ise oyunu hiç başlatma
-
-# Kurt oylamasında (köylü oylamasında da olabilir daha test etmedim) bazen oylama takılıyor. Bizden sonraki kişiye oy verdiğimizde düzeliyor. Çözülecek. !!!
-
-# Tüm fonksiyon içi değişkenler let olarak değiştirilecek. (Bunu araştırıp yapalım ama öyle olması gerekiyor gibime geliyo)
-
-
-# Oyun öncesi ekranda bizim olduğumuzu belirten bir gölge eklenebilir.
-# admin dağıtımında oyun öncesinde de sonrasında da sorun var.
-
-
-# Kurt oylamasında kimin oy verdiği gözükmüyor.
-# Dün gece kimse ölmedi, eşit oy gibi mesajlar yazılacak.
-# Menüde rolün kullanım klavuzu da yer alsın.
-
-# Sonraki girişte 782'den oyun sonu ekranından devam edicez.
-# Oyun bittiyse. Oyuncu oyunu görmeyi seçtiyse, gene oyun onu ekranını görebilecek.
-# Kurt dağıtım çarpanı değişicek.
-# Kişiye özel kazandınız ya da kaybettiniz bilgisi eklenebilir.
-
-# Sonraki girişte Oyun sonu ekranına kazandınız, kaybettiniz gibi mesaj yazdırılacak.
+# Admin dağıtımı halledilecek.

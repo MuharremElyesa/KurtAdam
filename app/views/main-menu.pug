@@ -23,7 +23,7 @@ html(lang="tr")
                 .container-ban
                     h1#player-name-text.text-shadow-white=playerName
             .col-12
-                input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız')
+                input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız' autofocus)
                 button#join-room-button.btn.btn-primary.col-12.mt-3(onclick='joinTheRoom()') Odaya Katıl
                 button.btn.btn-primary.col-12.mt-2(onclick='yeniOdaOlustur()') Yeni Oda Oluştur
                 button.btn.btn-warning.col-12.mt-2(onclick='') Nasıl Oynanır?

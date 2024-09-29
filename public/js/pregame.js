@@ -2,7 +2,7 @@ const preGameParticipantsList = document.getElementById("pre-game-participants-l
 const startButton = document.getElementById("start-game-button")
 const quitButton = document.getElementById("quit-button")
 let admin = false
-
+let isItMe
 
 // Odaya girdiğimiz an sunucuyu listeyi yenilemesi için tetikliyoruz:
 socket.emit("firstPreGamePlayerListRefresh", {roomKey: roomKey})
@@ -13,6 +13,9 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
     let keys = Object.keys(data1.data)
     
     keys.forEach((data2)=>{
+
+        isItMe = ""
+
         // Oyun ayarlarını içeren düğüğmü atlıyoruz:
         if (data2 == "gameConfig") {
             if (data1.data[data2].situation==1) {
@@ -21,8 +24,12 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
             return
         }
 
+        if (data2 === sessionStorage.getItem("playerID")) {
+            isItMe = " custom-frame-shadow"
+        }
+
         if (data1.data[data2].admin === true) {
-            preGameParticipantsList.innerHTML += "<div class='col-12 p-2 text-center my-1 pre-game-participants-list-box text-snadow-white' style='background-color:#6fb81b80;'><div class='pre-game-participants-list-box-text'>"+data1.data[data2].name+" (Admin) </div></div>"
+            preGameParticipantsList.innerHTML += `<div class='col-12 p-2 text-center my-1 pre-game-participants-list-box text-snadow-white ${isItMe}' style='background-color:#6fb81b80;'><div class='pre-game-participants-list-box-text'> ${data1.data[data2].name + " (Admin)"} </div></div>`
 
             if (data2 === sessionStorage.getItem("playerID")) {
                 startButton.classList.remove("d-none")
@@ -31,7 +38,11 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
             }
 
         }else{
-            preGameParticipantsList.innerHTML += "<div class='col-12 p-2 text-center my-1 pre-game-participants-list-box text-snadow-white'><div class='pre-game-participants-list-box-text'>"+data1.data[data2].name+"</div></div>"
+            preGameParticipantsList.innerHTML += `<div class='col-12 p-2 text-center my-1 pre-game-participants-list-box text-snadow-white ${isItMe}'><div class='pre-game-participants-list-box-text'> ${data1.data[data2].name} </div></div>`
+
+            if (data2 === sessionStorage.getItem("playerID")) {
+                admin = false
+            }
         }
         
     })
@@ -40,7 +51,7 @@ socket.on("preGamePlayerListRefresh", (data1)=>{
         startButton.classList.add("d-none")
         quitButton.innerHTML="Ayrıl"
     }
-    admin = false
+    
     playerNameLengthCheck_marquee()
 })
 
@@ -52,7 +63,7 @@ socket.on("theRoomIsClosed",()=>{
 
 // Odadan Ayrıl:
 function leaveTheRoom() {
-    window.location.href="/odadanAyriliniyor?playerID="+sessionStorage.getItem("playerID")+"&playerName="+sessionStorage.getItem("playerName")+"&enteredRoomKey="+roomKey
+    window.location.href="/odadanAyriliniyor?playerID="+sessionStorage.getItem("playerID")+"&playerName="+sessionStorage.getItem("playerName")+"&enteredRoomKey="+roomKey+"&isItAdmin="+admin
 }
 
 // Oyunu Başlat:
