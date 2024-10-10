@@ -9,7 +9,7 @@ const firebaseAdmin = require("./../../config/firebase-connect")
 const globalVariables = require("./../../config/global-variables")
 
 // Oyun öncesi odaya girdiğimizde odada kimlerin olduğunu listeleyen ve anlık yenileyen fonksiyon:
-globalVariables.preGamePlayerListRefresh = function(io, clientID, data1){
+globalVariables.preGamePlayerListRefresh = function (io, clientID, data1) {
     firebaseAdmin.database().ref("roomKeys").child(data1.roomKey).on("value", (snapshot) => {
         var data = snapshot.val()
 
@@ -17,14 +17,14 @@ globalVariables.preGamePlayerListRefresh = function(io, clientID, data1){
         if (data === null) {
             firebaseAdmin.database().ref("roomKeys").child(data1.roomKey).off("value")
             io.sockets.to(clientID).emit("theRoomIsClosed")
-        // Odadaki oyuncuları varsa sunucuya gönder:
-        }else{
+            // Odadaki oyuncuları varsa sunucuya gönder:
+        } else {
             io.sockets.to(clientID).emit("preGamePlayerListRefresh", {
                 data: data
             })
         }
     })
-    
+
 }
 
 // Odaya katılma fonksiyonu:
@@ -71,15 +71,21 @@ globalVariables.preGamePlayerListRefresh = function(io, clientID, data1){
 //         }
 //     })
 // }
-globalVariables.joinTheRoom = function(io, clientID, data){
+globalVariables.joinTheRoom = function (io, clientID, data) {
 
     // Girilen oda anahtarı veritabanında mevcut mu?:
-    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot)=>{
+    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot) => {
         if (snapshot.exists()) {
             var kontrol = false
+            var hasTheGameStarted = false
             var keys = Object.keys(snapshot.val())
-            keys.forEach((anahtar)=>{
-                if (data.enteredRoomKey == anahtar) {
+            var data1 = snapshot.val()
+
+            keys.forEach((anahtar) => {
+
+                if (data.enteredRoomKey == anahtar && data1[anahtar].gameConfig.situation != 0) {
+                    hasTheGameStarted = true
+                } else if (data.enteredRoomKey == anahtar && data1[anahtar].gameConfig.situation == 0) {
                     firebaseAdmin.database().ref("roomKeys").child(anahtar).update({
                         [data.playerID]: {
                             admin: false,
@@ -92,12 +98,15 @@ globalVariables.joinTheRoom = function(io, clientID, data){
                     io.sockets.to(clientID).emit("returnJoinTheRoom")
                 }
             })
-            if (kontrol===false) {
+
+            if (hasTheGameStarted === true) {
+                return io.sockets.to(clientID).emit("roomInformationToEnter", { situation: "theGameHasPassedTheInitialStage" })
+            } else if (kontrol === false) {
                 // console.log("oda yok")
-                return io.sockets.to(clientID).emit("returnCouldNotJoinTheRoom")
+                return io.sockets.to(clientID).emit("roomInformationToEnter", { situation: "noRoom" })
             }
-        }else{
-            return io.sockets.to(clientID).emit("returnCouldNotJoinTheRoom")
+        } else {
+            return io.sockets.to(clientID).emit("roomInformationToEnter", { situation: "noRoom" })
         }
     })
 
@@ -105,11 +114,11 @@ globalVariables.joinTheRoom = function(io, clientID, data){
 
 router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
 
-    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot)=>{
+    firebaseAdmin.database().ref("roomKeys").once("value", (snapshot) => {
         var keys = Object.keys(snapshot.val())
 
         keys.forEach(anahtar => {
-            if ((snapshot.val()[anahtar].gameConfig.creationDate) < (Date.now()-24*60*60*1000)) {
+            if ((snapshot.val()[anahtar].gameConfig.creationDate) < (Date.now() - 24 * 60 * 60 * 1000)) {
                 firebaseAdmin.database().ref("roomKeys").child(anahtar).remove()
             }
         })
@@ -136,7 +145,7 @@ router.get("/yeniOdaOlustur"/*, globalVariables.isLoggedIn*/, (req, res) => {
     // ve sonrasında kullanıcıyı odasına yönlendirmek:
     res.render("pregame", { gameName: globalVariables.gameName, roomKey: randomRoomKey })
 
-    
+
     // var id_counter = globalVariables.r_id_length
 
     // console.log(req.query.playerID)
@@ -203,34 +212,41 @@ router.get("/odayaKatil"/*, globalVariables.isLoggedIn*/, (req, res) => {
     res.end()
 })
 
-router.get("/odadanAyriliniyor", (req, res)=>{
-    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(req.query.playerID).remove()
+router.get("/NasilOynanir", (req, res)=>{
+    res.render("howtoplay", {
+        gameName: globalVariables.gameName
+    })
+    res.end()
+})
 
-    if (req.query.isItAdmin == true) {
+router.get("/odadanAyriliniyor", (req, res) => {
+    firebaseAdmin.database().ref("roomKeys/" + req.query.enteredRoomKey).child(req.query.playerID).remove()
 
-        firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).once("value", (snapshot)=>{
+    if (req.query.isItAdmin) {
+
+        firebaseAdmin.database().ref("roomKeys/" + req.query.enteredRoomKey).once("value", (snapshot) => {
 
             if (snapshot.exists()) {
                 var keys = Object.keys(snapshot.val())
-    
-    
+
+
                 for (let i = 0; i < keys.length; i++) {
-    
-                    if(keys[i] == "gameConfig"){
+
+                    if (keys[i] == "gameConfig") {
                         continue
                     }
-    
+
                     if (snapshot.val()[keys[i]].admin == false) {
-                        firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child(keys[i]).update({admin: true})
+                        firebaseAdmin.database().ref("roomKeys/" + req.query.enteredRoomKey).child(keys[i]).update({ admin: true })
                         break
                     }
-                    
+
                 }
-    
+
                 if (keys.length == 1 && keys == "gameConfig") {
                     firebaseAdmin.database().ref("roomKeys/").child(req.query.enteredRoomKey).remove()
                 }
-        
+
                 res.render("main-menu", {
                     gameName: globalVariables.gameName,
                     playerName: req.query.playerName,
@@ -239,8 +255,8 @@ router.get("/odadanAyriliniyor", (req, res)=>{
                     // first: false
                 })
                 res.end()
-        
-            }else{
+
+            } else {
                 res.render("main-menu", {
                     gameName: globalVariables.gameName,
                     playerName: req.query.playerName,
@@ -251,7 +267,7 @@ router.get("/odadanAyriliniyor", (req, res)=>{
                 res.end()
             }
         })
-    }else{
+    } else {
         res.render("main-menu", {
             gameName: globalVariables.gameName,
             playerName: req.query.playerName,
@@ -259,14 +275,14 @@ router.get("/odadanAyriliniyor", (req, res)=>{
             playerID: req.query.playerID
             // first: false
         })
-        res.end() 
+        res.end()
     }
 
 })
 
-router.get("/oyunuBaslat", (req, res)=>{
+router.get("/oyunuBaslat", (req, res) => {
 
-    firebaseAdmin.database().ref("roomKeys/"+req.query.enteredRoomKey).child("gameConfig").update({
+    firebaseAdmin.database().ref("roomKeys/" + req.query.enteredRoomKey).child("gameConfig").update({
         situation: 1,
         toTheBeginningOfTheGame: Math.floor(Date.now() / 1000) + globalVariables.time_left_until_the_game_starts,
         // Buradaki kontrol oyunun bu aşaması geçildi mi anlamında:
@@ -275,8 +291,8 @@ router.get("/oyunuBaslat", (req, res)=>{
 
 })
 
-router.get("/oyunBaslatiliyor", (req, res)=>{
-    res.render("game",{
+router.get("/oyunBaslatiliyor", (req, res) => {
+    res.render("game", {
         gameName: globalVariables.gameName,
         roomKey: req.query.enteredRoomKey
     })

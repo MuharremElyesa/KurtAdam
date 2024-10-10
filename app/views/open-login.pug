@@ -1,3 +1,5 @@
+include global-config.pug
+
 doctype html
 html(lang="tr")
     head
@@ -9,9 +11,11 @@ html(lang="tr")
         link(rel="stylesheet", href="css/global-config.css")
         //- open-login.css:
         link(rel="stylesheet", type="text/css", href="css/open-login.css")
+        //- Yazı Fontu:
+        +globalFont()
         title= gameName+" Oturum Açma Sayfası"
 
-    body#body
+    body#body.kite-one-regular
         .container-fluid.cerceve
             .cerceve-ici.row.justify-content-center
                 h1.text-center= gameName+" Oyununa Hoş Geldiniz"

@@ -231,7 +231,7 @@ globalVariables.escapeFromTheRoom = function(io, clientID, data) {
         }
     }).catch((error)=>{console.error(error)})
 
-    if (data.isItAdmin == true) {
+    if (data.isItAdmin) {
         firebaseAdmin.database().ref("roomKeys/"+data.enteredRoomKey).once("value")
         .then((snapshot)=>{
 
