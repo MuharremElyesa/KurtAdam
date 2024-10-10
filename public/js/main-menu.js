@@ -8,7 +8,7 @@ function signOut() {
 }
 
 // Yeni Oda Oluştur:
-function yeniOdaOlustur() {
+function createNewRoom() {
 
     window.location.href="/yeniOdaOlustur?playerName="+playerName+"&playerID="+playerID
     
@@ -34,6 +34,11 @@ function yeniOdaOlustur() {
     // xhr.send(JSON.stringify(send))
 
     // window.location.href="/yeniOdaOlustur?id="+playerID
+}
+
+// Nasıl Oynanır:
+function howToPlay() {
+    window.location.href="/NasilOynanir"
 }
 
 // Enter tuşuna basıldığında odaya katıl butonu çalışır:
@@ -70,9 +75,22 @@ socket.on("returnJoinTheRoom", ()=>{
     // })
 })
 
-// Oda veritabanında yoksa:
-socket.on("returnCouldNotJoinTheRoom", ()=>{
-    alert("Girdiğiniz oda kodu bulunamadı.")
+// Girilmek istenilen oda bilgisi:
+socket.on("roomInformationToEnter", (data)=>{
+
+    switch (data.situation) {
+        case "noRoom":
+            alert("Girdiğiniz oda kodu bulunamadı.")
+            break;
+
+        case "theGameHasPassedTheInitialStage":
+            alert("Girmek istediğiniz odada oyun başlamış ya da bitmiş.")
+            break;
+    
+        default:
+            break;
+    }
+
 })
 
 // Oyuncunun adı uzunsa marquee animasyonu uyguluyoruz:

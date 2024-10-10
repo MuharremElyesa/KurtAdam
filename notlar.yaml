@@ -1,6 +1,5 @@
 # OYUN YAYINLANDIĞINDA YAPILACAKLAR:
 
-# Oyunu public olarak yayınlayınca global-socket-io(client).js deki boğlantı kodu değişecek.
 # pm2 araştırılıp sunucuya kurulacak ve uygulama pm2 modulü ile çalıştırılacak.
 
 # -------------------------------------------------------------------------------
@@ -20,17 +19,20 @@
 # Oyun ekranında yenileme yapıldığında oyundan atacak mı yada bir değişiklik olacak mı?
 # Bütün veritabanı sorgularına try catch eklenecek.
 # Dün gece kimse ölmedi, eşit oy gibi mesajlar yazılacak.
+# Adminliği oyun öncesinde (oyunda da olabilir) başkasına ver butonu eklenecek.
 
 # -------------------------------------------------------------------------------
 # YAPILACAKLAR:
 
 # Nasıl oynanır butonu doldurulacak.
-# Oyuna başlandıysa odaya girilemesin.
 # Yayınlanmadan önce kullandığımız svg'leri atıf yapıp yapmamamız gerektiğini araştırıp, gereklilikleri yerine getirilecek. (3 tane)
 # ico ayarlanacak
 # Admin atamasında sıkıntılar var gibime geliyor. (oyundan çıkma, oyun öncesi ekranda)
 # admin dağıtımında oyun öncesinde de sonrasında da sorun var.
 # Aynı anda iki farklı oda ile test yapılacak.
+# Fotoğraflar ve isim ayarlanacak.
+# Reklam araştırması yapılcak.
+# Hosting araştırması yapılcak.
 
 # -------------------------------------------------------------------------------
 # ÇEŞİTLİ TASLAKLAR:
@@ -60,4 +62,5 @@
 # -------------------------------------------------------------------------------
 # KARIŞIK NOTLAR & TASLAKLAR:
 
-# Admin dağıtımı halledilecek.
+# Nasıl oynanır pugdan devam
+# game js deki loglar kaldırılacak.

@@ -1,3 +1,5 @@
+include global-config.pug
+
 doctype html
 //- Yönlendirmeden gelen profil fotosu:
 //- - var playerPhoto = playerPhoto
@@ -14,9 +16,11 @@ html(lang="tr")
         link(rel="stylesheet", href="css/main-menu.css")
         //- Socket.io CDN:
         script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js' integrity='sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ==' crossorigin='anonymous' referrerpolicy='no-referrer')
+        //- Yazı Fontu:
+        +globalFont()
         title= gameName+" Ana Sayfa"
 
-    body#body
+    body#body.kite-one-regular
         .container-fluid.cerceve
             .cerceve-ici.row.justify-content-center
                 //- img.col-12.p-2.m-2(src=playerPhoto)
@@ -25,8 +29,8 @@ html(lang="tr")
             .col-12
                 input#room-key-input-text.form-control.col-12.mt-3.text-center(type='text' placeholder='Oda kodunu yazınız' autofocus)
                 button#join-room-button.btn.btn-primary.col-12.mt-3(onclick='joinTheRoom()') Odaya Katıl
-                button.btn.btn-primary.col-12.mt-2(onclick='yeniOdaOlustur()') Yeni Oda Oluştur
-                button.btn.btn-warning.col-12.mt-2(onclick='') Nasıl Oynanır?
+                button.btn.btn-primary.col-12.mt-2(onclick='createNewRoom()') Yeni Oda Oluştur
+                button.btn.btn-warning.col-12.mt-2(onclick='howToPlay()') Nasıl Oynanır?
                 button.btn.btn-danger.col-12.my-2(onclick='signOut()') Oturumu Kapat!
 
         //- Yeni gelen kişiye özel karşılama yapılacak
