@@ -13,12 +13,50 @@ html(lang="tr")
         link(rel="stylesheet", href="css/howtoplay.css")
         //- Yazı Fontu:
         +globalFont()
+        //- Google analytics:
+        +analytics()
         title= gameName+" Nasıl Oynanır?"
 
     body#body.kite-one-regular
 
-        div#how-to-play-main-div.container-fluid dd
-            button#returnButton dön
+        //- Nasıl oynanır divi:
+        #how-to-play-main-div.container-fluid.p-4
+            .row 
+                #roleGuideButton.col-12.p-2.text-center.mb-2
+                    center
+                        img.mb-2
+                    span Rol Rehberi (Görmek için tıklayınız)
+
+                #guideDiv.col-12.p-2.text-center.mb-2
+                    h1= gameName+" Nasıl Oynanır?"
+
+                    h3.mt-5 Giriş
+                    span= "Merhaba Arkadaşlar. "+gameName+" oyunumuza hoş geldiniz. Şu an okumakta olduğunuz sayfa "+gameName+" oyununun oynanış rehberidir. Öncelikle oyunu oynamak için "
+                    span en az 5 kişi
+                    span  olmanız tavsiye edilir. Eğer hazırsanız önce nasıl oda kurup oyun öncesi hazırlığı yapabileceğinizi öğrenelim.
+
+                    h3.mt-5 Oda Kurulumu 
+                    span Oyunun ana ekranı aşağıdaki gibidir:
+                    br
+                    img.col-12.col-xxl-9.my-3(src="img/guide-img/main-menu.png")
+                    br
+                    span Bu ekrandan içinizden bir kişinin "Yeni Oda Oluştur" butonuna tıklayıp bir oda oluşturması gerekiyor. Bir oda oluşturduğunuzda aşağıdaki gibi gözükücek: 
+                    br
+                    img.col-12.col-xxl-9.my-3(src="img/guide-img/pre-game-admin.png")
+                    br
+                    span Şimdi ise diğer arkadaşlarınızın ilk ekranda bulunan "Oda kodunu yazınız" kısmına, sizin oluşturmuş olduğunuz odanın kodunu aynen yazıp ardından "Odaya Katıl" butonuna basıp odanıza katılmalarını bekleyin. Arkadaşlarınız odanıza geldiklerinde aşağıdaki gibi gözükecek:
+                    br
+                    img.col-12.col-xxl-9.my-3(src="img/guide-img/pre-game-multiple-players.png")
+                    br
+                    span Bu aşamayadan sonra
+                    span  Odayı Kuran Kişi 
+                    span aşağıda bulunan oyunu başlat butonundan oyunu başlatır ve herkes oyuna atılır. Dikkat edilmesi gereken bir konu var.
+                    span  Oyunu kuran kişinin, oyun tamamen bitene kadar oyundan çıkmaması gerekiyor. 
+                    span Aksi taktirde 
+                    span  oyun duracaktır. 
+                    span Oyun içi rehberimiz aşağıda tam gaz devam ediyor.
+
+                button#returnButton.col-12.btn.btn-danger Ana Sayfaya Dön
 
 
         script(src="js/howtoplay.js") 
