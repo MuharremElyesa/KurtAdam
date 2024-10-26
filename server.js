@@ -20,6 +20,8 @@ const bodyParser = require("body-parser")
 app.set("view engine", "pug")
 // views klasörünün konumunu bildirdik:
 app.set("views", "./app/views")
+// Node modules klasörü:
+app.use("/modules", express.static(path.join(__dirname, "node_modules")))
 // Bu oluşturduğumuz middleware ile express.js'in static özelliğini kullanarak ve path modulü ile de yolumuzu belirterek "public" klasörünü tarayıcıdan ulaşılabilir hale getirdik:
 app.use(express.static(path.join(__dirname, "public")))
 // JSON verilerini işlemek için body-parser middlewaresi:
@@ -30,7 +32,7 @@ app.use(bodyParser.json())
 // router modulunu middleware olarak tanımladık:
 app.use(router)
 // 7777 portu üzerinden yayın yapıyoruz:
-const io = socketIo(app.listen(7777))
+const io = socketIo(app.listen(7777/*, "25.37.182.166"*/))
 
 // Socket.io Server İşlemleri:
 io.on("connection", (connectedSocket) => {
