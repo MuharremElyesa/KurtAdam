@@ -65,6 +65,8 @@
 # Oyun içine de rol rehberi butonu eklenebilir.
 # game js deki loglar kaldırılacak.
 # Oyundan çıkınca ana sayfaya atsın.
-
+# analytics'e bakılıcak.
+# howtoplayde aşağıdaki scriptler eksik eklenecek.
+# admin kontrol logları clientten kaldırılacak.
 
 # Resimler: 55, 120 ekstradan oyun logosu yapılacak.
