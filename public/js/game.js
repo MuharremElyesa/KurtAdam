@@ -357,7 +357,7 @@ socket.on("sendListContats", (data) => {
             } else {
                 adminControl = false
             }
-console.log("Adminlik kontrol: "+adminControl);
+
 
             switch (data.data[keys[i]].role) {
                 case "villager":
@@ -512,7 +512,7 @@ socket.on("latestChanges", (data) => {
         risingInfobox_spanText.innerHTML = data.data.name + " Öldü"
 
         deceasedPlayerInformation_Animation.play()
-        console.log("lastChanges: "+adminControl);
+
         if (adminControl) {
             socket.emit("deathInformationComplement", {
                 enteredRoomKey: roomKey,
@@ -616,7 +616,6 @@ function contactCardDraft(/*Oyuncu Numarası*/ playerNumber, /*Aldığı Oy Say�
 // Rol dağıtımı isteği:
 function roleDistribution() {
     // Bu tarz isteklerde oynanan oda için sadece tek bir istek gitmesi için adminden sorguyu gönderiyoruz. Oyun esnasında admin oyundan çıkarsa adminlik başkasına verileceği için bu kontrol hep yapılıyor:
-    console.log("Rol dağıtımı isteği: "+adminControl);
     if (adminControl) {
         socket.emit("roleDistribution", {
             enteredRoomKey: roomKey
@@ -627,7 +626,6 @@ function roleDistribution() {
 // Gece isteği:
 function night() {
     // Bu tarz isteklerde oynanan oda için sadece tek bir istek gitmesi için adminden sorguyu gönderiyoruz. Oyun esnasında admin oyundan çıkarsa adminlik başkasına verileceği için bu kontrol hep yapılıyor:
-    console.log("Gece isteği: "+adminControl);
     if (adminControl) {
         // Gece için emit:
         socket.emit("night", {
@@ -639,7 +637,6 @@ function night() {
 // Gündüz isteği:
 function day() {
     // Bu tarz isteklerde oynanan oda için sadece tek bir istek gitmesi için adminden sorguyu gönderiyoruz. Oyun esnasında admin oyundan çıkarsa adminlik başkasına verileceği için bu kontrol hep yapılıyor:
-    console.log("Gündüz isteği: "+adminControl);
     if (adminControl) {
         // Gece için emit:
         socket.emit("day", {
@@ -651,7 +648,6 @@ function day() {
 // Oylama isteği:
 function vote() {
     // Bu tarz isteklerde oynanan oda için sadece tek bir istek gitmesi için adminden sorguyu gönderiyoruz. Oyun esnasında admin oyundan çıkarsa adminlik başkasına verileceği için bu kontrol hep yapılıyor:
-    console.log("Oy isteği: "+adminControl);
     if (adminControl) {
         // Gece için emit:
         socket.emit("vote", {
