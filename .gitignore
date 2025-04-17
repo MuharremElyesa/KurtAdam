@@ -1,3 +1,2 @@
 # Node modüllerini github'a almıyoruz. Projeyi çekince "npm install" yapmanız yeterli.
 node_modules
-config/service-account-key.json
