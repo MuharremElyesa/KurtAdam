@@ -1,4 +1,10 @@
+# KurtAdam Oyunu
+
+Merhabalar herkese. Bu depoda çoğunuzun bildiği vampir köylü oyununun node.js projesi bulunuyor. Şimdilik projemizde yanlızca köylü ve kurt rolleri bulunuyor. Eğer bir geliştiriciyseniz her türlü katkıya açığız. Projeyi fork edip başlamanız yeterli. :) Sadece oynamak için indirmek isterseniz de projeyi doğrudan indirip. CONTRIBUTING.md dosyasında verilen ayarlamaları yaparak yerel bilgisayarınızda çalıştırabilirsiniz. Ek olarak bilgisayarınızda ve modeminizde gerekli ayarlamaları yaparsanız yerel ağ üzerinde de oynayabilirsiniz. İyi eğlenceler ve iyi çalışmalar diliyorum.
+
 # Geşiltiricilere yönelik
+
+Ayrıntılı bilgi CONTRIBUTING.md dosyasında verilmiştir. Burası ön bilgilendirme tarzı bir yazıdır.
 
 ### Dosya Yapısı
 - app -> Ana uygulama klasörü
