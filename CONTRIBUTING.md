@@ -20,6 +20,8 @@ Aşağıdaki adımları izleyerek projeye katkı sağlayabilirsiniz.
    
 * **Geliştirme Yapma**
 
+   Her şeyden önce "npm install" ile gerekli paketleri indirin.
+
    Projemiz veritabanı olarak firebase'in realtime database'ini kullanıyor. Projeyi çalıştırabilmeniz için firebase console'da hesap oluşturup projeye bağlamanız gerekmektedir. Ücretsiz sürümde kullanabilirsiniz. Projemizde bulunan "config" klasörünün içerisinde bulunan "service-account-key.json" dosyasını oluşturmuş olduğunuz firebase hesabınızda size verilen anahtarları doldurup, "config/firebase-connect.js" yolunda bulunan dosyaya da realtime database'nizin url'sini yapıştırarak projeyi çalıştırabilirsiniz. Bunu yaptıktan sonra konsolda "npm start" komutu ile projeyi ayağa kaldırabilirsiniz.
 
    Projemiz normal şartlarda "localhost:7777" portunda çalışır. Eğer çalıştırmak istediğinizde o port dolu olduğu için hata alıyorsanız, kök dizinde bulunan "server.js" dosyasını düzenleyerek başka port yazarak çalıştırabilirsiniz. Onun haricinde IP hakkında vereceğim son bilgi de, "/puplic/js/global-socket-io(client).js" dosyası olacak. Projemizde client ile serveri socket.io ile bağladık. Client tarafındaki bağlantı dosyasıda vermiş olduğum yolda bulunuyor. O kısımda bir hata alırsanız ayar dosyası o şekilde. Projemizde bazı değişkenleri bir dosyada tuttuk ve o dosyadan ulaştık. Yolu şu şekilde: "config/global-variables.js". Bir çok ayar orada bulunuyor.
